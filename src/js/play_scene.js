@@ -17,24 +17,28 @@ var PlayScene = {
     //Método constructor...
   create: function () {
       //Creamos al player con un sprite por defecto.
-      //TODO 5 Creamos a rush 'rush'  con el sprite por defecto en el 10, 10 con la animación por defecto 'rush_idle01'
+      //DONE 5 Creamos a rush 'rush'  con el sprite por defecto en el 10, 10 con la animación por defecto 'rush_idle01'
       this._rush = this.game.add.sprite(10,10, 'rush');
-      //TODO 4: Cargar el tilemap 'tilemap' y asignarle al tileset 'patrones' la imagen de sprites 'tiles'
+
+      //DONE 4: Cargar el tilemap 'tilemap' y asignarle al tileset 'patrones' la imagen de sprites 'tiles'
       this.map = this.game.add.tilemap('tilemap');
-      this.map.addTilesetImage('patrones', 'tiles');
+      this.map.addTilesetImage('sheet', 'tiles');
       //Creacion de las layers
-      this.backgroundLayer = this.map.createLayer('BackgroundLayer');
-      this.groundLayer = this.map.createLayer('GroundLayer');
+      this.fondoback = this.map.createLayer('FondoBack');
+      this.fondo = this.map.createLayer('Fondo');
+      this.groundLayer = this.map.createLayer('Suelo');
       //plano de muerte
-      this.death = this.map.createLayer('Death');
+      this.muerte = this.map.createLayer('Muerte');
       //Colisiones con el plano de muerte y con el plano de muerte y con suelo.
-      this.map.setCollisionBetween(1, 5000, true, 'Death');
-      this.map.setCollisionBetween(1, 5000, true, 'GroundLayer');
-      this.death.visible = false;
+      this.map.setCollisionBetween(1, 5000, true, 'Muerte');
+      this.map.setCollisionBetween(1, 5000, true, 'Suelo');
+      this.muerte.visible = false;
       //Cambia la escala a x3.
-      this.groundLayer.setScale(3,3);
-      this.backgroundLayer.setScale(3,3);
-      this.death.setScale(3,3);
+      this.groundLayer.setScale(2,2);
+      this.fondo.setScale(2,2);
+      this.fondoback.setScale(2,2);
+      this.muerte.setScale(2,2);
+
 
       //this.groundLayer.resizeWorld(); //resize world and adjust to the screen
 
@@ -50,7 +54,6 @@ var PlayScene = {
 
     //IS called one per frame.
     update: function () {
-      //TODO: REVISAR EL MOVIMIENTO DEL PERSONAJE
         var moveDirection = new Phaser.Point(0, 0);
         var collisionWithTilemap = this.game.physics.arcade.collide(this._rush, this.groundLayer);
         var movement = this.GetMovement();
@@ -122,7 +125,7 @@ var PlayScene = {
         }
         //movement
         this.movement(moveDirection,5,
-                      this.backgroundLayer.layer.widthInPixels*this.backgroundLayer.scale.x - 10);
+                      this.fondo.layer.widthInPixels*this.fondo.scale.x - 10);
         this.checkPlayerFell();
     },
 
@@ -132,11 +135,13 @@ var PlayScene = {
     },
 
     onPlayerFell: function(){
-        //TODO 6 Carga de 'gameOver';
+        //DONE 6 Carga de 'gameOver';
+        this.destroy();
+        this.game.state.start('gameOver');
     },
 
     checkPlayerFell: function(){
-        if(this.game.physics.arcade.collide(this._rush, this.death))
+        if(this.game.physics.arcade.collide(this._rush, this.muerte))
             this.onPlayerFell();
     },
 
@@ -173,6 +178,7 @@ var PlayScene = {
         this._rush.body.gravity.y = 20000;
         this._rush.body.gravity.x = 0;
         this._rush.body.velocity.x = 0;
+        this._rush.z = 150;
         this.game.camera.follow(this._rush);
     },
     //move the player
@@ -183,8 +189,14 @@ var PlayScene = {
             this._rush.body.velocity.x = 0;
 
     },
+    destroy: function(){
+      this.map.destroy();
+      this._rush.destroy();
 
-    //TODO 9 destruir los recursos tilemap, tiles y logo.
+
+      console.log("Game assets deleted!");
+    //TODO 9 destruir los recursos tilemap, tiles
+    }
 
 };
 

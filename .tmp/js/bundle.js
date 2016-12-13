@@ -2,9 +2,9 @@
 var GameOver = {
     create: function () {
         console.log("Game Over");
-        var button = this.game.add.button(400, 300, 
-                                          'button', 
-                                          this.actionOnClick, 
+        var button = this.game.add.button(400, 300,
+                                          'button',
+                                          this.restart,
                                           this, 2, 1, 0);
         button.anchor.set(0.5);
         var goText = this.game.add.text(400, 100, "GameOver");
@@ -12,15 +12,34 @@ var GameOver = {
         text.anchor.set(0.5);
         goText.anchor.set(0.5);
         button.addChild(text);
-        
-        //TODO 8 crear un boton con el texto 'Return Main Menu' que nos devuelva al menu del juego.
-    }
-    
-    //TODO 7 declarar el callback del boton.
 
+  //DONE 8 crear un boton con el texto 'Return Main Menu' que nos devuelva al menu del juego
+        var button2 = this.game.add.button(400, 200,
+                                          'button',
+                                          this.goMenu,
+                                          this, 2, 2, 4);
+        button2.anchor.set(0.5);
+        var text2 = this.game.add.text(0, 0, "Menu");
+        text2.anchor.set(0.5);
+        button2.addChild(text2);
+
+
+        button.anchor.set(0.5);
+
+
+    },
+    //DONE 7 declarar el callback del boton.
+    restart: function(){
+      this.game.state.start('play');
+    },
+
+    goMenu: function(){
+      this.game.state.start('menu');
+    }
 };
 
 module.exports = GameOver;
+
 },{}],2:[function(require,module,exports){
 'use strict';
 
@@ -40,7 +59,7 @@ var BootScene = {
   },
 
   create: function () {
-    //this.game.state.start('preloader');
+      this.game.state.start('preloader');
       this.game.state.start('menu');
   }
 };
@@ -52,32 +71,29 @@ var PreloaderScene = {
     this.loadingBar.anchor.setTo(0, 0.5);
     this.game.load.setPreloadSprite(this.loadingBar);
     this.game.stage.backgroundColor = "#000000";
-
-
-
     this.load.onLoadStart.add(this.loadStart, this);
-    //TODO 2.1 Cargar el tilemap images/map.json con el nombre de la cache 'tilemap'.
+    //DONE 2.1 Cargar el tilemap images/map.json con el nombre de la cache 'tilemap'.
       //la imagen 'images/simples_pimples.png' con el nombre de la cache 'tiles' y
       // el atlasJSONHash con 'images/rush_spritesheet.png' como imagen y 'images/rush_spritesheet.json'
       //como descriptor de la animación.
 
-    this.load.tilemap('tilemap', 'images/map.json', null, Phaser.Tilemap.TILED_JSON);
-    this.load.image('tiles', 'images/simples_pimples.png');
-    this.load.atlas('rush', 'images/rush_spritesheet.png', 'images/rush_spritesheet.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    this.game.load.tilemap('tilemap', 'images/Test.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.image('tiles', 'images/sheet.png');
+    this.game.load.atlas('rush', 'images/rush_spritesheet.png', 'images/rush_spritesheet.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 
     this.load.onLoadComplete.add(this.loadComplete,this);
-      //TODO 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
+      //DONE 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
 
   },
   loadStart: function () {
-    this.game.state.start('play');
     console.log("Game Assets Loading ...");
   },
   loadComplete: function() {
     this.ready = true;
+    this.game.state.start('play');
     console.log("Game Assets Loaded!");
   },
-     //TODO 2.2b function loadComplete()
+     //DONE 2.2b function loadComplete()
     update: function(){
         this._loadingBar
     },
@@ -95,10 +111,10 @@ var wfconfig = {
 
 };
 
-//TODO 3.2 Cargar Google font cuando la página esté cargada con wfconfig.
-//TODO 3.3 La creación del juego y la asignación de los states se hará en el método init().
+//DONE 3.2 Cargar Google font cuando la página esté cargada con wfconfig.
+//DONE 3.3 La creación del juego y la asignación de los states se hará en el método init().
 window.init = function(){
-  //DONE1.2 Añadir los states 'boot' BootScene, 'menu' MenuScene, 'preloader' PreloaderScene, 'play' PlayScene, 'gameOver' GameOver.
+  //DONE 1.2 Añadir los states 'boot' BootScene, 'menu' MenuScene, 'preloader' PreloaderScene, 'play' PlayScene, 'gameOver' GameOver.
   //DONE 1.3 iniciar el state 'boot'.
   //Metodo init, que será llamado una vez la fuente se haya cargado.
   var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
@@ -113,37 +129,40 @@ window.init = function(){
 }
 window.onload = function () {
   //En el onload se cargará la Google Font
-  //TODO 3.2 Cargar Google font cuando la página esté cargada con wfconfig.
-  //TODO 3.3 La creación del juego y la asignación de los states se hará en el método init().
+  //DONE 3.2 Cargar Google font cuando la página esté cargada con wfconfig.
+  //DONE 3.3 La creación del juego y la asignación de los states se hará en el método init().
   WebFont.load(wfconfig);
 };
 
 },{"./gameover_scene":1,"./menu_scene":3,"./play_scene":4}],3:[function(require,module,exports){
 var MenuScene = {
     create: function () {
-        
-        var logo = this.game.add.sprite(this.game.world.centerX, 
-                                        this.game.world.centerY, 
+        this.game.world.setBounds(0,0,800,600);
+        this.game.stage.backgroundColor = "#000000";
+        var logo = this.game.add.sprite(this.game.world.centerX,
+                                        this.game.world.centerY,
                                         'logo');
         logo.anchor.setTo(0.5, 0.5);
-        var buttonStart = this.game.add.button(this.game.world.centerX, 
-                                               this.game.world.centerY, 
-                                               'button', 
-                                               this.actionOnClick, 
+        var buttonStart = this.game.add.button(this.game.world.centerX,
+                                               this.game.world.centerY,
+                                               'button',
+                                               this.actionOnClick,
                                                this, 2, 1, 0);
         buttonStart.anchor.set(0.5);
         var textStart = this.game.add.text(0, 0, "Start");
+
         textStart.font = 'Sniglet';
         textStart.anchor.set(0.5);
         buttonStart.addChild(textStart);
     },
-    
+
     actionOnClick: function(){
         this.game.state.start('preloader');
-    } 
+    }
 };
 
 module.exports = MenuScene;
+
 },{}],4:[function(require,module,exports){
 'use strict';
 
@@ -164,24 +183,28 @@ var PlayScene = {
     //Método constructor...
   create: function () {
       //Creamos al player con un sprite por defecto.
-      //TODO 5 Creamos a rush 'rush'  con el sprite por defecto en el 10, 10 con la animación por defecto 'rush_idle01'
+      //DONE 5 Creamos a rush 'rush'  con el sprite por defecto en el 10, 10 con la animación por defecto 'rush_idle01'
       this._rush = this.game.add.sprite(10,10, 'rush');
-      //TODO 4: Cargar el tilemap 'tilemap' y asignarle al tileset 'patrones' la imagen de sprites 'tiles'
+
+      //DONE 4: Cargar el tilemap 'tilemap' y asignarle al tileset 'patrones' la imagen de sprites 'tiles'
       this.map = this.game.add.tilemap('tilemap');
-      this.map.addTilesetImage('patrones', 'tiles');
+      this.map.addTilesetImage('sheet', 'tiles');
       //Creacion de las layers
-      this.backgroundLayer = this.map.createLayer('BackgroundLayer');
-      this.groundLayer = this.map.createLayer('GroundLayer');
+      this.fondoback = this.map.createLayer('FondoBack');
+      this.fondo = this.map.createLayer('Fondo');
+      this.groundLayer = this.map.createLayer('Suelo');
       //plano de muerte
-      this.death = this.map.createLayer('Death');
+      this.muerte = this.map.createLayer('Muerte');
       //Colisiones con el plano de muerte y con el plano de muerte y con suelo.
-      this.map.setCollisionBetween(1, 5000, true, 'Death');
-      this.map.setCollisionBetween(1, 5000, true, 'GroundLayer');
-      this.death.visible = false;
+      this.map.setCollisionBetween(1, 5000, true, 'Muerte');
+      this.map.setCollisionBetween(1, 5000, true, 'Suelo');
+      this.muerte.visible = false;
       //Cambia la escala a x3.
-      this.groundLayer.setScale(3,3);
-      this.backgroundLayer.setScale(3,3);
-      this.death.setScale(3,3);
+      this.groundLayer.setScale(2,2);
+      this.fondo.setScale(2,2);
+      this.fondoback.setScale(2,2);
+      this.muerte.setScale(2,2);
+
 
       //this.groundLayer.resizeWorld(); //resize world and adjust to the screen
 
@@ -268,7 +291,7 @@ var PlayScene = {
         }
         //movement
         this.movement(moveDirection,5,
-                      this.backgroundLayer.layer.widthInPixels*this.backgroundLayer.scale.x - 10);
+                      this.fondo.layer.widthInPixels*this.fondo.scale.x - 10);
         this.checkPlayerFell();
     },
 
@@ -278,11 +301,13 @@ var PlayScene = {
     },
 
     onPlayerFell: function(){
-        //TODO 6 Carga de 'gameOver';
+        //DONE 6 Carga de 'gameOver';
+        this.destroy();
+        this.game.state.start('gameOver');
     },
 
     checkPlayerFell: function(){
-        if(this.game.physics.arcade.collide(this._rush, this.death))
+        if(this.game.physics.arcade.collide(this._rush, this.muerte))
             this.onPlayerFell();
     },
 
@@ -319,6 +344,7 @@ var PlayScene = {
         this._rush.body.gravity.y = 20000;
         this._rush.body.gravity.x = 0;
         this._rush.body.velocity.x = 0;
+        this._rush.z = 150;
         this.game.camera.follow(this._rush);
     },
     //move the player
@@ -329,8 +355,14 @@ var PlayScene = {
             this._rush.body.velocity.x = 0;
 
     },
+    destroy: function(){
+      this.map.destroy();
+      this._rush.destroy();
 
-    //TODO 9 destruir los recursos tilemap, tiles y logo.
+
+      console.log("Game assets deleted!");
+    //TODO 9 destruir los recursos tilemap, tiles
+    }
 
 };
 
