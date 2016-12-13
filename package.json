@@ -1,0 +1,24 @@
+{
+  "version": "0.0.0",
+  "name": "NAME NOT YET DEFINED",
+  "version": "0.0.0",
+  "author": "",
+  "license": "CC-BY-NC-SA-4.0",
+
+  "repository": "https://github.com/Kekstar/PVLI-P3.git",
+  "author": "Kekstar Studio",
+
+  "dependencies": {
+    "browserify": "*",
+    "browser-sync": "*",
+    "del": "*",
+    "gulp": "*",
+    "gulp-connect": "*",
+    "gulp-gh-pages": "*",
+    "gulp-util": "*",
+    "merge-stream": "*",
+    "phaser": "*",
+    "vinyl-source-stream": "*",
+    "watchify": "*"
+  }
+}
