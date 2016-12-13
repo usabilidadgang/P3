@@ -1,10 +1,40 @@
-# Awesome game
+# [insertar nombre juego]
 
-Awesome game by
-[gituser](https://github.com/gituser).
+Por
+[Manuel Hernández](https://github.com/manherna) y [Francisco Solano López-Bleda](https://github.com/franlbc97).
+## Resumen
+[generador tablas](http://www.tablesgenerator.com/markdown_tables#) por si aca 
 
-Initial scaffolding generated with [generator-gamejam](https://github.com/belen-albeza/generator-gamejam/).
-
+| Genero         | Público | Modos de juego | Plataforma |
+|----------------|---------|----------------|------------|
+| Plataformas 2D | yo      | 1 Jugador      | navegador  |
+## Descripción
+una puta ida de olla
+## Jugabilidad
+### Mecanica
+robotica
+### Dinámica
+movil
+### Estetica
+bonica
+## Menús
+### Menú principal
+y tho
+### Menú de pausa
+pa que quires saber eso
+### Creditos
+puto lilo
+### Menu N-esimo
+imbecil
+## Historia
+salva a la animadora, salva el mundo
+## Personajes
+### La madre de manu en moniciclo
+tambien toca la guitarra
+### La Puta Madre de Manu en monociclo
+que toca el bajo
+## Niveles
+mu chungos porque semos jarcores
 ## Installation
 
 ### Requirements
