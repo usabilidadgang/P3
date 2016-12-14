@@ -12,11 +12,14 @@ Por
 una puta ida de olla
 ## Jugabilidad
 ### Mecanica
-robotica
+- Movimiento básico: Con las flechas del teclado.
+- Salto: Con la barra espaciadora.
 ### Dinámica
-movil
+- Matar serpientes: Tenemos que saltar encima de ellas para que mueran.
+- Caer en la lava/ agua nos matará.
+- Si tocamos a una serpiente, moriremos.
 ### Estetica
-bonica
+16 bits. Fantasía medieval.
 ## Menús
 ### Menú principal
 y tho
@@ -29,12 +32,17 @@ imbecil
 ## Historia
 salva a la animadora, salva el mundo
 ## Personajes
-### La madre de manu en moniciclo
-tambien toca la guitarra
-### La Puta Madre de Manu en monociclo
-que toca el bajo
+### Rey Oswald III
+A quien ha sido arrebatado su castillo
+### Golden Golem
+Que ha robado el castillo del Rey Oswald. Es el malvado villano.
+### Serpientes
+Súbditos del golem dorado.
 ## Niveles
-mu chungos porque semos jarcores
+### 1º Nivel: Fuera del castillo.
+Habremos de llegar desde las afueras del castillo hasta su puerta, esquivando a las serpientes.
+### 2º Nivel: Dentro del castillo.
+Lucha contra serpientes y contra el malvado golem.
 
 Initial scaffolding generated with [generator-gamejam](https://github.com/belen-albeza/generator-gamejam/).
 
