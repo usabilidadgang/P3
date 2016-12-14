@@ -271,17 +271,16 @@ var PlayScene = {
                 moveDirection.x = 0;
                 break;
             case PlayerState.JUMP:
+                console.log("kek");
             case PlayerState.RUN:
             case PlayerState.FALLING:
-                if(movement === Direction.RIGHT){
-                    moveDirection.x = this._speed;
-                    if(this._rush.scale.x < 0)
-                        this._rush.scale.x *= -1;
+                if(movement === Direction.NONE){
+                    moveDirection.x = 0;
+                    this._rush.scale.x *= 1;
                 }
                 else{
-                    moveDirection.x = -this._speed;
-                    if(this._rush.scale.x > 0)
-                        this._rush.scale.x *= -1;
+                    moveDirection.x = this._speed;
+                    this._rush.scale.x = (this._speed/Math.abs(this._speed));
                 }
                 if(this._playerState === PlayerState.JUMP)
                     moveDirection.y = -this._jumpSpeed;
@@ -325,10 +324,14 @@ var PlayScene = {
         //Move Right
         if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
             movement = Direction.RIGHT;
+            this._speed = 300;
+            console.log("RIGHT");
         }
         //Move Left
         if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
             movement = Direction.LEFT;
+            this._speed = -300;
+            console.log("LEFT");
         }
         return movement;
     },

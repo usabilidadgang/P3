@@ -100,22 +100,20 @@ var PlayScene = {
         }
         //States
         switch(this._playerState){
-
+          var JorF = false;
             case PlayerState.STOP:
                 moveDirection.x = 0;
                 break;
             case PlayerState.JUMP:
-            case PlayerState.RUN:
             case PlayerState.FALLING:
-                if(movement === Direction.RIGHT){
-                    moveDirection.x = this._speed;
-                    if(this._rush.scale.x < 0)
-                        this._rush.scale.x *= -1;
+            case PlayerState.RUN:
+                if(movement === Direction.NONE){
+                    moveDirection.x = 0;
+                    this._rush.scale.x *= 1;
                 }
                 else{
-                    moveDirection.x = -this._speed;
-                    if(this._rush.scale.x > 0)
-                        this._rush.scale.x *= -1;
+                    moveDirection.x = this._speed;
+                    this._rush.scale.x = (this._speed/Math.abs(this._speed));
                 }
                 if(this._playerState === PlayerState.JUMP)
                     moveDirection.y = -this._jumpSpeed;
@@ -159,10 +157,12 @@ var PlayScene = {
         //Move Right
         if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
             movement = Direction.RIGHT;
+            this._speed = 300;
         }
         //Move Left
         if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
             movement = Direction.LEFT;
+            this._speed = -300;
         }
         return movement;
     },
