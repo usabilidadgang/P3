@@ -71,10 +71,45 @@ Habremos de llegar desde las afueras del castillo hasta su puerta, esquivando a 
 Lucha contra serpientes y contra el malvado golem.
 
 ***
-## Installation
+creo que esto puede valer.
+# Arquitectura
+- Personaje
+  + Cualidades
+    - Movimiento en el Eje X.
+    - Puede morir y tiene vidas.
+  + Hijos
+    - Rey Oswald
+      + Se mueve por el input del usuario (flechas de dirección).
+      + Salta.
+      + Coge objetos.
+    - Enemigos
+      + Cualidades
+        - Hacen daño a Oswald.
+        - No les afectan las leyes de la fisica.
+        - tienen inteligencia artificial.
+      + Hijos
+        - Golden Golem
+          + Tiene 3 vidas.
+          + Se mueve libremente por el eje X e Y.
+        - Serpiente
+          + Tiene 1 vida.
+          + Al Morir da puntos.
+- Objeto
+  + Cualidades
+    - Pueden ser cogidos por Oswald
+  + Hijos
+    - 1UP
+      + Desaparece al ser cogido.
+      + Da 1 vida.
+    - Cofre
+      + No desaparece al ser cogido pero solo se puede coger 1 vez.
+      + Da puntos.
+
+***
+# Installation
 Initial scaffolding generated with [generator-gamejam](https://github.com/belen-albeza/generator-gamejam/).
 
-### Requirements
+## Requirements
 
 This games uses [gulp](http://gulpjs.com/) for building and tasks automation.
 
@@ -84,7 +119,7 @@ You can install gulp with npm:
 npm install -g gulp
 ```
 
-### Build
+## Build
 
 Clone this repository and install dependencies:
 
