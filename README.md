@@ -1,5 +1,10 @@
 # [insertar nombre juego]
 
+posibles nombres\:
+- Rex Vult (el rey lo quiere en latin, referencia a deus vult)
+- Castrum sine Rex (Rey sin castillo en latin)
+- 
+
 Por
 [Manuel Hernández](https://github.com/manherna) y [Francisco Solano López-Bleda](https://github.com/franlbc97).
 ## Resumen
@@ -9,15 +14,36 @@ Por
 |----------------|---------|----------------|------------|
 | Plataformas 2D | yo      | 1 Jugador      | navegador  |
 ## Descripción
-una puta ida de olla
+Goldem Golem le ha quitado a el Rey Oswald III su castillo y este intentará recuperarlo.
 ## Jugabilidad
 ### Mecanica
-- Movimiento básico: Con las flechas del teclado.
-- Salto: Con la barra espaciadora.
+- Rey Oswald III
+  + Movimiento en el eje x mediante las flechas del teclado.
+  + Salto: Con la barra espaciadora.
+  + Le afectan las leyes de la fisica.
+- Serpiente
+  + Movimiento en el eje X y automático.
+  + No le afectan las leyes de la física.
+- Golden Golem
+  + Movimiento libre en los ejes X e Y, automático.
+  + No le afectan las leyes de la física.
+
 ### Dinámica
-- Matar serpientes: Tenemos que saltar encima de ellas para que mueran.
-- Caer en la lava/ agua nos matará.
-- Si tocamos a una serpiente, moriremos.
+- Rey Oswald III
+  + Muere
+    - Ser tocado por un enemigo.
+    - Al caer en la lava/ agua nos matará.
+  + Obtiene puntos
+    - Al matar a una serpiente.
+    - Pasarse el nivel.
+    - Coger cofres.
+  + Obtiene una vida cuando coge un 1UP.
+- Serpiente
+  + Muere al ser aplastada por Oswald.
+- Golden Golem
+  + Pierde vida al ser yoqse por Oswald.
+  + Muere al tener 0 vidas.
+
 ### Estetica
 16 bits. Fantasía medieval.
 ## Menús
@@ -30,7 +56,7 @@ puto lilo
 ### Menu N-esimo
 imbecil
 ## Historia
-salva a la animadora, salva el mundo
+Goldem Golem le ha quitado a el Rey Oswald III su castillo y este intentará recuperarlo.
 ## Personajes
 ### Rey Oswald III
 A quien ha sido arrebatado su castillo
@@ -44,9 +70,9 @@ Habremos de llegar desde las afueras del castillo hasta su puerta, esquivando a 
 ### 2º Nivel: Dentro del castillo.
 Lucha contra serpientes y contra el malvado golem.
 
-Initial scaffolding generated with [generator-gamejam](https://github.com/belen-albeza/generator-gamejam/).
-
+***
 ## Installation
+Initial scaffolding generated with [generator-gamejam](https://github.com/belen-albeza/generator-gamejam/).
 
 ### Requirements
 
