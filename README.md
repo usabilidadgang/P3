@@ -3,7 +3,7 @@
 posibles nombres\:
 - Rex Vult (el rey lo quiere en latin, referencia a deus vult)
 - Castrum sine Rex (Rey sin castillo en latin)
-- 
+- Rex ad Golem (El rey contra el Golem, el latin)
 
 Por
 [Manuel Hernández](https://github.com/manherna) y [Francisco Solano López-Bleda](https://github.com/franlbc97).
