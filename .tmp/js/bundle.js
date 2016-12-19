@@ -184,21 +184,23 @@ var PlayScene = {
   create: function () {
       //Creamos al player con un sprite por defecto.
       //DONE 5 Creamos a rush 'rush'  con el sprite por defecto en el 10, 10 con la animación por defecto 'rush_idle01'
-      this._rush = this.game.add.sprite(10,10, 'rush');
+
 
       //DONE 4: Cargar el tilemap 'tilemap' y asignarle al tileset 'patrones' la imagen de sprites 'tiles'
       this.map = this.game.add.tilemap('tilemap');
       this.map.addTilesetImage('sheet', 'tiles');
       //Creacion de las layers
+      this.muerte = this.map.createLayer('Muerte');
       this.fondoback = this.map.createLayer('FondoBack');
       this.fondo = this.map.createLayer('Fondo');
+      this._rush = this.game.add.sprite(10,10, 'rush');
       this.groundLayer = this.map.createLayer('Suelo');
       //plano de muerte
-      this.muerte = this.map.createLayer('Muerte');
+
       //Colisiones con el plano de muerte y con el plano de muerte y con suelo.
       this.map.setCollisionBetween(1, 5000, true, 'Muerte');
       this.map.setCollisionBetween(1, 5000, true, 'Suelo');
-      this.muerte.visible = false;
+      //this.muerte.visible = true;
       //Cambia la escala a x3.
       this.groundLayer.setScale(2,2);
       this.fondo.setScale(2,2);
@@ -344,7 +346,8 @@ var PlayScene = {
         this._rush.body.gravity.y = 20000;
         this._rush.body.gravity.x = 0;
         this._rush.body.velocity.x = 0;
-        this._rush.z = 150;
+        this._rush.z = 150
+        ;
         this.game.camera.follow(this._rush);
     },
     //move the player
