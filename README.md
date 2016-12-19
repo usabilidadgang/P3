@@ -1,13 +1,115 @@
-# Awesome game
+# [insertar nombre juego]
 
-Awesome game by
-[gituser](https://github.com/gituser).
+posibles nombres\:
+- Rex Vult (el rey lo quiere en latin, referencia a deus vult)
+- Castrum sine Rex (Rey sin castillo en latin)
+- Rex ad Golem (El rey contra el Golem, el latin)
 
+Por
+[Manuel Hernández](https://github.com/manherna) y [Francisco Solano López-Bleda](https://github.com/franlbc97).
+## Resumen
+[generador tablas](http://www.tablesgenerator.com/markdown_tables#) por si aca 
+
+| Genero         | Público | Modos de juego | Plataforma |
+|----------------|---------|----------------|------------|
+| Plataformas 2D | yo      | 1 Jugador      | navegador  |
+## Descripción
+Goldem Golem le ha quitado a el Rey Oswald III su castillo y este intentará recuperarlo.
+## Jugabilidad
+### Mecanica
+- Rey Oswald III
+  + Movimiento en el eje x mediante las flechas del teclado.
+  + Salto: Con la barra espaciadora.
+  + Le afectan las leyes de la fisica.
+- Serpiente
+  + Movimiento en el eje X y automático.
+  + No le afectan las leyes de la física.
+- Golden Golem
+  + Movimiento libre en los ejes X e Y, automático.
+  + No le afectan las leyes de la física.
+
+### Dinámica
+- Rey Oswald III
+  + Muere
+    - Ser tocado por un enemigo.
+    - Al caer en la lava/ agua nos matará.
+  + Obtiene puntos
+    - Al matar a una serpiente.
+    - Pasarse el nivel.
+    - Coger cofres.
+  + Obtiene una vida cuando coge un 1UP.
+- Serpiente
+  + Muere al ser aplastada por Oswald.
+- Golden Golem
+  + Pierde vida al ser yoqse por Oswald.
+  + Muere al tener 0 vidas.
+
+### Estetica
+16 bits. Fantasía medieval.
+## Menús
+### Menú principal
+y tho
+### Menú de pausa
+pa que quires saber eso
+### Creditos
+puto lilo
+### Menu N-esimo
+imbecil
+## Historia
+Goldem Golem le ha quitado a el Rey Oswald III su castillo y este intentará recuperarlo.
+## Personajes
+### Rey Oswald III
+A quien ha sido arrebatado su castillo
+### Golden Golem
+Que ha robado el castillo del Rey Oswald. Es el malvado villano.
+### Serpientes
+Súbditos del golem dorado.
+## Niveles
+### 1º Nivel: Fuera del castillo.
+Habremos de llegar desde las afueras del castillo hasta su puerta, esquivando a las serpientes.
+### 2º Nivel: Dentro del castillo.
+Lucha contra serpientes y contra el malvado golem.
+
+***
+creo que esto puede valer.
+# Arquitectura
+- Personaje
+  + Cualidades
+    - Movimiento en el Eje X.
+    - Puede morir y tiene vidas.
+  + Hijos
+    - Rey Oswald
+      + Se mueve por el input del usuario (flechas de dirección).
+      + Salta.
+      + Coge objetos.
+    - Enemigos
+      + Cualidades
+        - Hacen daño a Oswald.
+        - No les afectan las leyes de la fisica.
+        - tienen inteligencia artificial.
+      + Hijos
+        - Golden Golem
+          + Tiene 3 vidas.
+          + Se mueve libremente por el eje X e Y.
+        - Serpiente
+          + Tiene 1 vida.
+          + Al Morir da puntos.
+- Objeto
+  + Cualidades
+    - Pueden ser cogidos por Oswald
+  + Hijos
+    - 1UP
+      + Desaparece al ser cogido.
+      + Da 1 vida.
+    - Cofre
+      + No desaparece al ser cogido pero solo se puede coger 1 vez.
+      + Da puntos.
+
+***
+# Installation
 Initial scaffolding generated with [generator-gamejam](https://github.com/belen-albeza/generator-gamejam/).
 
-## Installation
-
-### Requirements
+## Requirements
 
 This games uses [gulp](http://gulpjs.com/) for building and tasks automation.
 
@@ -17,7 +119,7 @@ You can install gulp with npm:
 npm install -g gulp
 ```
 
-### Build
+## Build
 
 Clone this repository and install dependencies:
 
