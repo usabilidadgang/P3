@@ -212,11 +212,11 @@ var PlayScene = {
 
       //nombre de la animación, frames, framerate, isloop
       this._rush.animations.add('run',
-                    Phaser.Animation.generateFrameNames('R_',1,4,'',2),10,true);
+                    Phaser.Animation.generateFrameNames('RUN',1,4,'',2),10,true);
       this._rush.animations.add('stop',
-                    Phaser.Animation.generateFrameNames('J_',3,3,'',2),0,false);
+                    Phaser.Animation.generateFrameNames('WALK',0,0,'',2),0,false);
       this._rush.animations.add('jump',
-                     Phaser.Animation.generateFrameNames('J_',0,3,'',2),0,false);
+                     Phaser.Animation.generateFrameNames('JUMP',0,3,'',2),0,false);
       this.configure();
   },
 

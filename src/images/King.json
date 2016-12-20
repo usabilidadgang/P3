@@ -54,7 +54,7 @@
 	"sourceSize": {"w":17,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"J_00.png":
+"JUMP00.png":
 {
 	"frame": {"x":93,"y":0,"w":17,"h":21},
 	"rotated": false,
@@ -63,7 +63,7 @@
 	"sourceSize": {"w":17,"h":21},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"J_01.png":
+"JUMP01.png":
 {
 	"frame": {"x":110,"y":0,"w":16,"h":22},
 	"rotated": false,
@@ -72,7 +72,7 @@
 	"sourceSize": {"w":16,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"J_02.png":
+"JUMP02.png":
 {
 	"frame": {"x":0,"y":23,"w":15,"h":22},
 	"rotated": false,
@@ -81,7 +81,7 @@
 	"sourceSize": {"w":15,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"J_03.png":
+"JUMP03.png":
 {
 	"frame": {"x":15,"y":23,"w":16,"h":21},
 	"rotated": false,
@@ -90,7 +90,7 @@
 	"sourceSize": {"w":16,"h":21},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"PUNCH_00.png":
+"PUNCH00.png":
 {
 	"frame": {"x":31,"y":23,"w":15,"h":22},
 	"rotated": false,
@@ -99,7 +99,7 @@
 	"sourceSize": {"w":15,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"PUNCH_01.png":
+"PUNCH01.png":
 {
 	"frame": {"x":46,"y":23,"w":17,"h":22},
 	"rotated": false,
@@ -108,7 +108,7 @@
 	"sourceSize": {"w":17,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"R_01.png":
+"RUN01.png":
 {
 	"frame": {"x":63,"y":23,"w":15,"h":22},
 	"rotated": false,
@@ -117,7 +117,7 @@
 	"sourceSize": {"w":15,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"R_02.png":
+"RUN02.png":
 {
 	"frame": {"x":78,"y":23,"w":15,"h":22},
 	"rotated": false,
@@ -126,7 +126,7 @@
 	"sourceSize": {"w":15,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"R_03.png":
+"RUN03.png":
 {
 	"frame": {"x":93,"y":23,"w":17,"h":22},
 	"rotated": false,
@@ -135,7 +135,7 @@
 	"sourceSize": {"w":17,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"R_04.png":
+"RUN04.png":
 {
 	"frame": {"x":110,"y":23,"w":16,"h":22},
 	"rotated": false,
@@ -180,7 +180,7 @@
 	"sourceSize": {"w":15,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"W_00.png":
+"WALK00.png":
 {
 	"frame": {"x":60,"y":45,"w":15,"h":22},
 	"rotated": false,
@@ -189,7 +189,7 @@
 	"sourceSize": {"w":15,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"W_01.png":
+"WALK01.png":
 {
 	"frame": {"x":75,"y":45,"w":15,"h":22},
 	"rotated": false,
@@ -198,7 +198,7 @@
 	"sourceSize": {"w":15,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"W_02.png":
+"WALK02.png":
 {
 	"frame": {"x":90,"y":45,"w":16,"h":22},
 	"rotated": false,
@@ -207,7 +207,7 @@
 	"sourceSize": {"w":16,"h":22},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"W_03.png":
+"WALK03.png":
 {
 	"frame": {"x":106,"y":45,"w":17,"h":22},
 	"rotated": false,
