@@ -5,6 +5,7 @@ html {
 .s2{
   display:flex;
   justify-content: space-between;
+  background-color: #f35;
 }
 .s1{
   width: calc(50%);
@@ -21,7 +22,7 @@ body {
 }
 
 a {
-  color: #c39;
+  color: #0f0;
 }
 h1 {
   text-align: center;
@@ -39,5 +40,5 @@ main {
 
 h2 {
   text-align: center;
-  background-color: #f00;
+  background-color: #fff;
 }
