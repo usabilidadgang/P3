@@ -36,21 +36,21 @@ var PlayScene = {
       this.map.setCollisionBetween(1, 5000, true, 'Suelo');
       //this.muerte.visible = true;
       //Cambia la escala a x3.
-      this.groundLayer.setScale(2,2);
-      this.fondo.setScale(2,2);
-      this.fondoback.setScale(2,2);
-      this.muerte.setScale(2,2);
+      this.groundLayer.setScale(1,1);
+      this.fondo.setScale(1,1);
+      this.fondoback.setScale(1,1);
+      this.muerte.setScale(1,1);
 
 
       //this.groundLayer.resizeWorld(); //resize world and adjust to the screen
 
       //nombre de la animación, frames, framerate, isloop
       this._rush.animations.add('run',
-                    Phaser.Animation.generateFrameNames('rush_run',1,5,'',2),10,true);
+                    Phaser.Animation.generateFrameNames('R_',1,4,'',2),10,true);
       this._rush.animations.add('stop',
-                    Phaser.Animation.generateFrameNames('rush_idle',1,1,'',2),0,false);
+                    Phaser.Animation.generateFrameNames('J_',3,3,'',2),0,false);
       this._rush.animations.add('jump',
-                     Phaser.Animation.generateFrameNames('rush_jump',2,2,'',2),0,false);
+                     Phaser.Animation.generateFrameNames('J_',0,3,'',2),0,false);
       this.configure();
   },
 

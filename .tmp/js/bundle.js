@@ -79,7 +79,7 @@ var PreloaderScene = {
 
     this.game.load.tilemap('tilemap', 'images/Test.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tiles', 'images/sheet.png');
-    this.game.load.atlas('rush', 'images/rush_spritesheet.png', 'images/rush_spritesheet.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    this.game.load.atlas('rush', 'images/King.png', 'images/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 
     this.load.onLoadComplete.add(this.loadComplete,this);
       //DONE 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
@@ -202,21 +202,21 @@ var PlayScene = {
       this.map.setCollisionBetween(1, 5000, true, 'Suelo');
       //this.muerte.visible = true;
       //Cambia la escala a x3.
-      this.groundLayer.setScale(2,2);
-      this.fondo.setScale(2,2);
-      this.fondoback.setScale(2,2);
-      this.muerte.setScale(2,2);
+      this.groundLayer.setScale(1,1);
+      this.fondo.setScale(1,1);
+      this.fondoback.setScale(1,1);
+      this.muerte.setScale(1,1);
 
 
       //this.groundLayer.resizeWorld(); //resize world and adjust to the screen
 
       //nombre de la animación, frames, framerate, isloop
       this._rush.animations.add('run',
-                    Phaser.Animation.generateFrameNames('rush_run',1,5,'',2),10,true);
+                    Phaser.Animation.generateFrameNames('R_',1,4,'',2),10,true);
       this._rush.animations.add('stop',
-                    Phaser.Animation.generateFrameNames('rush_idle',1,1,'',2),0,false);
+                    Phaser.Animation.generateFrameNames('J_',3,3,'',2),0,false);
       this._rush.animations.add('jump',
-                     Phaser.Animation.generateFrameNames('rush_jump',2,2,'',2),0,false);
+                     Phaser.Animation.generateFrameNames('J_',0,3,'',2),0,false);
       this.configure();
   },
 
