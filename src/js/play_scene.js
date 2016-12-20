@@ -102,7 +102,7 @@ var PlayScene = {
         }
         //States
         switch(this._playerState){
-          var JorF = false;
+
             case PlayerState.STOP:
                 moveDirection.x = 0;
                 break;

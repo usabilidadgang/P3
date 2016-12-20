@@ -149,7 +149,7 @@ var MenuScene = {
                                                this.actionOnClick,
                                                this, 2, 1, 0);
         buttonStart.anchor.set(0.5);
-        var textStart = this.game.add.text(0, 0, "Start");
+        var textStart = this.game.add.text(0, 0, "Niveles");
 
         textStart.font = 'Sniglet';
         textStart.anchor.set(0.5);
@@ -273,9 +273,8 @@ var PlayScene = {
                 moveDirection.x = 0;
                 break;
             case PlayerState.JUMP:
-                console.log("kek");
-            case PlayerState.RUN:
             case PlayerState.FALLING:
+            case PlayerState.RUN:
                 if(movement === Direction.NONE){
                     moveDirection.x = 0;
                     this._rush.scale.x *= 1;
@@ -327,13 +326,11 @@ var PlayScene = {
         if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
             movement = Direction.RIGHT;
             this._speed = 300;
-            console.log("RIGHT");
         }
         //Move Left
         if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
             movement = Direction.LEFT;
             this._speed = -300;
-            console.log("LEFT");
         }
         return movement;
     },
