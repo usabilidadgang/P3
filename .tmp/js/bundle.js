@@ -1,4 +1,234 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+var Direction = {'LEFT':-1, 'RIGHT':1, 'NONE':0};
+
+//DEFINICION DE OBJETOS DE LA ESCENA
+//Bandos del juego. Enemigos, heroe e indefinido para errores.
+var party = {enemy : 0, hero : 1, undefined: -1};
+
+//Clase base para desarrollar el resto de personajes
+function Character(x, y, party, name, lifes, spritename, escene){
+  this.sprite = escene.game.add.sprite(x, y, spritename);
+  this.position = {x:x, y:y} || {x:0, y:0};
+  this.name = name || 'name not defined';
+  this.lifes = lifes || 0;
+  this.party = party || party.undefined;
+  escene.game.physics.arcade.enable(this.sprite);
+  Character.prototype.moveX =  function (dir) {
+    switch (dir) {
+      case Direction.RIGHT:
+        this.position.x++;
+        this.body.velocity.x = 10;
+        break;
+      case Direction.LEFT:
+        this.position.x--;
+        this.body.velocity.x = -10;
+        break;
+      default:
+    }
+  };
+}
+//Rey, que hereda de Character y se mueve y salta conforme al input del usuario
+function King (x, y, escene){
+  //TODO CAMBIAR EL SPRITE AÑADIDO.
+  Character.apply(this, [x, y, party.hero, 'King', 100, 'einstein', escene]);
+
+  King.prototype.update = function () {
+    var dir = this.getInput();
+    if(dir !== 0){
+      this.scale.x = dir;
+      this.moveX(dir);
+    }
+  };
+  King.prototype.getInput = function () {
+    var movement = Direction.NONE;
+    //Move Right
+    if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) movement = Direction.RIGHT;
+    else if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) movement = Direction.LEFT;
+    //Move Left
+    return movement;
+
+  };
+  King.prototype.jump = function (){
+
+
+  };
+  King.prototype = Object.create(Character.prototype);
+  King.prototype.constructor = King;
+}
+//Enemy, clase base para enemigos. Si tocan al rey le hacen daño.
+function Enemy (name, x ,y ,vidas, danyo, spriteName) {
+    Character.apply(this, [x, y,party.enemy,name,vidas, spriteName]);
+    this.danyo = danyo || 0;
+    Enemy.prototype = Object.create(Character.prototype);
+    Enemy.prototype.constructor = Enemy;
+
+}
+//Serpiente, hereda de enemy y se mueve a izquierda y derecha
+function Serpiente(x, y){
+  Enemy.apply(this, ['Serpiente',x, y, 1, /*Nombre de sprite*/]);
+  Serpiente.prototype = Object.create(Enemy.prototype);
+  Serpiente.prototype.constructor = Serpiente;
+}
+//Golem, enemigo final del juego.
+function Golem(x, y){
+  Enemy.apply(this, ['Golem',x, y, 15]);
+  Golem.prototype = Object.create(Enemy.prototype);
+  Golem.prototype.constructor = Golem;
+}
+
+module.exports = {
+  King: King,
+  Serpiente: Serpiente,
+  Golem: Golem
+};
+
+
+
+
+/*  var moveDirection = new Phaser.Point(0, 0);
+  var collisionWithTilemap = this.game.physics.arcade.collide(this._rush, this.groundLayer);
+  var movement = this.GetMovement();
+  //transitions
+  switch(this._playerState)
+  {
+      case PlayerState.STOP:
+      case PlayerState.RUN:
+          if(this.isJumping(collisionWithTilemap)){
+              this._playerState = PlayerState.JUMP;
+              this._initialJumpHeight = this._rush.y;
+              this._rush.animations.play('jump');
+          }
+          else{
+              if(movement !== Direction.NONE){
+                  this._playerState = PlayerState.RUN;
+                  this._rush.animations.play('run');
+              }
+              else{
+                  this._playerState = PlayerState.STOP;
+                  this._rush.animations.play('stop');
+              }
+          }
+          break;
+
+      case PlayerState.JUMP:
+
+          var currentJumpHeight = this._rush.y - this._initialJumpHeight;
+          this._playerState = (currentJumpHeight*currentJumpHeight < this._jumpHight*this._jumpHight) ? PlayerState.JUMP : PlayerState.FALLING;
+          break;
+
+      case PlayerState.FALLING:
+          if(this.isStanding()){
+              if(movement !== Direction.NONE){
+                  this._playerState = PlayerState.RUN;
+                  this._rush.animations.play('run');
+              }
+              else{
+                  this._playerState = PlayerState.STOP;
+                  this._rush.animations.play('stop');
+              }
+          }
+          break;
+  }
+  //States
+  switch(this._playerState){
+
+      case PlayerState.STOP:
+          moveDirection.x = 0;
+          break;
+      case PlayerState.JUMP:
+      case PlayerState.FALLING:
+      case PlayerState.RUN:
+          if(movement === Direction.NONE){
+              moveDirection.x = 0;
+              this._rush.scale.x *= 1;
+          }
+          else{
+              moveDirection.x = this._speed;
+              this._rush.scale.x = (this._speed/Math.abs(this._speed));
+          }
+          if(this._playerState === PlayerState.JUMP)
+              moveDirection.y = -this._jumpSpeed;
+          if(this._playerState === PlayerState.FALLING)
+              moveDirection.y = 0;
+          break;
+  }
+  //movement
+  this.movement(moveDirection,5,
+                this.fondo.layer.widthInPixels*this.fondo.scale.x - 10);
+  this.checkPlayerFell();
+},
+
+
+canJump: function(collisionWithTilemap){
+  return this.isStanding() && collisionWithTilemap || this._jamping;
+},
+
+onPlayerFell: function(){
+  //DONE 6 Carga de 'gameOver';
+  this.destroy();
+  this.game.state.start('gameOver');
+},
+
+checkPlayerFell: function(){
+  if(this.game.physics.arcade.collide(this._rush, this.muerte))
+      this.onPlayerFell();
+},
+
+isStanding: function(){
+  return this._rush.body.blocked.down || this._rush.body.touching.down;
+},
+
+isJumping: function(collisionWithTilemap){
+  return this.canJump(collisionWithTilemap) &&
+      this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR);
+},
+
+GetMovement: function(){
+  var movement = Direction.NONE;
+  //Move Right
+  if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
+      movement = Direction.RIGHT;
+      this._speed = 300;
+  }
+  //Move Left
+  if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
+      movement = Direction.LEFT;
+      this._speed = -300;
+  }
+  return movement;
+},*/
+
+},{}],2:[function(require,module,exports){
+'use strict';
+var characters = require('./Characters.js');
+
+function CreateMap (Jsonfile, escene){
+      escene.map = escene.game.add.tilemap(Jsonfile);
+        //Utilizaremos siempre la misma hoja de patrones, por tanto, no necesitamos pasarla por
+        //variable.
+      escene.map.addTilesetImage('sheet', 'tiles');
+
+        //Creamos las capas de nuestro tilemap
+      escene.back = escene.map.createLayer('Back');
+      escene.death = escene.map.createLayer('Death');
+      escene.ground = escene.map.createLayer('Ground');
+
+      escene._player = characters.King(100,250, escene);
+
+        //Declaramos las colisiones con la muerte y el Suelo
+      escene.map.setCollisionBetween(1, 5000, true, 'Death');
+      escene.map.setCollisionBetween(1, 5000, true, 'Ground');
+
+      escene.game.stage.backgroundColor = '#a9f0ff';
+      console.log(escene);
+    }
+
+module.exports = {
+CreateMap: CreateMap
+};
+
+},{"./Characters.js":1}],3:[function(require,module,exports){
 var GameOver = {
     create: function () {
         console.log("Game Over");
@@ -40,7 +270,7 @@ var GameOver = {
 
 module.exports = GameOver;
 
-},{}],2:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var playScene = require('./play_scene');
@@ -80,6 +310,7 @@ var PreloaderScene = {
     this.game.load.tilemap('tilemap', 'images/Test.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tiles', 'images/sheet.png');
     this.game.load.atlas('rush', 'images/King.png', 'images/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    this.game.load.image('einstein', 'images/Rush.png');
 
     this.load.onLoadComplete.add(this.loadComplete,this);
       //DONE 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
@@ -134,7 +365,7 @@ window.onload = function () {
   WebFont.load(wfconfig);
 };
 
-},{"./gameover_scene":1,"./menu_scene":3,"./play_scene":4}],3:[function(require,module,exports){
+},{"./gameover_scene":3,"./menu_scene":5,"./play_scene":6}],5:[function(require,module,exports){
 var MenuScene = {
     create: function () {
         this.game.world.setBounds(0,0,800,600);
@@ -163,13 +394,15 @@ var MenuScene = {
 
 module.exports = MenuScene;
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 //Enumerados: PlayerState son los estado por los que pasa el player. Directions son las direcciones a las que se puede
 //mover el player.
 var PlayerState = {'JUMP':0, 'RUN':1, 'FALLING':2, 'STOP':3};
 var Direction = {'LEFT':0, 'RIGHT':1, 'NONE':3};
+var characters = require('./Characters.js');
+var mapCreator = require('./MapCreator');
 //Scena de juego.
 var PlayScene = {
     _player: {}, //player
@@ -179,28 +412,11 @@ var PlayScene = {
     _playerState: PlayerState.STOP, //estado del player
     _direction: Direction.NONE,  //dirección inicial del player. NONE es ninguna dirección.
 
-    //Método constructor...
-  createMap : function(Jsonfile){
-        this.map = this.game.add.tilemap(Jsonfile);
-        //Utilizaremos siempre la misma hoja de patrones, por tanto, no necesitamos pasarla por
-        //variable.
-        this.map.addTilesetImage('sheet', 'tiles');
 
-        //Creamos las capas de nuestro tilemap
-        this.death = this.map.createLayer('Death');
-        this.ground = this.map.createLayer('Ground');
-        this.back = this.map.createLayer('Back');
 
-        //Declaramos las colisiones con la muerte y el Suelo
-        this.map.setCollisionBetween(1, 5000, true, 'Death');
-        this.map.setCollisionBetween(1, 5000, true, 'Ground');
-
-        this.game.stage.backgroundColor = '#a9f0ff';
-      },
-
+  //Método constructor...
   create: function () {
-
-    this.createMap('tilemap');
+    this.map = mapCreator.CreateMap('tilemap', this);
 /*
       this.map = this.game.add.tilemap('tilemap');
       this.map.addTilesetImage('sheet', 'tiles');
@@ -237,7 +453,7 @@ var PlayScene = {
 
     //IS called one per frame.
     update: function () {
-
+      this._player.update();
     //configure the scene
   },
     configure: function(){
@@ -274,6 +490,8 @@ var PlayScene = {
 
 };
 
+
+
 module.exports = PlayScene;
 
-},{}]},{},[2]);
+},{"./Characters.js":1,"./MapCreator":2}]},{},[4]);

@@ -1,27 +1,36 @@
 'use strict';
-var party = {enemy : 0, hero : 1, undefined: -1};
 var Direction = {'LEFT':-1, 'RIGHT':1, 'NONE':0};
 
-function Character (x, y, party,name,lifes){
-  this.position = {x:x,y:y} || {x:0,y:0};
+//DEFINICION DE OBJETOS DE LA ESCENA
+//Bandos del juego. Enemigos, heroe e indefinido para errores.
+var party = {enemy : 0, hero : 1, undefined: -1};
+
+//Clase base para desarrollar el resto de personajes
+function Character(x, y, party, name, lifes, spritename, escene){
+  this.sprite = escene.game.add.sprite(x, y, spritename);
+  this.position = {x:x, y:y} || {x:0, y:0};
   this.name = name || 'name not defined';
   this.lifes = lifes || 0;
   this.party = party || party.undefined;
+  escene.game.physics.arcade.enable(this.sprite);
   Character.prototype.moveX =  function (dir) {
     switch (dir) {
       case Direction.RIGHT:
         this.position.x++;
+        this.body.velocity.x = 10;
         break;
       case Direction.LEFT:
         this.position.x--;
+        this.body.velocity.x = -10;
         break;
       default:
-
     }
   };
 }
-function King (x, y){
-  Character.apply(this, [x, y, party.hero, 'King', 100]);
+//Rey, que hereda de Character y se mueve y salta conforme al input del usuario
+function King (x, y, escene){
+  //TODO CAMBIAR EL SPRITE AÑADIDO.
+  Character.apply(this, [x, y, party.hero, 'King', 100, 'einstein', escene]);
 
   King.prototype.update = function () {
     var dir = this.getInput();
@@ -43,28 +52,39 @@ function King (x, y){
 
 
   };
+  King.prototype = Object.create(Character.prototype);
+  King.prototype.constructor = King;
 }
-King.prototype = Object.create(Character.prototype);
-King.prototype.constructor = King;
-
-function Enemy (name, x ,y, vidas) {
-    Character.apply(this, [x, y,party.enemy,name,vidas]);
+//Enemy, clase base para enemigos. Si tocan al rey le hacen daño.
+function Enemy (name, x ,y ,vidas, danyo, spriteName) {
+    Character.apply(this, [x, y,party.enemy,name,vidas, spriteName]);
+    this.danyo = danyo || 0;
+    Enemy.prototype = Object.create(Character.prototype);
+    Enemy.prototype.constructor = Enemy;
 
 }
-Enemy.prototype = Object.create(Character.prototype);
-Enemy.prototype.constructor = Enemy;
-function Serpiente(x,y){
-  Enemy.apply(this, ['Serpiente',x, y, 1]);
+//Serpiente, hereda de enemy y se mueve a izquierda y derecha
+function Serpiente(x, y){
+  Enemy.apply(this, ['Serpiente',x, y, 1, /*Nombre de sprite*/]);
+  Serpiente.prototype = Object.create(Enemy.prototype);
+  Serpiente.prototype.constructor = Serpiente;
 }
-Serpiente.prototype = Object.create(Enemy.prototype);
-Serpiente.prototype.constructor = Serpiente;
-
-function Golem(x,y){
+//Golem, enemigo final del juego.
+function Golem(x, y){
   Enemy.apply(this, ['Golem',x, y, 15]);
-
+  Golem.prototype = Object.create(Enemy.prototype);
+  Golem.prototype.constructor = Golem;
 }
-Golem.prototype = Object.create(Enemy.prototype);
-Golem.prototype.constructor = Golem;
+
+module.exports = {
+  King: King,
+  Serpiente: Serpiente,
+  Golem: Golem
+};
+
+
+
+
 /*  var moveDirection = new Phaser.Point(0, 0);
   var collisionWithTilemap = this.game.physics.arcade.collide(this._rush, this.groundLayer);
   var movement = this.GetMovement();

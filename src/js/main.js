@@ -37,6 +37,7 @@ var PreloaderScene = {
     this.game.load.tilemap('tilemap', 'images/Test.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tiles', 'images/sheet.png');
     this.game.load.atlas('rush', 'images/King.png', 'images/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    this.game.load.image('einstein', 'images/Rush.png');
 
     this.load.onLoadComplete.add(this.loadComplete,this);
       //DONE 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'

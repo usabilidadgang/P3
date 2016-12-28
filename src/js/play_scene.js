@@ -4,6 +4,8 @@
 //mover el player.
 var PlayerState = {'JUMP':0, 'RUN':1, 'FALLING':2, 'STOP':3};
 var Direction = {'LEFT':0, 'RIGHT':1, 'NONE':3};
+var characters = require('./Characters.js');
+var mapCreator = require('./MapCreator');
 //Scena de juego.
 var PlayScene = {
     _player: {}, //player
@@ -13,28 +15,11 @@ var PlayScene = {
     _playerState: PlayerState.STOP, //estado del player
     _direction: Direction.NONE,  //dirección inicial del player. NONE es ninguna dirección.
 
-    //Método constructor...
-  createMap : function(Jsonfile){
-        this.map = this.game.add.tilemap(Jsonfile);
-        //Utilizaremos siempre la misma hoja de patrones, por tanto, no necesitamos pasarla por
-        //variable.
-        this.map.addTilesetImage('sheet', 'tiles');
 
-        //Creamos las capas de nuestro tilemap
-        this.death = this.map.createLayer('Death');
-        this.ground = this.map.createLayer('Ground');
-        this.back = this.map.createLayer('Back');
 
-        //Declaramos las colisiones con la muerte y el Suelo
-        this.map.setCollisionBetween(1, 5000, true, 'Death');
-        this.map.setCollisionBetween(1, 5000, true, 'Ground');
-
-        this.game.stage.backgroundColor = '#a9f0ff';
-      },
-
+  //Método constructor...
   create: function () {
-
-    this.createMap('tilemap');
+    this.map = mapCreator.CreateMap('tilemap', this);
 /*
       this.map = this.game.add.tilemap('tilemap');
       this.map.addTilesetImage('sheet', 'tiles');
@@ -71,7 +56,7 @@ var PlayScene = {
 
     //IS called one per frame.
     update: function () {
-
+      this._player.update();
     //configure the scene
   },
     configure: function(){
@@ -107,5 +92,7 @@ var PlayScene = {
     }
 
 };
+
+
 
 module.exports = PlayScene;
