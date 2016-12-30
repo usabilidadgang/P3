@@ -35,15 +35,15 @@ function King (x, y, escene){
   King.prototype.update = function () {
     var dir = this.getInput();
     if(dir !== 0){
-      this.scale.x = dir;
-      this.moveX(dir);
+      this.sprite.scale.x = dir;
+      Character.prototype.moveX.call(this,dir);
     }
   };
   King.prototype.getInput = function () {
     var movement = Direction.NONE;
     //Move Right
-    if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) movement = Direction.RIGHT;
-    else if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) movement = Direction.LEFT;
+    if(escene.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) movement = Direction.RIGHT;
+    else if(escene.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) movement = Direction.LEFT;
     //Move Left
     return movement;
 

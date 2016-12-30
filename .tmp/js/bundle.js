@@ -36,15 +36,15 @@ function King (x, y, escene){
   King.prototype.update = function () {
     var dir = this.getInput();
     if(dir !== 0){
-      this.scale.x = dir;
-      this.moveX(dir);
+      this.sprite.scale.x = dir;
+      Character.prototype.moveX.call(this,dir);
     }
   };
   King.prototype.getInput = function () {
     var movement = Direction.NONE;
     //Move Right
-    if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) movement = Direction.RIGHT;
-    else if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) movement = Direction.LEFT;
+    if(escene.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) movement = Direction.RIGHT;
+    else if(escene.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) movement = Direction.LEFT;
     //Move Left
     return movement;
 
@@ -214,7 +214,7 @@ function CreateMap (Jsonfile, escene){
       escene.death = escene.map.createLayer('Death');
       escene.ground = escene.map.createLayer('Ground');
 
-      escene._player = characters.King(100,250, escene);
+      escene._player = new characters.King(100,250, escene);
 
         //Declaramos las colisiones con la muerte y el Suelo
       escene.map.setCollisionBetween(1, 5000, true, 'Death');
@@ -416,7 +416,8 @@ var PlayScene = {
 
   //Método constructor...
   create: function () {
-    this.map = mapCreator.CreateMap('tilemap', this);
+    this.map = new mapCreator.CreateMap('tilemap', this);
+    console.log(this);
 /*
       this.map = this.game.add.tilemap('tilemap');
       this.map.addTilesetImage('sheet', 'tiles');
