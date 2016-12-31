@@ -20,7 +20,6 @@ var PlayScene = {
   //Método constructor...
   create: function () {
     this.map = new mapCreator.CreateMap('tilemap', this);
-    console.log(this);
 /*
       this.map = this.game.add.tilemap('tilemap');
       this.map.addTilesetImage('sheet', 'tiles');

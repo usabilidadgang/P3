@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 var Direction = {'LEFT':-1, 'RIGHT':1, 'NONE':0};
-
+var playerSpeed = 100;
 //DEFINICION DE OBJETOS DE LA ESCENA
 //Bandos del juego. Enemigos, heroe e indefinido para errores.
 var party = {enemy : 0, hero : 1, undefined: -1};
@@ -17,12 +17,16 @@ function Character(x, y, party, name, lifes, spritename, escene){
   Character.prototype.moveX =  function (dir) {
     switch (dir) {
       case Direction.RIGHT:
-        this.position.x++;
-        this.body.velocity.x = 10;
+        this.x+= 100;
+        this.sprite.body.velocity.x = playerSpeed;
         break;
       case Direction.LEFT:
-        this.position.x--;
-        this.body.velocity.x = -10;
+        this.x-= 100;
+        this.sprite.body.velocity.x = -playerSpeed;
+        break;
+      case Direction.NONE:
+        console.log('krek');
+        this.sprite.body.velocity.x = 0;
         break;
       default:
     }
@@ -35,21 +39,22 @@ function King (x, y, escene){
 
   King.prototype.update = function () {
     var dir = this.getInput();
-    if(dir !== 0){
-      this.sprite.scale.x = dir;
-      Character.prototype.moveX.call(this,dir);
-    }
+    //TODO CAmbiar el update. Si se pulsa una tecla, se llama al método. Si no
+    //no se le llama
+    this.sprite.scale.x = dir;
+    Character.prototype.moveX.call(this,dir);
+
   };
   King.prototype.getInput = function () {
     var movement = Direction.NONE;
     //Move Right
     if(escene.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) movement = Direction.RIGHT;
     else if(escene.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) movement = Direction.LEFT;
-    //Move Left
     return movement;
 
   };
   King.prototype.jump = function (){
+
 
 
   };
@@ -221,7 +226,6 @@ function CreateMap (Jsonfile, escene){
       escene.map.setCollisionBetween(1, 5000, true, 'Ground');
 
       escene.game.stage.backgroundColor = '#a9f0ff';
-      console.log(escene);
     }
 
 module.exports = {
@@ -417,7 +421,6 @@ var PlayScene = {
   //Método constructor...
   create: function () {
     this.map = new mapCreator.CreateMap('tilemap', this);
-    console.log(this);
 /*
       this.map = this.game.add.tilemap('tilemap');
       this.map.addTilesetImage('sheet', 'tiles');
