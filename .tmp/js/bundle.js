@@ -5,11 +5,13 @@ var playerSpeed = 100;
 //DEFINICION DE OBJETOS DE LA ESCENA
 //Bandos del juego. Enemigos, heroe e indefinido para errores.
 var party = {enemy : 0, hero : 1, undefined: -1};
-
+var jumpTimer = 0;
 //Clase base para desarrollar el resto de personajes
 function Character(x, y, party, name, lifes, spritename, escene){
   this.sprite = escene.game.add.sprite(x, y, spritename);
-  this.position = {x:x, y:y} || {x:0, y:0};
+  //Cambiamos el ancla del sprite al centro.
+  this.sprite.anchor.setTo(0.5,0);
+  this.startposition = {x:x, y:y} || {x:0, y:0};
   this.name = name || 'name not defined';
   this.lifes = lifes || 0;
   this.party = party || party.undefined;
@@ -17,15 +19,12 @@ function Character(x, y, party, name, lifes, spritename, escene){
   Character.prototype.moveX =  function (dir) {
     switch (dir) {
       case Direction.RIGHT:
-        this.x+= 100;
         this.sprite.body.velocity.x = playerSpeed;
         break;
       case Direction.LEFT:
-        this.x-= 100;
         this.sprite.body.velocity.x = -playerSpeed;
         break;
       case Direction.NONE:
-        console.log('krek');
         this.sprite.body.velocity.x = 0;
         break;
       default:
@@ -36,27 +35,33 @@ function Character(x, y, party, name, lifes, spritename, escene){
 function King (x, y, escene){
   //TODO CAMBIAR EL SPRITE AÑADIDO.
   Character.apply(this, [x, y, party.hero, 'King', 100, 'einstein', escene]);
-
+  var self = this;
+  this.sprite.body.allowgravity = false;
   King.prototype.update = function () {
     var dir = this.getInput();
     //TODO CAmbiar el update. Si se pulsa una tecla, se llama al método. Si no
     //no se le llama
-    this.sprite.scale.x = dir;
+    if(dir!== 0)this.sprite.scale.x = dir;
     Character.prototype.moveX.call(this,dir);
-
+    console.log('velocidad en y: ', this.sprite.body.velocity.y);
   };
   King.prototype.getInput = function () {
     var movement = Direction.NONE;
     //Move Right
     if(escene.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) movement = Direction.RIGHT;
     else if(escene.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) movement = Direction.LEFT;
+
+    if(escene.game.input.keyboard.isDown(Phaser.Keyboard.UP)){
+    this.jump();
+  }
     return movement;
 
   };
   King.prototype.jump = function (){
+    if(escene.colliding){
+      this.sprite.body.velocity.y = -2100;
 
-
-
+    }
   };
   King.prototype = Object.create(Character.prototype);
   King.prototype.constructor = King;
@@ -218,8 +223,6 @@ function CreateMap (Jsonfile, escene){
       escene.back = escene.map.createLayer('Back');
       escene.death = escene.map.createLayer('Death');
       escene.ground = escene.map.createLayer('Ground');
-
-      escene._player = new characters.King(100,250, escene);
 
         //Declaramos las colisiones con la muerte y el Suelo
       escene.map.setCollisionBetween(1, 5000, true, 'Death');
@@ -416,11 +419,23 @@ var PlayScene = {
     _playerState: PlayerState.STOP, //estado del player
     _direction: Direction.NONE,  //dirección inicial del player. NONE es ninguna dirección.
 
-
-
   //Método constructor...
   create: function () {
+    this.game.time.desiredFps = 30;
+    //Generamos el mapa.
     this.map = new mapCreator.CreateMap('tilemap', this);
+
+    //Introducimos al personaje
+    this._player = new characters.King(100,230, this);
+
+    //TODO Introducir enemigos
+
+    var enemies = this.game.add.group();
+
+
+    this.game.camera.follow(this._player.sprite);
+    //this.game.physics.arcade.gravity.y= 100;
+
 /*
       this.map = this.game.add.tilemap('tilemap');
       this.map.addTilesetImage('sheet', 'tiles');
@@ -458,22 +473,24 @@ var PlayScene = {
     //IS called one per frame.
     update: function () {
       this._player.update();
-    //configure the scene
+      this.colliding = this.game.physics.arcade.collide(this._player.sprite, this.ground);
+        //configure the scene
   },
     configure: function(){
         //Start the Arcade Physics systems
-        /*this.game.world.setBounds(0, 0, 2400, 160);
+      this.game.world.setBounds(0, 0, 2400, 160);
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.game.stage.backgroundColor = '#a9f0ff';
-        this.game.physics.arcade.enable(this._rush);
+        this.game.physics.arcade.enable(this._player);
 
-        this._rush.body.bounce.y = 0.2;
-        this._rush.body.gravity.y = 20000;
-        this._rush.body.gravity.x = 0;
-        this._rush.body.velocity.x = 0;
-        this._rush.z = 150
-        ;
-        this.game.camera.follow(this._rush);*/
+
+
+        this._player.sprite.body.bounce.y = 0.2;
+        this._player.sprite.body.gravity.y = 175;
+        this._player.sprite.body.gravity.x = 0;
+        this._player.sprite.body.velocity.x = 0;
+        //this._player.z = 150;
+        this.game.camera.follow(this._player.sprite);
     },
     //move the player
     movement: function(point, xMin, xMax){/*

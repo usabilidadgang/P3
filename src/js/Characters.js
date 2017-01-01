@@ -35,14 +35,14 @@ function King (x, y, escene){
   //TODO CAMBIAR EL SPRITE AÑADIDO.
   Character.apply(this, [x, y, party.hero, 'King', 100, 'einstein', escene]);
   var self = this;
-  this.sprite.body.allowgravity = true;
+  this.sprite.body.allowgravity = false;
   King.prototype.update = function () {
     var dir = this.getInput();
     //TODO CAmbiar el update. Si se pulsa una tecla, se llama al método. Si no
     //no se le llama
     if(dir!== 0)this.sprite.scale.x = dir;
     Character.prototype.moveX.call(this,dir);
-
+    console.log('velocidad en y: ', this.sprite.body.velocity.y);
   };
   King.prototype.getInput = function () {
     var movement = Direction.NONE;
@@ -50,16 +50,17 @@ function King (x, y, escene){
     if(escene.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) movement = Direction.RIGHT;
     else if(escene.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) movement = Direction.LEFT;
 
-    if(escene.game.input.keyboard.isDown(Phaser.Keyboard.UP))
+    if(escene.game.input.keyboard.isDown(Phaser.Keyboard.UP)){
     this.jump();
+  }
     return movement;
 
   };
   King.prototype.jump = function (){
-    console.log('hehe');
-    console.log('saltuco');
-    this.sprite.body.velocity.y = -250;
+    if(escene.colliding){
+      this.sprite.body.velocity.y = -2100;
 
+    }
   };
   King.prototype = Object.create(Character.prototype);
   King.prototype.constructor = King;

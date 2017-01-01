@@ -15,14 +15,22 @@ var PlayScene = {
     _playerState: PlayerState.STOP, //estado del player
     _direction: Direction.NONE,  //dirección inicial del player. NONE es ninguna dirección.
 
-
-
   //Método constructor...
   create: function () {
     this.game.time.desiredFps = 30;
+    //Generamos el mapa.
     this.map = new mapCreator.CreateMap('tilemap', this);
+
+    //Introducimos al personaje
+    this._player = new characters.King(100,230, this);
+
+    //TODO Introducir enemigos
+
+    var enemies = this.game.add.group();
+
+
     this.game.camera.follow(this._player.sprite);
-    this.game.physics.arcade.gravity.y= 100;
+    //this.game.physics.arcade.gravity.y= 100;
 
 /*
       this.map = this.game.add.tilemap('tilemap');
@@ -61,22 +69,24 @@ var PlayScene = {
     //IS called one per frame.
     update: function () {
       this._player.update();
-    //configure the scene
+      this.colliding = this.game.physics.arcade.collide(this._player.sprite, this.ground);
+        //configure the scene
   },
     configure: function(){
         //Start the Arcade Physics systems
-        /*this.game.world.setBounds(0, 0, 2400, 160);
+      this.game.world.setBounds(0, 0, 2400, 160);
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.game.stage.backgroundColor = '#a9f0ff';
-        this.game.physics.arcade.enable(this._rush);
+        this.game.physics.arcade.enable(this._player);
 
-        this._rush.body.bounce.y = 0.2;
-        this._rush.body.gravity.y = 20000;
-        this._rush.body.gravity.x = 0;
-        this._rush.body.velocity.x = 0;
-        this._rush.z = 150
-        ;
-        this.game.camera.follow(this._rush);*/
+
+
+        this._player.sprite.body.bounce.y = 0.2;
+        this._player.sprite.body.gravity.y = 175;
+        this._player.sprite.body.gravity.x = 0;
+        this._player.sprite.body.velocity.x = 0;
+        //this._player.z = 150;
+        this.game.camera.follow(this._player.sprite);
     },
     //move the player
     movement: function(point, xMin, xMax){/*
