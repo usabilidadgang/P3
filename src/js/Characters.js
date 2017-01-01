@@ -4,11 +4,13 @@ var playerSpeed = 100;
 //DEFINICION DE OBJETOS DE LA ESCENA
 //Bandos del juego. Enemigos, heroe e indefinido para errores.
 var party = {enemy : 0, hero : 1, undefined: -1};
-
+var jumpTimer = 0;
 //Clase base para desarrollar el resto de personajes
 function Character(x, y, party, name, lifes, spritename, escene){
   this.sprite = escene.game.add.sprite(x, y, spritename);
-  this.position = {x:x, y:y} || {x:0, y:0};
+  //Cambiamos el ancla del sprite al centro.
+  this.sprite.anchor.setTo(0.5,0);
+  this.startposition = {x:x, y:y} || {x:0, y:0};
   this.name = name || 'name not defined';
   this.lifes = lifes || 0;
   this.party = party || party.undefined;
@@ -16,15 +18,12 @@ function Character(x, y, party, name, lifes, spritename, escene){
   Character.prototype.moveX =  function (dir) {
     switch (dir) {
       case Direction.RIGHT:
-        this.x+= 100;
         this.sprite.body.velocity.x = playerSpeed;
         break;
       case Direction.LEFT:
-        this.x-= 100;
         this.sprite.body.velocity.x = -playerSpeed;
         break;
       case Direction.NONE:
-        console.log('krek');
         this.sprite.body.velocity.x = 0;
         break;
       default:
@@ -35,12 +34,13 @@ function Character(x, y, party, name, lifes, spritename, escene){
 function King (x, y, escene){
   //TODO CAMBIAR EL SPRITE AÑADIDO.
   Character.apply(this, [x, y, party.hero, 'King', 100, 'einstein', escene]);
-
+  var self = this;
+  this.sprite.body.allowgravity = true;
   King.prototype.update = function () {
     var dir = this.getInput();
     //TODO CAmbiar el update. Si se pulsa una tecla, se llama al método. Si no
     //no se le llama
-    this.sprite.scale.x = dir;
+    if(dir!== 0)this.sprite.scale.x = dir;
     Character.prototype.moveX.call(this,dir);
 
   };
@@ -49,12 +49,16 @@ function King (x, y, escene){
     //Move Right
     if(escene.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) movement = Direction.RIGHT;
     else if(escene.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) movement = Direction.LEFT;
+
+    if(escene.game.input.keyboard.isDown(Phaser.Keyboard.UP))
+    this.jump();
     return movement;
 
   };
   King.prototype.jump = function (){
-
-
+    console.log('hehe');
+    console.log('saltuco');
+    this.sprite.body.velocity.y = -250;
 
   };
   King.prototype = Object.create(Character.prototype);

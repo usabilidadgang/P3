@@ -19,7 +19,11 @@ var PlayScene = {
 
   //Método constructor...
   create: function () {
+    this.game.time.desiredFps = 30;
     this.map = new mapCreator.CreateMap('tilemap', this);
+    this.game.camera.follow(this._player.sprite);
+    this.game.physics.arcade.gravity.y= 100;
+
 /*
       this.map = this.game.add.tilemap('tilemap');
       this.map.addTilesetImage('sheet', 'tiles');

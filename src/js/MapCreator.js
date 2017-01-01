@@ -12,11 +12,12 @@ function CreateMap (Jsonfile, escene){
       escene.death = escene.map.createLayer('Death');
       escene.ground = escene.map.createLayer('Ground');
 
-      escene._player = new characters.King(100,250, escene);
-
+      escene._player = new characters.King(100,240, escene);
+      escene.game.physics.arcade.collide(escene._player.sprite, escene.ground);
         //Declaramos las colisiones con la muerte y el Suelo
       escene.map.setCollisionBetween(1, 5000, true, 'Death');
       escene.map.setCollisionBetween(1, 5000, true, 'Ground');
+
 
       escene.game.stage.backgroundColor = '#a9f0ff';
     }
