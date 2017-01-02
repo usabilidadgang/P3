@@ -81,10 +81,11 @@ var PlayScene = {
 
 
 
-        this._player.sprite.body.bounce.y = 0.2;
-        this._player.sprite.body.gravity.y = 175;
+        //this._player.sprite.body.bounce.y = 0.2;
+        this._player.sprite.body.gravity.y = 150;
         this._player.sprite.body.gravity.x = 0;
         this._player.sprite.body.velocity.x = 0;
+        this._player.sprite.body.collideWorldBounds = false;
         //this._player.z = 150;
         this.game.camera.follow(this._player.sprite);
     },

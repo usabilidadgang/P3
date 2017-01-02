@@ -1,6 +1,6 @@
 'use strict';
 var Direction = {'LEFT':-1, 'RIGHT':1, 'NONE':0};
-var playerSpeed = 100;
+var playerSpeed = 150;
 //DEFINICION DE OBJETOS DE LA ESCENA
 //Bandos del juego. Enemigos, heroe e indefinido para errores.
 var party = {enemy : 0, hero : 1, undefined: -1};
@@ -41,8 +41,8 @@ function King (x, y, escene){
     //TODO CAmbiar el update. Si se pulsa una tecla, se llama al método. Si no
     //no se le llama
     if(dir!== 0)this.sprite.scale.x = dir;
-    Character.prototype.moveX.call(this,dir);
-    console.log('velocidad en y: ', this.sprite.body.velocity.y);
+    Character.prototype.moveX.call(this, dir);
+    //console.log('velocidad en y: ', this.sprite.body.velocity.y);
   };
   King.prototype.getInput = function () {
     var movement = Direction.NONE;
@@ -57,8 +57,9 @@ function King (x, y, escene){
 
   };
   King.prototype.jump = function (){
-    if(escene.colliding){
-      this.sprite.body.velocity.y = -2100;
+    console.log(escene._player.sprite.body.onFloor());
+    if(escene._player.sprite.body.touching.down){
+      this.sprite.body.velocity.y = -750;
 
     }
   };
