@@ -17,17 +17,20 @@ var PlayScene = {
 
   //Método constructor...
   create: function () {
-    this.game.time.desiredFps = 30;
+
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
     //Generamos el mapa.
     this.map = new mapCreator.CreateMap('tilemap', this);
 
     //Introducimos al personaje
     this._player = new characters.King(100,230, this);
+    this.enemy1 = new characters.Serpiente(300,240, this);
 
     //TODO Introducir enemigos
-
-    var enemies = this.game.add.group();
-
+    this.enemies = this.game.add.group();
+    //Esto es un poco puenteo, pues no sabemos como introducir objetos enteros dentro
+    //de un grupo
+    this.enemies.add(this.enemy1.sprite);
 
     this.game.camera.follow(this._player.sprite);
     //this.game.physics.arcade.gravity.y= 100;
@@ -68,21 +71,31 @@ var PlayScene = {
 
     //IS called one per frame.
     update: function () {
+      this.collisionWithTilemap = this.game.physics.arcade.collide(this._player.sprite, this.ground);
+      this.collisionDeath = this.game.physics.arcade.collide(this._player.sprite, this.death);
+      this.collisionWithFloor = this.game.physics.arcade.collide(this.enemy1.sprite, this.ground);
+      this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player.sprite, this.enemies);
+      this.enemy1.update();
       this._player.update();
-      this.colliding = this.game.physics.arcade.collide(this._player.sprite, this.ground);
+
         //configure the scene
+  },
+  render:function(){
+    //debug del cuerpo en verde
+    //this.game.debug.body(this._player.sprite);
+    //Datos del collider
+    this.game.debug.bodyInfo(this.enemy1.sprite, 32, 32);
+
   },
     configure: function(){
         //Start the Arcade Physics systems
-      this.game.world.setBounds(0, 0, 2400, 160);
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
+        this.game.world.setBounds(0, 0, 2400, 160);
         this.game.stage.backgroundColor = '#a9f0ff';
-        this.game.physics.arcade.enable(this._player);
 
 
 
         //this._player.sprite.body.bounce.y = 0.2;
-        this._player.sprite.body.gravity.y = 150;
+        this.game.physics.arcade.gravity.y = 750;
         this._player.sprite.body.gravity.x = 0;
         this._player.sprite.body.velocity.x = 0;
         this._player.sprite.body.collideWorldBounds = false;
