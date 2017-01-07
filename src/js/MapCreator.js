@@ -16,6 +16,7 @@ function CreateMap (Jsonfile, escene){
       escene.map.setCollisionBetween(1, 5000, true, 'Death');
       escene.map.setCollisionBetween(1, 5000, true, 'Ground');
 
+      
       escene.game.stage.backgroundColor = '#a9f0ff';
     }
 

@@ -21,40 +21,21 @@ var PlayScene = {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     //Generamos el mapa.
     this.map = new mapCreator.CreateMap('tilemap', this);
-
     //Introducimos al personaje
-    this._player = new characters.King(100,230, this);
-    this.enemy1 = new characters.Serpiente(300,240, this);
+    this._player = new characters.King(100,700, this);
+    this.enemy1 = new characters.Serpiente(500,600, this);
+
+    this.ground.setScale(3,3);
+    this.back.setScale(5,5);
+    this.death.setScale(3,3);
+
 
     //TODO Introducir enemigos
     this.enemies = this.game.add.group();
+    this.enemies.add(this.enemy1.sprite);
+    this.pauseButton = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
     //Esto es un poco puenteo, pues no sabemos como introducir objetos enteros dentro
     //de un grupo
-    this.enemies.add(this.enemy1.sprite);
-
-    this.game.camera.follow(this._player.sprite);
-    //this.game.physics.arcade.gravity.y= 100;
-
-/*
-      this.map = this.game.add.tilemap('tilemap');
-      this.map.addTilesetImage('sheet', 'tiles');
-      this.muerte = this.map.createLayer('Muerte');
-      this.fondoback = this.map.createLayer('FondoBack');
-      this.fondo = this.map.createLayer('Fondo');
-      this._rush = this.game.add.sprite(10,10, 'rush');
-      this.groundLayer = this.map.createLayer('Suelo');
-      //plano de muerte
-
-      //Colisiones con el plano de muerte y con el plano de muerte y con suelo.
-      this.map.setCollisionBetween(1, 5000, true, 'Muerte');
-      this.map.setCollisionBetween(1, 5000, true, 'Suelo');
-      //this.muerte.visible = true;
-      //Cambia la escala a x3.
-      this.groundLayer.setScale(1,1);
-      this.fondo.setScale(1,1);
-      this.fondoback.setScale(1,1);
-      this.muerte.setScale(1,1);
-*/
 
 
       //this.groundLayer.resizeWorld(); //resize world and adjust to the screen
@@ -75,32 +56,75 @@ var PlayScene = {
       this.collisionDeath = this.game.physics.arcade.collide(this._player.sprite, this.death);
       this.collisionWithFloor = this.game.physics.arcade.collide(this.enemy1.sprite, this.ground);
       this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player.sprite, this.enemies);
-      this.enemy1.update();
-      this._player.update();
+      if(this.enemy1!== null){this.enemy1.update(); console.log('kekere')}
+      if(this._player !== null)this._player.update();
 
+      if(this.pauseButton.isDown){
+        this.game.paused = true;
+        this.pauseMenu();
+      }
+
+
+      this.input.onDown.add(this.unpause, this);
         //configure the scene
   },
+  unpause:function(event){
+  console.log("click");
+  if (this.game.paused) {
+      if (this.b_menu.getBounds().contains(event.x, event.y)){
+             this.game.state.start('gameOver');
+             this.game.paused = false;
+           }
+      if (this.b_continue.getBounds().contains(event.x, event.y)) {
+        this.game.paused = false;
+    }
+    else {
+      this.game.paused = false;
+    }
+    this.salir();
+ }
+},
+
+salir:function(){
+  this.b_menu.destroy();
+  this.b_continue.destroy();
+  this.pausetext.destroy();
+
+},
+pauseMenu:function(){
+
+      this.b_menu = this.game.add.sprite(this.game.camera.x+400,this.game.camera.y+ 250,'menu');
+      this.b_menu.anchor.setTo(0.5,0.5);
+      this.b_menu.scale.setTo(2,2);
+
+      this.b_continue = this.game.add.sprite(this.game.camera.x+400, this.game.camera.y +350 ,'continue');
+      this.b_continue.anchor.setTo(0.5,0.5);
+      this.b_continue.scale.setTo(2, 2);
+
+      this.pausetext = this.game.add.text(this.game.camera.x+400,this.game.camera.y+ 175, 'Click anywhere to continue', { font: '40px Revalia', fill: '#000',boundsAlignH: "center", boundsAlignV: "middle"  });
+      this.pausetext.anchor.setTo(0.5,0.5);
+    },
+
   render:function(){
     //debug del cuerpo en verde
     //this.game.debug.body(this._player.sprite);
     //Datos del collider
-    this.game.debug.bodyInfo(this.enemy1.sprite, 32, 32);
+    //this.game.debug.bodyInfo(this.enemy1.sprite, 32, 32);
 
   },
     configure: function(){
-        //Start the Arcade Physics systems
-        this.game.world.setBounds(0, 0, 2400, 160);
-        this.game.stage.backgroundColor = '#a9f0ff';
 
-
+        this.game.world.setBounds(0, 0, 2400, 500);
 
         //this._player.sprite.body.bounce.y = 0.2;
-        this.game.physics.arcade.gravity.y = 750;
+        this.game.physics.arcade.gravity.y = 2000;
         this._player.sprite.body.gravity.x = 0;
         this._player.sprite.body.velocity.x = 0;
-        this._player.sprite.body.collideWorldBounds = false;
+        //this._player.sprite.body.collideWorldBounds = false;
+
         //this._player.z = 150;
         this.game.camera.follow(this._player.sprite);
+        this.ground.resizeWorld();
     },
     //move the player
     movement: function(point, xMin, xMax){/*
@@ -109,6 +133,10 @@ var PlayScene = {
         if((this._rush.x < xMin && point.x < 0)|| (this._rush.x > xMax && point.x > 0))
             this._rush.body.velocity.x = 0;
 */
+    },
+    characterDestroy: function (character){
+      character.sprite.destroy();
+      character = null;
     },
     destroy: function(){
       this.map.destroy();

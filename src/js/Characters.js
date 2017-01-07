@@ -9,15 +9,17 @@ var party = {enemy : 0, hero : 1, undefined: -1};
 function Character(x, y, party, name, lifes, spritename, escene){
 
   this.sprite = escene.game.add.sprite(x, y, spritename);
+  this.sprite.scale.setTo(3, 3);
+  escene.game.physics.arcade.enable(this.sprite);
   //Cambiamos el ancla del sprite al centro.
   this.sprite.anchor.setTo(0.5,0.5);
   this.startposition = {x:x, y:y} || {x:0, y:0};
   this.name = name || 'name not defined';
   this.lifes = lifes || 0;
   this.party = party || party.undefined;
-  this.playerSpeed = 175;
+  this.playerSpeed = 400;
 
-  escene.game.physics.arcade.enable(this.sprite);
+
 
   Character.prototype.moveX =  function (dir) {
     switch (dir) {
@@ -48,7 +50,7 @@ Character.apply(this, [x, y, party.hero, 'King', 100, 'personaje', escene]);
     var dir = this.getInput();
     //TODO CAmbiar el update. Si se pulsa una tecla, se llama al método. Si no
     //no se le llama
-    if(dir!== 0)this.sprite.scale.x = dir;
+    if(dir!== 0)this.sprite.scale.x = 3*dir;
     Character.prototype.moveX.call(this, dir);
     //console.log('velocidad en y: ', this.sprite.body.velocity.y);
 
@@ -67,7 +69,7 @@ Character.apply(this, [x, y, party.hero, 'King', 100, 'personaje', escene]);
   };
 
   King.prototype.jump = function (){
-      this.sprite.body.velocity.y = -250;
+      this.sprite.body.velocity.y = -700;
 
   };
 
@@ -92,18 +94,26 @@ Enemy.prototype.constructor = Enemy;
 //Serpiente, hereda de enemy y se mueve a izquierda y derecha
 function Serpiente(x, y, escene){
   Enemy.apply(this, ['Serpiente',x, y, 1,1, 'serpiente'/*Nombre de sprite*/, escene]);
-  this.playerSpeed = 250;
-  this.reach = 150;
+  this.playerSpeed = 300;
+  this.reach = 200;
 
   Serpiente.prototype.update = function (){
 
     this.moveX(this.playerNear());
-    if(this.Stepped())this.sprite.kill();
+    if(this.Stepped())escene.characterDestroy(this);
 
   };
   Serpiente.prototype.playerNear = function () {
-      if(escene._player.sprite.x <= this.sprite.x && escene._player.sprite.x >= this.sprite.x - this.reach) return Direction.LEFT;
-      else if (escene._player.sprite.x >= this.sprite.x && escene._player.sprite.x <= this.sprite.x + this.reach)return Direction.RIGHT;
+      if(escene._player.sprite.x <= this.sprite.x && escene._player.sprite.x >= this.sprite.x - this.reach)
+      {
+        this.sprite.scale.x = Direction.LEFT * 3;
+        return Direction.LEFT;
+      }
+      else if (escene._player.sprite.x >= this.sprite.x && escene._player.sprite.x <= this.sprite.x + this.reach)
+       {
+         this.sprite.scale.x = Direction.RIGHT * 3;
+          return Direction.RIGHT;
+        }
       else return 0;
   };
 
