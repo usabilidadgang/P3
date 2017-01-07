@@ -40,11 +40,11 @@ function Character(x, y, party, name, lifes, spritename, escene){
 //Rey, que hereda de Character y se mueve y salta conforme al input del usuario
 function King (x, y, escene){
   //TODO CAMBIAR EL SPRITE AÑADIDO.
-Character.apply(this, [x, y, party.hero, 'King', 100, 'personaje', escene]);
+Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
 
 //FUNCIONES DEL REY
   King.prototype.update = function () {
-    if(escene.collisionDeath){
+    if(escene.collisionDeath || this.lifes <= 0){
         escene.game.state.start('gameOver');
 
     }
@@ -89,6 +89,7 @@ function Enemy (name, x, y, vidas, danyo, spriteName, escene) {
     Character.apply(this, [x, y,party.enemy,name , vidas, spriteName, escene]);
     this.damage = danyo || 0;
 }
+
 Enemy.prototype = Object.create(Character.prototype);
 Enemy.prototype.constructor = Enemy;
 
@@ -101,8 +102,12 @@ function Serpiente(x, y, escene){
   Serpiente.prototype.update = function (){
 
     this.moveX(this.playerNear());
-    if(this.Stepped())escene.characterDestroy(this);
+    if(this.Stepped())console.log("kek");
+    else if (escene.collisionWithEnnemies) {
+      console.log("player muerto");
+      escene._player.lifes--;
 
+    }
   };
   Serpiente.prototype.playerNear = function () {
       if(escene._player.sprite.x <= this.sprite.x && escene._player.sprite.x >= this.sprite.x - this.reach)
@@ -512,7 +517,10 @@ var PlayScene = {
       this.collisionDeath = this.game.physics.arcade.collide(this._player.sprite, this.death);
       this.collisionWithFloor = this.game.physics.arcade.collide(this.enemy1.sprite, this.ground);
       this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player.sprite, this.enemies);
-      if(this.enemy1!== null){this.enemy1.update(); console.log('kekere')}
+      if(this.enemy1 !== null){
+        this.enemy1.update();
+      }
+
       if(this._player !== null)this._player.update();
 
       if(this.pauseButton.isDown){

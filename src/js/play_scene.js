@@ -56,7 +56,10 @@ var PlayScene = {
       this.collisionDeath = this.game.physics.arcade.collide(this._player.sprite, this.death);
       this.collisionWithFloor = this.game.physics.arcade.collide(this.enemy1.sprite, this.ground);
       this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player.sprite, this.enemies);
-      if(this.enemy1!== null){this.enemy1.update(); console.log('kekere')}
+      if(this.enemy1 !== null){
+        this.enemy1.update();
+      }
+
       if(this._player !== null)this._player.update();
 
       if(this.pauseButton.isDown){
