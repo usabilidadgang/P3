@@ -20,13 +20,17 @@ var PlayScene = {
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     //Generamos el mapa.
-    this.map = new mapCreator.CreateMap('tilemap', this);
+    //DEBUG: AL CARGAR TIENES QUE CAMBIAR EN EL MAIN EL NOMBRE DEL ARCHIVO
+    new mapCreator.CreateMap('tilemap', this);
     //Introducimos al personaje
     this._player = new characters.King(100,700, this);
     this.enemy1 = new characters.Serpiente(500,600, this);
+    var self = this;
+
+
 
     this.ground.setScale(3,3);
-    this.back.setScale(5,5);
+    this.back.setScale(3,3);
     this.death.setScale(3,3);
 
 
@@ -128,6 +132,17 @@ pauseMenu:function(){
         //this._player.z = 150;
         this.game.camera.follow(this._player.sprite);
         this.ground.resizeWorld();
+        /*var self = this;
+        console.log(this.map);
+        this.map.forEach(function(tile){
+          console.log('tile!');
+          console.log(self.spawn);
+          console.log(tile);
+          if(tile.index === 76 && tile.layer === self.spawn){
+            console.log('created!');
+            new characters.Serpiente(tile.x, tile.y, self);
+          }
+        });*/
     },
     //move the player
     movement: function(point, xMin, xMax){/*

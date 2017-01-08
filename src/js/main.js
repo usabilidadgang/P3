@@ -34,9 +34,9 @@ var PreloaderScene = {
       // el atlasJSONHash con 'images/rush_spritesheet.png' como imagen y 'images/rush_spritesheet.json'
       //como descriptor de la animación.
 
-    this.game.load.tilemap('tilemap', 'images/Test.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.tilemap('tilemap', 'mapas/Nivel1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tiles', 'images/sheet.png');
-    this.game.load.atlas('rush', 'images/King.png', 'images/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    //this.game.load.atlas('rush', 'atlas/King.png', 'images/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     this.game.load.image('personaje', 'images/Rush.png');
     this.game.load.image('serpiente', 'images/serpiente.png');
     this.game.load.image('menu', 'images/b_menu.png');

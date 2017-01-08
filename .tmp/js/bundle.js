@@ -277,11 +277,13 @@ function CreateMap (Jsonfile, escene){
       escene.back = escene.map.createLayer('Back');
       escene.death = escene.map.createLayer('Death');
       escene.ground = escene.map.createLayer('Ground');
+      escene.spawn = escene.map.createLayer('Spawn');
+
         //Declaramos las colisiones con la muerte y el Suelo
       escene.map.setCollisionBetween(1, 5000, true, 'Death');
       escene.map.setCollisionBetween(1, 5000, true, 'Ground');
 
-      
+      escene.spawn.visible = false;
       escene.game.stage.backgroundColor = '#a9f0ff';
     }
 
@@ -368,9 +370,9 @@ var PreloaderScene = {
       // el atlasJSONHash con 'images/rush_spritesheet.png' como imagen y 'images/rush_spritesheet.json'
       //como descriptor de la animación.
 
-    this.game.load.tilemap('tilemap', 'images/Test.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.tilemap('tilemap', 'mapas/Nivel1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tiles', 'images/sheet.png');
-    this.game.load.atlas('rush', 'images/King.png', 'images/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    //this.game.load.atlas('rush', 'atlas/King.png', 'images/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     this.game.load.image('personaje', 'images/Rush.png');
     this.game.load.image('serpiente', 'images/serpiente.png');
     this.game.load.image('menu', 'images/b_menu.png');
@@ -481,13 +483,17 @@ var PlayScene = {
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     //Generamos el mapa.
-    this.map = new mapCreator.CreateMap('tilemap', this);
+    //DEBUG: AL CARGAR TIENES QUE CAMBIAR EN EL MAIN EL NOMBRE DEL ARCHIVO
+    new mapCreator.CreateMap('tilemap', this);
     //Introducimos al personaje
     this._player = new characters.King(100,700, this);
     this.enemy1 = new characters.Serpiente(500,600, this);
+    var self = this;
+
+
 
     this.ground.setScale(3,3);
-    this.back.setScale(5,5);
+    this.back.setScale(3,3);
     this.death.setScale(3,3);
 
 
@@ -589,6 +595,17 @@ pauseMenu:function(){
         //this._player.z = 150;
         this.game.camera.follow(this._player.sprite);
         this.ground.resizeWorld();
+        /*var self = this;
+        console.log(this.map);
+        this.map.forEach(function(tile){
+          console.log('tile!');
+          console.log(self.spawn);
+          console.log(tile);
+          if(tile.index === 76 && tile.layer === self.spawn){
+            console.log('created!');
+            new characters.Serpiente(tile.x, tile.y, self);
+          }
+        });*/
     },
     //move the player
     movement: function(point, xMin, xMax){/*
