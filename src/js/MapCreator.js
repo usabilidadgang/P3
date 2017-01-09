@@ -12,13 +12,18 @@ function CreateMap (Jsonfile, escene){
       escene.back = escene.map.createLayer('Back');
       escene.death = escene.map.createLayer('Death');
       escene.ground = escene.map.createLayer('Ground');
-      escene.spawn = escene.map.createLayer('Spawn');
+      //escene.spawn = escene.map.createLayer('spawn');
 
         //Declaramos las colisiones con la muerte y el Suelo
       escene.map.setCollisionBetween(1, 5000, true, 'Death');
       escene.map.setCollisionBetween(1, 5000, true, 'Ground');
 
-      escene.spawn.visible = false;
+      escene.ground.setScale(3,3);
+      escene.back.setScale(3,3);
+      escene.death.setScale(3,3);
+      //this.spawn.setScale(3,3);
+
+      //escene.spawn.visible = false;
       escene.game.stage.backgroundColor = '#a9f0ff';
     }
 

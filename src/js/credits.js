@@ -66,7 +66,7 @@ var Credits = {
     this.addMenuOption('GitHub', function (e) {
       window.open("https://github.com/Kekstar");
     });
-    
+
 
 
   }

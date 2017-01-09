@@ -2,19 +2,11 @@
 
 //Enumerados: PlayerState son los estado por los que pasa el player. Directions son las direcciones a las que se puede
 //mover el player.
-var PlayerState = {'JUMP':0, 'RUN':1, 'FALLING':2, 'STOP':3};
-var Direction = {'LEFT':0, 'RIGHT':1, 'NONE':3};
 var characters = require('./Characters.js');
 var mapCreator = require('./MapCreator');
 //Scena de juego.
 var PlayScene = {
     _player: {}, //player
-    _speed: 300, //velocidad del player
-    _jumpSpeed: 600, //velocidad de salto
-    _jumpHight: 150, //altura máxima del salto.
-    _playerState: PlayerState.STOP, //estado del player
-    _direction: Direction.NONE,  //dirección inicial del player. NONE es ninguna dirección.
-
   //Método constructor...
   create: function () {
 
@@ -23,26 +15,14 @@ var PlayScene = {
     //DEBUG: AL CARGAR TIENES QUE CAMBIAR EN EL MAIN EL NOMBRE DEL ARCHIVO
     new mapCreator.CreateMap('tilemap', this);
     //Introducimos al personaje
-    this._player = new characters.King(100,700, this);
-    this.enemy1 = new characters.Serpiente(500,600, this);
-    var self = this;
-
-
-
-    this.ground.setScale(3,3);
-    this.back.setScale(3,3);
-    this.death.setScale(3,3);
-
-
-    //TODO Introducir enemigos
+    //this._player = new characters.King(100,700, this);
+    //Array de enemigos
+    this.enemyArray = [];
+    //grupo para los sprites de los enemigos.
     this.enemies = this.game.add.group();
-    this.enemies.add(this.enemy1.sprite);
+    this.spawnObjects('Spawn');
+
     this.pauseButton = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-    //Esto es un poco puenteo, pues no sabemos como introducir objetos enteros dentro
-    //de un grupo
-
-
-      //this.groundLayer.resizeWorld(); //resize world and adjust to the screen
 
       //nombre de la animación, frames, framerate, isloop
       /*this._rush.animations.add('run',
@@ -52,17 +32,68 @@ var PlayScene = {
       this._rush.animations.add('jump',
                      Phaser.Animation.generateFrameNames('JUMP',0,3,'',2),0,false);*/
       this.configure();
+
   },
+
+  spawnObjects: function(layer){
+    var self = this;
+    var results = this.findObjectsByType('enemy', this.map, layer);
+    for(var i = 0; i < results.length; i++){
+      self.spawnFromObject(results[i]);
+    }
+    var king = this.findObjectsByType('King', this.map, layer);
+    self.spawnFromObject(king[0]);
+
+    var endlevel = this.findObjectsByType('endlevel', this.map, layer);
+    self.spawnFromObject(endlevel[0]);
+  },
+  //Codigo inspirado por este tutorial:
+  // https://gamedevacademy.org/html5-phaser-tutorial-top-down-games-with-tiled/
+  //find objects in a Tiled layer that containt a property called "type" equal to a certain value
+  findObjectsByType: function(type, map, layer) {
+     var result = [];
+
+    map.objects[layer].forEach(function(element){
+       if(element.type === type) {
+         //Phaser uses top left, Tiled bottom left so we have to adjust
+         //also keep in mind that the cup images are a bit smaller than the tile which is 16x16
+         //so they might not be placed in the exact position as in Tiled
+         element.y -= map.tileHeight;
+         result.push(element);
+       }
+     });
+     return result;
+   },
+
+
+ //create a sprite from an object
+ spawnFromObject: function(element/*, group*/) {
+     if(element.type === 'enemy'){
+       var enemy = new characters.Serpiente(element.x*3, element.y*3, this); // Snake Spawn on tile's x,y
+       this.enemyArray.push(enemy);
+       this.enemies.add(enemy.sprite);
+   }
+   else if(element.type === 'King')
+        this._player = new characters.King(element.x*3, element.y*3, this);
+    else if(element.type === 'endlevel'){
+        //this.endlevel = this.game.addSprite(element.x*3, element.y*3,)
+    }
+
+
+
+ },
+
+
 
     //IS called one per frame.
     update: function () {
       this.collisionWithTilemap = this.game.physics.arcade.collide(this._player.sprite, this.ground);
       this.collisionDeath = this.game.physics.arcade.collide(this._player.sprite, this.death);
-      this.collisionWithFloor = this.game.physics.arcade.collide(this.enemy1.sprite, this.ground);
+      this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
       this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player.sprite, this.enemies);
-      if(this.enemy1 !== null){
-        this.enemy1.update();
-      }
+      this.enemyArray.forEach(function(elem){
+        if(elem!== null)elem.update();
+      });
 
       if(this._player !== null)this._player.update();
 
@@ -76,7 +107,6 @@ var PlayScene = {
         //configure the scene
   },
   unpause:function(event){
-  console.log("click");
   if (this.game.paused) {
       if (this.b_menu.getBounds().contains(event.x, event.y)){
              this.game.state.start('gameOver');
@@ -114,9 +144,9 @@ pauseMenu:function(){
 
   render:function(){
     //debug del cuerpo en verde
-    //this.game.debug.body(this._player.sprite);
+    this.game.debug.body(this.enemies);
     //Datos del collider
-    //this.game.debug.bodyInfo(this.enemy1.sprite, 32, 32);
+    this.game.debug.bodyInfo(this.enemies, 32, 32);
 
   },
     configure: function(){
@@ -132,31 +162,16 @@ pauseMenu:function(){
         //this._player.z = 150;
         this.game.camera.follow(this._player.sprite);
         this.ground.resizeWorld();
-        /*var self = this;
-        console.log(this.map);
-        this.map.forEach(function(tile){
-          console.log('tile!');
-          console.log(self.spawn);
-          console.log(tile);
-          if(tile.index === 76 && tile.layer === self.spawn){
-            console.log('created!');
-            new characters.Serpiente(tile.x, tile.y, self);
-          }
-        });*/
     },
-    //move the player
-    movement: function(point, xMin, xMax){/*
-        this._rush.body.velocity = point;// * this.game.time.elapseTime;
-
-        if((this._rush.x < xMin && point.x < 0)|| (this._rush.x > xMax && point.x > 0))
-            this._rush.body.velocity.x = 0;
-*/
-    },
+    
     characterDestroy: function (character){
       character.sprite.destroy();
       character = null;
     },
     destroy: function(){
+      this.enemyArray.forEach(function(elem){
+        elem.sprite.destroy();
+        elem = null;});
       this.map.destroy();
       this.character.destroy();
 

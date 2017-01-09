@@ -8,7 +8,7 @@ var MenuScene = {
       var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'logo');
       logo.anchor.setTo(0.5, 0.5);
       this.addMenuOption('Jugar', function (e) {
-          this.game.state.start("preload");
+          this.game.state.start('preloader');
       });
       this.addMenuOption('Creditos', function (e) {
           this.game.state.start("creditos");

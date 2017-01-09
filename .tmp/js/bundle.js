@@ -6,7 +6,9 @@ var Direction = {'LEFT':-1, 'RIGHT':1, 'NONE':0};
 //Bandos del juego. Enemigos, heroe e indefinido para errores.
 var party = {enemy : 0, hero : 1, undefined: -1};
 
-//Clase base para desarrollar el resto de personajes
+
+////////////////////////////////////////////////////////////////////////////
+//Character, clase base para desarrollar el resto de personajes
 function Character(x, y, party, name, lifes, spritename, escene){
 
   this.sprite = escene.game.add.sprite(x, y, spritename);
@@ -19,7 +21,6 @@ function Character(x, y, party, name, lifes, spritename, escene){
   this.lifes = lifes || 0;
   this.party = party || party.undefined;
   this.playerSpeed = 400;
-
 
 
   Character.prototype.moveX =  function (dir) {
@@ -37,6 +38,7 @@ function Character(x, y, party, name, lifes, spritename, escene){
     }
   };
 }
+////////////////////////////////////////////////////////////////////////////
 //Rey, que hereda de Character y se mueve y salta conforme al input del usuario
 function King (x, y, escene){
   //TODO CAMBIAR EL SPRITE AÑADIDO.
@@ -45,15 +47,13 @@ Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
 //FUNCIONES DEL REY
   King.prototype.update = function () {
     if(escene.collisionDeath || this.lifes <= 0){
+      this.sprite.visible = false;
         escene.game.state.start('gameOver');
 
     }
     var dir = this.getInput();
-    //TODO CAmbiar el update. Si se pulsa una tecla, se llama al método. Si no
-    //no se le llama
     if(dir!== 0)this.sprite.scale.x = 3*dir;
     Character.prototype.moveX.call(this, dir);
-    //console.log('velocidad en y: ', this.sprite.body.velocity.y);
 
   };
 
@@ -84,6 +84,10 @@ Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
 }
 King.prototype = Object.create(Character.prototype);
 King.prototype.constructor = King;
+
+
+////////////////////////////////////////////////////////////////////////////
+//Enemigos
 //Enemy, clase base para enemigos. Si tocan al rey le hacen daño.
 function Enemy (name, x, y, vidas, danyo, spriteName, escene) {
     Character.apply(this, [x, y,party.enemy,name , vidas, spriteName, escene]);
@@ -93,6 +97,7 @@ function Enemy (name, x, y, vidas, danyo, spriteName, escene) {
 Enemy.prototype = Object.create(Character.prototype);
 Enemy.prototype.constructor = Enemy;
 
+////////////////////////////////////////////////////////////////////////////
 //Serpiente, hereda de enemy y se mueve a izquierda y derecha
 function Serpiente(x, y, escene){
   Enemy.apply(this, ['Serpiente',x, y, 1,1, 'serpiente'/*Nombre de sprite*/, escene]);
@@ -100,17 +105,15 @@ function Serpiente(x, y, escene){
   this.reach = 200;
 
   Serpiente.prototype.update = function (){
-
     this.moveX(this.playerNear());
-    if(this.Stepped())console.log("kek");
-    else if (escene.collisionWithEnnemies) {
-      console.log("player muerto");
-      escene._player.lifes--;
-
+    if(this.Stepped()){
+      this.sprite.visible = false;
+      this.sprite.body.enable = false;
     }
+    if(this.KillPlayer())  escene.game.state.start('gameOver');
   };
   Serpiente.prototype.playerNear = function () {
-      if(escene._player.sprite.x <= this.sprite.x && escene._player.sprite.x >= this.sprite.x - this.reach)
+      if(escene._player.sprite.x <= this.sprite.x  && escene._player.sprite.x >= this.sprite.x - this.reach)
       {
         this.sprite.scale.x = Direction.LEFT * 3;
         return Direction.LEFT;
@@ -123,6 +126,14 @@ function Serpiente(x, y, escene){
       else return 0;
   };
 
+  Serpiente.prototype.KillPlayer = function(){
+    return !this.Stepped() && this.SideCollision();
+  };
+
+  Serpiente.prototype.SideCollision = function (){
+    return escene.collisionWithEnnemies && ((this.sprite.body.blocked.left || this.sprite.body.blocked.right)||(this.sprite.body.touching.left || this.sprite.body.touching.right));
+  };
+
   Serpiente.prototype.Stepped = function(){
     return escene.collisionWithEnnemies && this.touchedUp();
   };
@@ -133,6 +144,8 @@ function Serpiente(x, y, escene){
 }
 Serpiente.prototype = Object.create(Enemy.prototype);
 Serpiente.prototype.constructor = Serpiente;
+
+////////////////////////////////////////////////////////////////////////////
 //Golem, enemigo final del juego.
 function Golem(x, y, escene){
   Enemy.apply(this, ['Golem',x, y, 15, escene]);
@@ -145,122 +158,6 @@ module.exports = {
   Serpiente: Serpiente,
   Golem: Golem
 };
-
-
-
-
-/*  var moveDirection = new Phaser.Point(0, 0);
-  var collisionWithTilemap = this.game.physics.arcade.collide(this._rush, this.groundLayer);
-  var movement = this.GetMovement();
-  //transitions
-  switch(this._playerState)
-  {
-      case PlayerState.STOP:
-      case PlayerState.RUN:
-          if(this.isJumping(collisionWithTilemap)){
-              this._playerState = PlayerState.JUMP;
-              this._initialJumpHeight = this._rush.y;
-              this._rush.animations.play('jump');
-          }
-          else{
-              if(movement !== Direction.NONE){
-                  this._playerState = PlayerState.RUN;
-                  this._rush.animations.play('run');
-              }
-              else{
-                  this._playerState = PlayerState.STOP;
-                  this._rush.animations.play('stop');
-              }
-          }
-          break;
-
-      case PlayerState.JUMP:
-
-          var currentJumpHeight = this._rush.y - this._initialJumpHeight;
-          this._playerState = (currentJumpHeight*currentJumpHeight < this._jumpHight*this._jumpHight) ? PlayerState.JUMP : PlayerState.FALLING;
-          break;
-
-      case PlayerState.FALLING:
-          if(this.isStanding()){
-              if(movement !== Direction.NONE){
-                  this._playerState = PlayerState.RUN;
-                  this._rush.animations.play('run');
-              }
-              else{
-                  this._playerState = PlayerState.STOP;
-                  this._rush.animations.play('stop');
-              }
-          }
-          break;
-  }
-  //States
-  switch(this._playerState){
-
-      case PlayerState.STOP:
-          moveDirection.x = 0;
-          break;
-      case PlayerState.JUMP:
-      case PlayerState.FALLING:
-      case PlayerState.RUN:
-          if(movement === Direction.NONE){
-              moveDirection.x = 0;
-              this._rush.scale.x *= 1;
-          }
-          else{
-              moveDirection.x = this._speed;
-              this._rush.scale.x = (this._speed/Math.abs(this._speed));
-          }
-          if(this._playerState === PlayerState.JUMP)
-              moveDirection.y = -this._jumpSpeed;
-          if(this._playerState === PlayerState.FALLING)
-              moveDirection.y = 0;
-          break;
-  }
-  //movement
-  this.movement(moveDirection,5,
-                this.fondo.layer.widthInPixels*this.fondo.scale.x - 10);
-  this.checkPlayerFell();
-},
-
-
-canJump: function(collisionWithTilemap){
-  return this.isStanding() && collisionWithTilemap || this._jamping;
-},
-
-onPlayerFell: function(){
-  //DONE 6 Carga de 'gameOver';
-  this.destroy();
-  this.game.state.start('gameOver');
-},
-
-checkPlayerFell: function(){
-  if(this.game.physics.arcade.collide(this._rush, this.muerte))
-      this.onPlayerFell();
-},
-
-isStanding: function(){
-  return this._rush.body.blocked.down || this._rush.body.touching.down;
-},
-
-isJumping: function(collisionWithTilemap){
-  return this.canJump(collisionWithTilemap) &&
-      this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR);
-},
-
-GetMovement: function(){
-  var movement = Direction.NONE;
-  //Move Right
-  if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
-      movement = Direction.RIGHT;
-      this._speed = 300;
-  }
-  //Move Left
-  if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
-      movement = Direction.LEFT;
-      this._speed = -300;
-  }
-  return movement;
-},*/
 
 },{}],2:[function(require,module,exports){
 'use strict';
@@ -277,13 +174,18 @@ function CreateMap (Jsonfile, escene){
       escene.back = escene.map.createLayer('Back');
       escene.death = escene.map.createLayer('Death');
       escene.ground = escene.map.createLayer('Ground');
-      escene.spawn = escene.map.createLayer('Spawn');
+      //escene.spawn = escene.map.createLayer('spawn');
 
         //Declaramos las colisiones con la muerte y el Suelo
       escene.map.setCollisionBetween(1, 5000, true, 'Death');
       escene.map.setCollisionBetween(1, 5000, true, 'Ground');
 
-      escene.spawn.visible = false;
+      escene.ground.setScale(3,3);
+      escene.back.setScale(3,3);
+      escene.death.setScale(3,3);
+      //this.spawn.setScale(3,3);
+
+      //escene.spawn.visible = false;
       escene.game.stage.backgroundColor = '#a9f0ff';
     }
 
@@ -292,6 +194,83 @@ CreateMap: CreateMap
 };
 
 },{"./Characters.js":1}],3:[function(require,module,exports){
+var Credits = {
+
+  preload: function () {
+    this.optionCount = 1;
+    this.creditCount = 0;
+
+  },
+
+  addCredit: function(task, author) {
+    var authorStyle = { font: '40pt TheMinion', fill: 'white', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 4};
+    var taskStyle = { font: '30pt TheMinion', fill: 'white', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 4};
+    var authorText = this.game.add.text(this.game.world.centerX, 900, author, authorStyle);
+    var taskText = this.game.add.text(this.game.world.centerX, 950, task, taskStyle);
+    authorText.anchor.setTo(0.5);
+    authorText.stroke = "rgba(0,0,0,0)";
+    authorText.strokeThickness = 4;
+    taskText.anchor.setTo(0.5);
+    taskText.stroke = "rgba(0,0,0,0)";
+    taskText.strokeThickness = 4;
+    this.game.add.tween(authorText).to( { y: -300 }, 20000, Phaser.Easing.Cubic.Out, true, this.creditCount * 10000);
+    this.game.add.tween(taskText).to( { y: -200 }, 20000, Phaser.Easing.Cubic.Out, true, this.creditCount * 10000);
+    this.creditCount ++;
+  },
+
+
+  addMenuOption: function(text, callback) {
+    var optionStyle = { font: '30pt calibri', fill: 'white', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
+    var button =  this.game.add.button(100, (this.optionCount * 80) + 400, 'button', callback, this, 2, 1, 0);
+    var txt = this.game.add.text(0,0, text, optionStyle);
+    txt.anchor.set(0.5);
+    button.anchor.set(0.5);
+    button.addChild(txt);
+
+    txt.stroke = "rgba(0,0,0,0";
+    txt.strokeThickness = 4;
+    var onOver = function (target) {
+      target.fill = "#FEFFD5";
+      target.stroke = "rgba(200,200,200,0.5)";
+      txt.useHandCursor = true;
+    };
+    var onOut = function (target) {
+      target.fill = "white";
+      target.stroke = "rgba(0,0,0,0)";
+      txt.useHandCursor = false;
+    };
+    txt.useHandCursor = true;
+    txt.inputEnabled = true;
+    txt.events.onInputUp.add(callback, this);
+    txt.events.onInputOver.add(onOver, this);
+    txt.events.onInputOut.add(onOut, this);
+
+    this.optionCount ++;
+  },
+
+  create: function () {
+    this.stage.disableVisibilityChange = true;
+    this.addCredit('Music', 'Kevin Macleod');
+    this.addCredit('Developer', 'Matt McFarland');
+    this.addCredit('Lorem Ipsum', 'Mipsem Dempsum');
+    this.addCredit('Caveats', 'Keyboard Cat');
+    this.addCredit('Phaser.io', 'Powered By');
+    this.addCredit('for playing', 'Thank you');
+    this.addMenuOption('Menu', function (e) {
+      this.game.state.start("menu");
+    });
+    this.addMenuOption('GitHub', function (e) {
+      window.open("https://github.com/Kekstar");
+    });
+
+
+
+  }
+
+};
+module.exports = Credits;
+
+},{}],4:[function(require,module,exports){
 var GameOver = {
     create: function () {
         console.log("Game Over");
@@ -333,12 +312,14 @@ var GameOver = {
 
 module.exports = GameOver;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 var playScene = require('./play_scene');
 var gameOver = require('./gameover_scene');
 var menuScene = require('./menu_scene');
+var credits = require('./credits');
+
 //  The Google WebFont Loader will look for this object, so
 // it before loading the script.
 
@@ -419,6 +400,7 @@ window.init = function(){
   game.state.add('menu', menuScene);
   game.state.add('preloader', PreloaderScene);
   game.state.add('play', playScene);
+  game.state.add('creditos', credits);
   game.state.add('gameOver', gameOver);
   //Comenzamos con el estado boot
   game.state.start('boot');
@@ -431,53 +413,67 @@ window.onload = function () {
   WebFont.load(wfconfig);
 };
 
-},{"./gameover_scene":3,"./menu_scene":5,"./play_scene":6}],5:[function(require,module,exports){
+},{"./credits":3,"./gameover_scene":4,"./menu_scene":6,"./play_scene":7}],6:[function(require,module,exports){
 var MenuScene = {
-    create: function () {
-        this.game.world.setBounds(0,0,800,600);
-        this.game.stage.backgroundColor = "#000000";
-        var logo = this.game.add.sprite(this.game.world.centerX,
-                                        this.game.world.centerY,
-                                        'logo');
-        logo.anchor.setTo(0.5, 0.5);
-        var buttonStart = this.game.add.button(this.game.world.centerX,
-                                               this.game.world.centerY,
-                                               'button',
-                                               this.actionOnClick,
-                                               this, 2, 1, 0);
-        buttonStart.anchor.set(0.5);
-        var textStart = this.game.add.text(0, 0, "Niveles");
+  preload: function () {
+    this.optionCount = 1;
+  },
+  create: function () {
+      this.game.world.setBounds(0,0,800,600);
+      this.game.stage.backgroundColor = "#000000";
+      var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'logo');
+      logo.anchor.setTo(0.5, 0.5);
+      this.addMenuOption('Jugar', function (e) {
+          this.game.state.start('preloader');
+      });
+      this.addMenuOption('Creditos', function (e) {
+          this.game.state.start("creditos");
+      });
+      this.addMenuOption('GitHub', function (e) {
+        window.open("https://github.com/Kekstar");
+      });
+  },
+  addMenuOption: function(text, callback) {
+    var optionStyle = { font: '30pt calibri', fill: 'black', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
+    var button =  this.game.add.button(this.game.world.centerX, (this.optionCount * 80)+300, 'button', callback, this, 2, 1, 0);
+    var txt = this.game.add.text(0,0, text, optionStyle);
+    txt.anchor.set(0.5);
+    button.anchor.set(0.5);
+    button.addChild(txt);
+    txt.stroke = "rgba(0,0,0,0";
+    txt.strokeThickness = 4;
+    var onOver = function (target) {
+      target.fill = "#FEFFD5";
+      target.stroke = "rgba(200,200,200,0.5)";
+      txt.useHandCursor = true;
+    };
+    var onOut = function (target) {
+      target.fill = "black";
+      target.stroke = "rgba(0,0,0,0)";
+      txt.useHandCursor = false;
+      };
+      txt.useHandCursor = true;
+      txt.inputEnabled = true;
+      txt.events.onInputUp.add(callback, this);
+      txt.events.onInputOver.add(onOver, this);
+      txt.events.onInputOut.add(onOut, this);
 
-        textStart.font = 'Sniglet';
-        textStart.anchor.set(0.5);
-        buttonStart.addChild(textStart);
+      this.optionCount ++;
     },
-
-    actionOnClick: function(){
-        this.game.state.start('preloader');
-    }
 };
 
 module.exports = MenuScene;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 //Enumerados: PlayerState son los estado por los que pasa el player. Directions son las direcciones a las que se puede
 //mover el player.
-var PlayerState = {'JUMP':0, 'RUN':1, 'FALLING':2, 'STOP':3};
-var Direction = {'LEFT':0, 'RIGHT':1, 'NONE':3};
 var characters = require('./Characters.js');
 var mapCreator = require('./MapCreator');
 //Scena de juego.
 var PlayScene = {
     _player: {}, //player
-    _speed: 300, //velocidad del player
-    _jumpSpeed: 600, //velocidad de salto
-    _jumpHight: 150, //altura máxima del salto.
-    _playerState: PlayerState.STOP, //estado del player
-    _direction: Direction.NONE,  //dirección inicial del player. NONE es ninguna dirección.
-
   //Método constructor...
   create: function () {
 
@@ -486,26 +482,14 @@ var PlayScene = {
     //DEBUG: AL CARGAR TIENES QUE CAMBIAR EN EL MAIN EL NOMBRE DEL ARCHIVO
     new mapCreator.CreateMap('tilemap', this);
     //Introducimos al personaje
-    this._player = new characters.King(100,700, this);
-    this.enemy1 = new characters.Serpiente(500,600, this);
-    var self = this;
-
-
-
-    this.ground.setScale(3,3);
-    this.back.setScale(3,3);
-    this.death.setScale(3,3);
-
-
-    //TODO Introducir enemigos
+    //this._player = new characters.King(100,700, this);
+    //Array de enemigos
+    this.enemyArray = [];
+    //grupo para los sprites de los enemigos.
     this.enemies = this.game.add.group();
-    this.enemies.add(this.enemy1.sprite);
+    this.spawnObjects('Spawn');
+
     this.pauseButton = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-    //Esto es un poco puenteo, pues no sabemos como introducir objetos enteros dentro
-    //de un grupo
-
-
-      //this.groundLayer.resizeWorld(); //resize world and adjust to the screen
 
       //nombre de la animación, frames, framerate, isloop
       /*this._rush.animations.add('run',
@@ -515,17 +499,68 @@ var PlayScene = {
       this._rush.animations.add('jump',
                      Phaser.Animation.generateFrameNames('JUMP',0,3,'',2),0,false);*/
       this.configure();
+
   },
+
+  spawnObjects: function(layer){
+    var self = this;
+    var results = this.findObjectsByType('enemy', this.map, layer);
+    for(var i = 0; i < results.length; i++){
+      self.spawnFromObject(results[i]);
+    }
+    var king = this.findObjectsByType('King', this.map, layer);
+    self.spawnFromObject(king[0]);
+
+    var endlevel = this.findObjectsByType('endlevel', this.map, layer);
+    self.spawnFromObject(endlevel[0]);
+  },
+  //Codigo inspirado por este tutorial:
+  // https://gamedevacademy.org/html5-phaser-tutorial-top-down-games-with-tiled/
+  //find objects in a Tiled layer that containt a property called "type" equal to a certain value
+  findObjectsByType: function(type, map, layer) {
+     var result = [];
+
+    map.objects[layer].forEach(function(element){
+       if(element.type === type) {
+         //Phaser uses top left, Tiled bottom left so we have to adjust
+         //also keep in mind that the cup images are a bit smaller than the tile which is 16x16
+         //so they might not be placed in the exact position as in Tiled
+         element.y -= map.tileHeight;
+         result.push(element);
+       }
+     });
+     return result;
+   },
+
+
+ //create a sprite from an object
+ spawnFromObject: function(element/*, group*/) {
+     if(element.type === 'enemy'){
+       var enemy = new characters.Serpiente(element.x*3, element.y*3, this); // Snake Spawn on tile's x,y
+       this.enemyArray.push(enemy);
+       this.enemies.add(enemy.sprite);
+   }
+   else if(element.type === 'King')
+        this._player = new characters.King(element.x*3, element.y*3, this);
+    else if(element.type === 'endlevel'){
+        //this.endlevel = this.game.addSprite(element.x*3, element.y*3,)
+    }
+
+
+
+ },
+
+
 
     //IS called one per frame.
     update: function () {
       this.collisionWithTilemap = this.game.physics.arcade.collide(this._player.sprite, this.ground);
       this.collisionDeath = this.game.physics.arcade.collide(this._player.sprite, this.death);
-      this.collisionWithFloor = this.game.physics.arcade.collide(this.enemy1.sprite, this.ground);
+      this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
       this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player.sprite, this.enemies);
-      if(this.enemy1 !== null){
-        this.enemy1.update();
-      }
+      this.enemyArray.forEach(function(elem){
+        if(elem!== null)elem.update();
+      });
 
       if(this._player !== null)this._player.update();
 
@@ -539,7 +574,6 @@ var PlayScene = {
         //configure the scene
   },
   unpause:function(event){
-  console.log("click");
   if (this.game.paused) {
       if (this.b_menu.getBounds().contains(event.x, event.y)){
              this.game.state.start('gameOver');
@@ -577,9 +611,9 @@ pauseMenu:function(){
 
   render:function(){
     //debug del cuerpo en verde
-    //this.game.debug.body(this._player.sprite);
+    this.game.debug.body(this.enemies);
     //Datos del collider
-    //this.game.debug.bodyInfo(this.enemy1.sprite, 32, 32);
+    this.game.debug.bodyInfo(this.enemies, 32, 32);
 
   },
     configure: function(){
@@ -595,31 +629,16 @@ pauseMenu:function(){
         //this._player.z = 150;
         this.game.camera.follow(this._player.sprite);
         this.ground.resizeWorld();
-        /*var self = this;
-        console.log(this.map);
-        this.map.forEach(function(tile){
-          console.log('tile!');
-          console.log(self.spawn);
-          console.log(tile);
-          if(tile.index === 76 && tile.layer === self.spawn){
-            console.log('created!');
-            new characters.Serpiente(tile.x, tile.y, self);
-          }
-        });*/
     },
-    //move the player
-    movement: function(point, xMin, xMax){/*
-        this._rush.body.velocity = point;// * this.game.time.elapseTime;
-
-        if((this._rush.x < xMin && point.x < 0)|| (this._rush.x > xMax && point.x > 0))
-            this._rush.body.velocity.x = 0;
-*/
-    },
+    
     characterDestroy: function (character){
       character.sprite.destroy();
       character = null;
     },
     destroy: function(){
+      this.enemyArray.forEach(function(elem){
+        elem.sprite.destroy();
+        elem = null;});
       this.map.destroy();
       this.character.destroy();
 
@@ -634,4 +653,4 @@ pauseMenu:function(){
 
 module.exports = PlayScene;
 
-},{"./Characters.js":1,"./MapCreator":2}]},{},[4]);
+},{"./Characters.js":1,"./MapCreator":2}]},{},[5]);
