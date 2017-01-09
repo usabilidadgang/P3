@@ -14,8 +14,7 @@ var PlayScene = {
     //Generamos el mapa.
     //DEBUG: AL CARGAR TIENES QUE CAMBIAR EN EL MAIN EL NOMBRE DEL ARCHIVO
     new mapCreator.CreateMap('tilemap', this);
-    //Introducimos al personaje
-    //this._player = new characters.King(100,700, this);
+    //Introducimos los objetos de juego
     //Array de enemigos
     this.enemyArray = [];
     //grupo para los sprites de los enemigos.
@@ -73,15 +72,20 @@ var PlayScene = {
        this.enemyArray.push(enemy);
        this.enemies.add(enemy.sprite);
    }
-   else if(element.type === 'King')
-        this._player = new characters.King(element.x*3, element.y*3, this);
+   else if(element.type === 'King'){
+     this._player = new characters.King(element.x*3, element.y*3, this);
+
+   }
+
     else if(element.type === 'endlevel'){
-        //this.endlevel = this.game.addSprite(element.x*3, element.y*3,)
+      this.endlevel = this.game.add.sprite(element.x*3, element.y*3,'stairs');
+      this.endlevel.scale.setTo(3,3);
+      this.game.physics.arcade.enable(this.endlevel);
+      this.endlevel.body.allowGravity = false;
+      this.endlevel.body.immovable = true;
+
     }
-
-
-
- },
+},
 
 
 
@@ -91,6 +95,7 @@ var PlayScene = {
       this.collisionDeath = this.game.physics.arcade.collide(this._player.sprite, this.death);
       this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
       this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player.sprite, this.enemies);
+      this.levelComplete = this.game.physics.arcade.collide(this._player.sprite, this.endlevel);
       this.enemyArray.forEach(function(elem){
         if(elem!== null)elem.update();
       });
@@ -101,10 +106,9 @@ var PlayScene = {
         this.game.paused = true;
         this.pauseMenu();
       }
-
+      if(this.levelComplete)this.game.state.start('levelSucceed');
 
       this.input.onDown.add(this.unpause, this);
-        //configure the scene
   },
   unpause:function(event){
   if (this.game.paused) {
@@ -163,7 +167,7 @@ pauseMenu:function(){
         this.game.camera.follow(this._player.sprite);
         this.ground.resizeWorld();
     },
-    
+
     characterDestroy: function (character){
       character.sprite.destroy();
       character = null;

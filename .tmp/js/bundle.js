@@ -101,8 +101,8 @@ Enemy.prototype.constructor = Enemy;
 //Serpiente, hereda de enemy y se mueve a izquierda y derecha
 function Serpiente(x, y, escene){
   Enemy.apply(this, ['Serpiente',x, y, 1,1, 'serpiente'/*Nombre de sprite*/, escene]);
-  this.playerSpeed = 300;
-  this.reach = 200;
+  this.playerSpeed = 450;
+  this.reach = 250;
 
   Serpiente.prototype.update = function (){
     this.moveX(this.playerNear());
@@ -313,12 +313,54 @@ var GameOver = {
 module.exports = GameOver;
 
 },{}],5:[function(require,module,exports){
+var GameOver = {
+    create: function () {
+        console.log("Game Over");
+        var button = this.game.add.button(400, 300,
+                                          'button',
+                                          this.restart,
+                                          this, 2, 1, 0);
+        button.anchor.set(0.5);
+        var goText = this.game.add.text(400, 100, "Level Suceeded!");
+        var text = this.game.add.text(0, 0, "Reset Game");
+        text.anchor.set(0.5);
+        goText.anchor.set(0.5);
+        button.addChild(text);
+        
+        var button2 = this.game.add.button(400, 200,
+                                          'button',
+                                          this.goMenu,
+                                          this, 2, 2, 4);
+        button2.anchor.set(0.5);
+        var text2 = this.game.add.text(0, 0, "Menu");
+        text2.anchor.set(0.5);
+        button2.addChild(text2);
+
+
+        button.anchor.set(0.5);
+
+
+    },
+    //DONE 7 declarar el callback del boton.
+    restart: function(){
+      this.game.state.start('play');
+    },
+
+    goMenu: function(){
+      this.game.state.start('menu');
+    }
+};
+
+module.exports = GameOver;
+
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var playScene = require('./play_scene');
 var gameOver = require('./gameover_scene');
 var menuScene = require('./menu_scene');
 var credits = require('./credits');
+var levelSucceed = require('./levelSucceed_scene');
 
 //  The Google WebFont Loader will look for this object, so
 // it before loading the script.
@@ -358,7 +400,7 @@ var PreloaderScene = {
     this.game.load.image('serpiente', 'images/serpiente.png');
     this.game.load.image('menu', 'images/b_menu.png');
     this.game.load.image('continue', 'images/b_continue.png');
-
+    this.game.load.image('stairs','images/stairs.png');
     this.load.onLoadComplete.add(this.loadComplete,this);
       //DONE 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
 
@@ -402,6 +444,7 @@ window.init = function(){
   game.state.add('play', playScene);
   game.state.add('creditos', credits);
   game.state.add('gameOver', gameOver);
+  game.state.add('levelSucceed',levelSucceed);
   //Comenzamos con el estado boot
   game.state.start('boot');
 
@@ -413,7 +456,7 @@ window.onload = function () {
   WebFont.load(wfconfig);
 };
 
-},{"./credits":3,"./gameover_scene":4,"./menu_scene":6,"./play_scene":7}],6:[function(require,module,exports){
+},{"./credits":3,"./gameover_scene":4,"./levelSucceed_scene":5,"./menu_scene":7,"./play_scene":8}],7:[function(require,module,exports){
 var MenuScene = {
   preload: function () {
     this.optionCount = 1;
@@ -464,7 +507,7 @@ var MenuScene = {
 
 module.exports = MenuScene;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 //Enumerados: PlayerState son los estado por los que pasa el player. Directions son las direcciones a las que se puede
@@ -481,8 +524,7 @@ var PlayScene = {
     //Generamos el mapa.
     //DEBUG: AL CARGAR TIENES QUE CAMBIAR EN EL MAIN EL NOMBRE DEL ARCHIVO
     new mapCreator.CreateMap('tilemap', this);
-    //Introducimos al personaje
-    //this._player = new characters.King(100,700, this);
+    //Introducimos los objetos de juego
     //Array de enemigos
     this.enemyArray = [];
     //grupo para los sprites de los enemigos.
@@ -540,15 +582,20 @@ var PlayScene = {
        this.enemyArray.push(enemy);
        this.enemies.add(enemy.sprite);
    }
-   else if(element.type === 'King')
-        this._player = new characters.King(element.x*3, element.y*3, this);
+   else if(element.type === 'King'){
+     this._player = new characters.King(element.x*3, element.y*3, this);
+
+   }
+
     else if(element.type === 'endlevel'){
-        //this.endlevel = this.game.addSprite(element.x*3, element.y*3,)
+      this.endlevel = this.game.add.sprite(element.x*3, element.y*3,'stairs');
+      this.endlevel.scale.setTo(3,3);
+      this.game.physics.arcade.enable(this.endlevel);
+      this.endlevel.body.allowGravity = false;
+      this.endlevel.body.immovable = true;
+
     }
-
-
-
- },
+},
 
 
 
@@ -558,6 +605,7 @@ var PlayScene = {
       this.collisionDeath = this.game.physics.arcade.collide(this._player.sprite, this.death);
       this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
       this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player.sprite, this.enemies);
+      this.levelComplete = this.game.physics.arcade.collide(this._player.sprite, this.endlevel);
       this.enemyArray.forEach(function(elem){
         if(elem!== null)elem.update();
       });
@@ -568,10 +616,9 @@ var PlayScene = {
         this.game.paused = true;
         this.pauseMenu();
       }
-
+      if(this.levelComplete)this.game.state.start('levelSucceed');
 
       this.input.onDown.add(this.unpause, this);
-        //configure the scene
   },
   unpause:function(event){
   if (this.game.paused) {
@@ -630,7 +677,7 @@ pauseMenu:function(){
         this.game.camera.follow(this._player.sprite);
         this.ground.resizeWorld();
     },
-    
+
     characterDestroy: function (character){
       character.sprite.destroy();
       character = null;
@@ -653,4 +700,4 @@ pauseMenu:function(){
 
 module.exports = PlayScene;
 
-},{"./Characters.js":1,"./MapCreator":2}]},{},[5]);
+},{"./Characters.js":1,"./MapCreator":2}]},{},[6]);

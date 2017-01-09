@@ -100,8 +100,8 @@ Enemy.prototype.constructor = Enemy;
 //Serpiente, hereda de enemy y se mueve a izquierda y derecha
 function Serpiente(x, y, escene){
   Enemy.apply(this, ['Serpiente',x, y, 1,1, 'serpiente'/*Nombre de sprite*/, escene]);
-  this.playerSpeed = 300;
-  this.reach = 200;
+  this.playerSpeed = 450;
+  this.reach = 250;
 
   Serpiente.prototype.update = function (){
     this.moveX(this.playerNear());
