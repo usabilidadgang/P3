@@ -43,7 +43,7 @@ var MenuScene = {
       txt.events.onInputOut.add(onOut, this);
 
       this.optionCount ++;
-    },
+    }
 };
 
 module.exports = MenuScene;

@@ -113,12 +113,9 @@ var PlayScene = {
   unpause:function(event){
   if (this.game.paused) {
       if (this.b_menu.getBounds().contains(event.x, event.y)){
-             this.game.state.start('gameOver');
+             this.game.state.start('menu');
              this.game.paused = false;
            }
-      if (this.b_continue.getBounds().contains(event.x, event.y)) {
-        this.game.paused = false;
-    }
     else {
       this.game.paused = false;
     }
@@ -133,17 +130,17 @@ salir:function(){
 
 },
 pauseMenu:function(){
-
-      this.b_menu = this.game.add.sprite(this.game.camera.x+400,this.game.camera.y+ 250,'menu');
-      this.b_menu.anchor.setTo(0.5,0.5);
-      this.b_menu.scale.setTo(2,2);
-
-      this.b_continue = this.game.add.sprite(this.game.camera.x+400, this.game.camera.y +350 ,'continue');
-      this.b_continue.anchor.setTo(0.5,0.5);
-      this.b_continue.scale.setTo(2, 2);
-
-      this.pausetext = this.game.add.text(this.game.camera.x+400,this.game.camera.y+ 175, 'Click anywhere to continue', { font: '40px Revalia', fill: '#000',boundsAlignH: "center", boundsAlignV: "middle"  });
-      this.pausetext.anchor.setTo(0.5,0.5);
+  this.b_menu=this.addMenuOption("Menu",function () {
+    this.salir();
+    this.destroy();
+    this.game.state.start('menu');}
+    ,0);
+  this.b_continue=this.addMenuOption("Continue",function () {
+    this.salir();
+    this.game.paused = false;}
+    ,1);
+  this.pausetext = this.game.add.text(this.game.camera.x+400,this.game.camera.y+ 175, 'Click anywhere to continue', { font: '40px Revalia', fill: '#000',boundsAlignH: "center", boundsAlignV: "middle"  });
+  this.pausetext.anchor.setTo(0.5,0.5);
     },
 
   render:function(){
@@ -182,6 +179,32 @@ pauseMenu:function(){
 
       console.log("Game assets deleted!");
     //TODO 9 destruir los recursos tilemap, tiles
+  },
+  addMenuOption: function(text, callback,n) {
+    var optionStyle = { font: '30pt calibri', fill: 'black', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
+    var button =  this.game.add.button(this.game.camera.x+400, (n * 80)+this.game.camera.y+ 250, 'button', callback, this, 2, 1, 0);
+    var txt = this.game.add.text(0,0, text, optionStyle);
+    txt.anchor.set(0.5);
+    button.anchor.set(0.5);
+    button.addChild(txt);
+    txt.stroke = "rgba(0,0,0,0";
+    txt.strokeThickness = 4;
+    var onOver = function (target) {
+      target.fill = "#FEFFD5";
+      target.stroke = "rgba(200,200,200,0.5)";
+      txt.useHandCursor = true;
+    };
+    var onOut = function (target) {
+      target.fill = "black";
+      target.stroke = "rgba(0,0,0,0)";
+      txt.useHandCursor = false;
+      };
+      txt.useHandCursor = true;
+      txt.inputEnabled = true;
+      txt.events.onInputUp.add(callback, this);
+      txt.events.onInputOver.add(onOver, this);
+      txt.events.onInputOut.add(onOut, this);
+    return button;
     }
 
 };
