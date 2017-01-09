@@ -3,6 +3,8 @@
 var playScene = require('./play_scene');
 var gameOver = require('./gameover_scene');
 var menuScene = require('./menu_scene');
+var credits = require('./credits');
+
 //  The Google WebFont Loader will look for this object, so
 // it before loading the script.
 
@@ -83,6 +85,7 @@ window.init = function(){
   game.state.add('menu', menuScene);
   game.state.add('preloader', PreloaderScene);
   game.state.add('play', playScene);
+  game.state.add('creditos', credits);
   game.state.add('gameOver', gameOver);
   //Comenzamos con el estado boot
   game.state.start('boot');
