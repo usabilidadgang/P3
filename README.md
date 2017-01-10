@@ -1,38 +1,36 @@
 # Rex Vult
-
-Por
+Desde [Kekstar](https://github.com/kekstar) por
 [Manuel Hernández](https://github.com/manherna) y [Francisco Solano López-Bleda](https://github.com/franlbc97).
 ## Resumen
-[generador tablas](http://www.tablesgenerator.com/markdown_tables#) por si aca 
-
 | Genero         | Público | Modos de juego | Plataforma | calificación |
 |----------------|---------|----------------|------------| -------- |
 | Plataformas 2D | 10-88 años, casual      | 1 Jugador      | navegador  | Todas las edades |
 ## Descripción
-Golden Golem le ha quitado a el Rey Oswald III su castillo y este intentará recuperarlo.
+Golden Golem le ha quitado a el Rey Oswald III su castillo y este intentará recuperarlo. un juego de plataformas 2D lineal y basíco.
 ## Jugabilidad
-### Mecanica
+##### Mecanica
 Tu eres el Rey Oswald III, puedes saltar y moverte por el mapa, mediante las flechas de dirección, mueres cuando te toca un enemigo o caes a un foso, mostrandose la pantalla de fin de juego, también puede obtener puntos cogiendo cofres. La serpiente te persigue cuando estas dentro de su rango, pero no puede saltar y muere al ser aplastada. El Golem lanza cosas y se mueve de lado a lado, y muere cuando se pisa 3 veces. Si se Pulsa P se pausará el juego.
-### Dinámica
-Llegar al final del mapa es el objetivo del juego
-### Estetica
+##### Dinámica
+Llegar al final del mapa es el objetivo del juego, se pueden coger cofres, para obtener más puntos, y aplastando serpientes.
+##### Estetica
 16 bits. Fantasía medieval.
-## Menús
-- Menú principal: se puede acceder a los creditos, al juego, o la cuenta de github del grupo
-- Créditos
-- Menu de Pausa
-- Selección de nivel (probablemente)
-
 ## Historia
-Golden Golem le ha quitado a el Rey Oswald III su castillo, por conveniencia de guión, y este intentará recuperarlo.
+Golden Golem le ha quitado a el Rey Oswald III su castillo, y este intentará recuperarlo ya que es la único que tiene, eso y una deuda mastodóntica.
 ## Personajes
-- Rey Oswald III
-  - A quien ha sido arrebatado su castillo
-- Golden Golem
-  - Que ha robado el castillo del Rey Oswald. Es el malvado villano.
-- Serpientes
-  - Súbditos del golem dorado.
+- Rey Oswald III, a quien ha sido arrebatado su castillo, el protagonista, hijo de Oswald II y nieto de Oswald I, lo de rey se lo puso el, porque lo único que tiene de rey es un castillo que heredo, un castillo y una deuda bastante decente.    
+- Golden Golem, el que ha robado el castillo del Rey Oswald III, es el malvado villano, le ha robado el castillo pensando que era un rey de verdad y así hacerse más rico.
+- Serpientes, los súbditos del golem dorado.
 
+## Referencias y recursos
+- Primeras cruzadas, Deus vult (Dios lo quiere) -> Rex Vult (el rey lo quiere).
+- [Super Mario Bros](https://es.wikipedia.org/wiki/Super_Mario_Bros.).
+- [Sprites](http://opengameart.org/content/a-platformer-in-the-forest) y [autor](http://opengameart.org/users/buch).
+- [Phaser](http://phaser.io/).
+
+## Agradecimientos
+- Nuestros familiares.
+- A la clase y a los profesores.
+- Special super extra thanks to [Hideo Kojima]().
 ***
 creo que esto puede valer.
 # Arquitectura
@@ -130,4 +128,3 @@ You can deploy to **Github Pages** with the `deploy:ghpages` task, which will bu
 ```
 gulp deploy:ghpages
 ```
-
