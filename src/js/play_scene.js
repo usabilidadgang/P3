@@ -6,7 +6,9 @@ var characters = require('./Characters.js');
 var mapCreator = require('./MapCreator');
 //Scena de juego.
 var PlayScene = {
-    _player: {}, //player
+    _player: {},
+    gameOver: false,
+  //player
   //Método constructor...
   create: function () {
 
@@ -16,7 +18,7 @@ var PlayScene = {
     new mapCreator.CreateMap('tilemap', this);
     //Introducimos los objetos de juego
     //Array de enemigos
-    this.enemyArray = [];
+    this.objectArray = [];
     //grupo para los sprites de los enemigos.
     this.enemies = this.game.add.group();
     this.spawnObjects('Spawn');
@@ -36,30 +38,23 @@ var PlayScene = {
 
   spawnObjects: function(layer){
     var self = this;
-    var results = this.findObjectsByType('enemy', this.map, layer);
+    var results = this.findObjectsInLayer(this.map, layer);
     for(var i = 0; i < results.length; i++){
       self.spawnFromObject(results[i]);
     }
-    var king = this.findObjectsByType('King', this.map, layer);
-    self.spawnFromObject(king[0]);
-
-    var endlevel = this.findObjectsByType('endlevel', this.map, layer);
-    self.spawnFromObject(endlevel[0]);
   },
   //Codigo inspirado por este tutorial:
   // https://gamedevacademy.org/html5-phaser-tutorial-top-down-games-with-tiled/
   //find objects in a Tiled layer that containt a property called "type" equal to a certain value
-  findObjectsByType: function(type, map, layer) {
+  findObjectsInLayer: function(map, layer) {
      var result = [];
 
     map.objects[layer].forEach(function(element){
-       if(element.type === type) {
          //Phaser uses top left, Tiled bottom left so we have to adjust
          //also keep in mind that the cup images are a bit smaller than the tile which is 16x16
          //so they might not be placed in the exact position as in Tiled
          element.y -= map.tileHeight;
          result.push(element);
-       }
      });
      return result;
    },
@@ -69,8 +64,8 @@ var PlayScene = {
  spawnFromObject: function(element/*, group*/) {
      if(element.type === 'enemy'){
        var enemy = new characters.Serpiente(element.x*3, element.y*3, this); // Snake Spawn on tile's x,y
-       this.enemyArray.push(enemy);
-       this.enemies.add(enemy.sprite);
+       this.objectArray.push(enemy);
+       this.enemies.add(enemy);
    }
    else if(element.type === 'King'){
      this._player = new characters.King(element.x*3, element.y*3, this);
@@ -91,12 +86,13 @@ var PlayScene = {
 
     //IS called one per frame.
     update: function () {
-      this.collisionWithTilemap = this.game.physics.arcade.collide(this._player.sprite, this.ground);
-      this.collisionDeath = this.game.physics.arcade.collide(this._player.sprite, this.death);
+      if(!this.levelComplete && !this.gameOver){
+      this.collisionWithTilemap = this.game.physics.arcade.collide(this._player, this.ground);
+      this.collisionDeath = this.game.physics.arcade.collide(this._player, this.death);
       this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
-      this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player.sprite, this.enemies);
-      this.levelComplete = this.game.physics.arcade.collide(this._player.sprite, this.endlevel);
-      this.enemyArray.forEach(function(elem){
+      this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player, this.enemies);
+      this.levelComplete = this.game.physics.arcade.collide(this._player, this.endlevel);
+      this.objectArray.forEach(function(elem){
         if(elem!== null)elem.update();
       });
 
@@ -106,9 +102,20 @@ var PlayScene = {
         this.game.paused = true;
         this.pauseMenu();
       }
-      if(this.levelComplete)this.game.state.start('levelSucceed');
+      if(this.levelComplete)
 
       this.input.onDown.add(this.unpause, this);
+    }
+    else {
+      this.closeLevel();
+      if(this.gameOver)this.game.state.start('gameOver');
+      else this.game.state.start('levelSucceed');
+    }
+
+
+  },
+  closeLevel: function(){
+
   },
   unpause:function(event){
   if (this.game.paused) {
@@ -130,7 +137,7 @@ salir:function(){
 
 },
 pauseMenu:function(){
-  this.b_menu=this.addMenuOption("Menu",function () {
+  this.b_menu= this.addMenuOption("Menu",function () {
     this.salir();
     this.destroy();
     this.game.state.start('menu');}
@@ -145,34 +152,41 @@ pauseMenu:function(){
 
   render:function(){
     //debug del cuerpo en verde
-    this.game.debug.body(this.enemies);
+    //this.game.debug.body(this.enemies);
     //Datos del collider
-    this.game.debug.bodyInfo(this.enemies, 32, 32);
+    //this.game.debug.bodyInfo(this.enemies, 32, 32);
 
   },
     configure: function(){
 
         this.game.world.setBounds(0, 0, 2400, 500);
 
-        //this._player.sprite.body.bounce.y = 0.2;
+        //this._player.body.bounce.y = 0.2;
         this.game.physics.arcade.gravity.y = 2000;
-        this._player.sprite.body.gravity.x = 0;
-        this._player.sprite.body.velocity.x = 0;
-        //this._player.sprite.body.collideWorldBounds = false;
+        this._player.body.gravity.x = 0;
+        this._player.body.velocity.x = 0;
+        //this._player.body.collideWorldBounds = false;
 
         //this._player.z = 150;
-        this.game.camera.follow(this._player.sprite);
+        this.game.camera.follow(this._player);
         this.ground.resizeWorld();
     },
 
-    characterDestroy: function (character){
-      character.sprite.destroy();
-      character = null;
+    objectDestroy: function (character){
+      var found = false;
+      var i = 0;
+      while(!found){
+        if (this.objectArray[i].name === character.name && this.objectArray[i].x === character.x && this.objectArray[i].y === character.y)found = true;
+        else i++;
+      }
+      character.destroy();
+      if (character.name != this._player.name)this.objectArray.splice(i,1);
     },
+
+
     destroy: function(){
-      this.enemyArray.forEach(function(elem){
-        elem.sprite.destroy();
-        elem = null;});
+      this.objectArray.forEach(function(elem){
+      elem.destroy();});
       this.map.destroy();
       this.character.destroy();
 

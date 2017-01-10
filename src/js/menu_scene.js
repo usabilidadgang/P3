@@ -5,8 +5,9 @@ var MenuScene = {
   create: function () {
       this.game.world.setBounds(0,0,800,600);
       this.game.stage.backgroundColor = "#000000";
-      var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'logo');
+      var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY/2, 'logo');
       logo.anchor.setTo(0.5, 0.5);
+      logo.scale.setTo(0.75, 0.75);
       this.addMenuOption('Jugar', function (e) {
           this.game.state.start('preloader');
       });

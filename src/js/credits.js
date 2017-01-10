@@ -54,12 +54,12 @@ var Credits = {
 
   create: function () {
     this.stage.disableVisibilityChange = true;
-    this.addCredit('Music', 'Kevin Macleod');
-    this.addCredit('Developer', 'Matt McFarland');
-    this.addCredit('Lorem Ipsum', 'Mipsem Dempsum');
-    this.addCredit('Caveats', 'Keyboard Cat');
-    this.addCredit('Phaser.io', 'Powered By');
     this.addCredit('for playing', 'Thank you');
+    this.addCredit('Kekstar Studio', 'Brought to you by');
+    this.addCredit('Lead One-Hand Programmer', 'Francisco Solano López');
+    this.addCredit('Lead Programmer', 'Manuel Hernández');
+    this.addCredit('Hideo Kojima', 'Hideo Kojima');
+    this.addCredit('Phaser.io', 'Powered By');
     this.addMenuOption('Menu', function (e) {
       this.game.state.start("menu");
     });

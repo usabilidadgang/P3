@@ -10,11 +10,12 @@ var party = {enemy : 0, hero : 1, undefined: -1};
 //Character, clase base para desarrollar el resto de personajes
 function Character(x, y, party, name, lifes, spritename, escene){
 
-  this.sprite = escene.game.add.sprite(x, y, spritename);
-  this.sprite.scale.setTo(3, 3);
-  escene.game.physics.arcade.enable(this.sprite);
+  Phaser.Sprite.call(this, escene.game, x, y,spritename);
+  escene.game.add.existing(this);
+  this.scale.setTo(3, 3);
+  escene.game.physics.arcade.enable(this);
   //Cambiamos el ancla del sprite al centro.
-  this.sprite.anchor.setTo(0.5,0.5);
+  this.anchor.setTo(0.5,0.5);
   this.startposition = {x:x, y:y} || {x:0, y:0};
   this.name = name || 'name not defined';
   this.lifes = lifes || 0;
@@ -25,18 +26,20 @@ function Character(x, y, party, name, lifes, spritename, escene){
   Character.prototype.moveX =  function (dir) {
     switch (dir) {
       case Direction.RIGHT:
-        this.sprite.body.velocity.x = this.playerSpeed;
+        this.body.velocity.x = this.playerSpeed;
         break;
       case Direction.LEFT:
-        this.sprite.body.velocity.x = -this.playerSpeed;
+        this.body.velocity.x = -this.playerSpeed;
         break;
       case Direction.NONE:
-        this.sprite.body.velocity.x = 0;
+        this.body.velocity.x = 0;
         break;
       default:
     }
   };
 }
+Character.prototype = Object.create(Phaser.Sprite.prototype);
+Character.prototype.constructor = Character;
 ////////////////////////////////////////////////////////////////////////////
 //Rey, que hereda de Character y se mueve y salta conforme al input del usuario
 function King (x, y, escene){
@@ -46,12 +49,12 @@ Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
 //FUNCIONES DEL REY
   King.prototype.update = function () {
     if(escene.collisionDeath || this.lifes <= 0){
-      this.sprite.visible = false;
+      this.visible = false;
         escene.game.state.start('gameOver');
 
     }
     var dir = this.getInput();
-    if(dir!== 0)this.sprite.scale.x = 3*dir;
+    if(dir!== 0)this.scale.x = 3*dir;
     Character.prototype.moveX.call(this, dir);
 
   };
@@ -69,7 +72,7 @@ Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
   };
 
   King.prototype.jump = function (){
-      this.sprite.body.velocity.y = -700;
+      this.body.velocity.y = -700;
 
   };
 
@@ -78,7 +81,7 @@ Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
   };
 
     King.prototype.isStanding = function(){
-       return this.sprite.body.blocked.down || this.sprite.body.touching.down;
+       return this.body.blocked.down || this.body.touching.down;
   };
 }
 King.prototype = Object.create(Character.prototype);
@@ -90,6 +93,7 @@ King.prototype.constructor = King;
 //Enemy, clase base para enemigos. Si tocan al rey le hacen daño.
 function Enemy (name, x, y, vidas, danyo, spriteName, escene) {
     Character.apply(this, [x, y,party.enemy,name , vidas, spriteName, escene]);
+    //TODO: HACER APLICACIÓN DEL DAÑO. PARA LA P4
     this.damage = danyo || 0;
 }
 
@@ -105,21 +109,21 @@ function Serpiente(x, y, escene){
 
   Serpiente.prototype.update = function (){
     this.moveX(this.playerNear());
-    if(this.Stepped()){
-      this.sprite.visible = false;
-      this.sprite.body.enable = false;
-    }
     if(this.KillPlayer())  escene.game.state.start('gameOver');
+    if(this.Stepped()){
+    escene.objectDestroy(this);
+    }
+
   };
   Serpiente.prototype.playerNear = function () {
-      if(escene._player.sprite.x <= this.sprite.x  && escene._player.sprite.x >= this.sprite.x - this.reach)
+      if(escene._player.x <= this.x  && escene._player.x >= this.x - this.reach)
       {
-        this.sprite.scale.x = Direction.LEFT * 3;
+        this.scale.x = Direction.LEFT * 3;
         return Direction.LEFT;
       }
-      else if (escene._player.sprite.x >= this.sprite.x && escene._player.sprite.x <= this.sprite.x + this.reach)
+      else if (escene._player.x >= this.x && escene._player.x <= this.x + this.reach)
        {
-         this.sprite.scale.x = Direction.RIGHT * 3;
+         this.scale.x = Direction.RIGHT * 3;
           return Direction.RIGHT;
         }
       else return 0;
@@ -130,7 +134,7 @@ function Serpiente(x, y, escene){
   };
 
   Serpiente.prototype.SideCollision = function (){
-    return escene.collisionWithEnnemies && ((this.sprite.body.blocked.left || this.sprite.body.blocked.right)||(this.sprite.body.touching.left || this.sprite.body.touching.right));
+    return escene.collisionWithEnnemies && ((this.body.blocked.left || this.body.blocked.right)||(this.body.touching.left || this.body.touching.right));
   };
 
   Serpiente.prototype.Stepped = function(){
@@ -138,7 +142,7 @@ function Serpiente(x, y, escene){
   };
 
   Serpiente.prototype.touchedUp = function(){
-    return this.sprite.body.blocked.up || this.sprite.body.touching.up;
+    return this.body.blocked.up || this.body.touching.up;
   };
 }
 Serpiente.prototype = Object.create(Enemy.prototype);

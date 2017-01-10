@@ -11,11 +11,12 @@ var party = {enemy : 0, hero : 1, undefined: -1};
 //Character, clase base para desarrollar el resto de personajes
 function Character(x, y, party, name, lifes, spritename, escene){
 
-  this.sprite = escene.game.add.sprite(x, y, spritename);
-  this.sprite.scale.setTo(3, 3);
-  escene.game.physics.arcade.enable(this.sprite);
+  Phaser.Sprite.call(this, escene.game, x, y,spritename);
+  escene.game.add.existing(this);
+  this.scale.setTo(3, 3);
+  escene.game.physics.arcade.enable(this);
   //Cambiamos el ancla del sprite al centro.
-  this.sprite.anchor.setTo(0.5,0.5);
+  this.anchor.setTo(0.5,0.5);
   this.startposition = {x:x, y:y} || {x:0, y:0};
   this.name = name || 'name not defined';
   this.lifes = lifes || 0;
@@ -26,18 +27,20 @@ function Character(x, y, party, name, lifes, spritename, escene){
   Character.prototype.moveX =  function (dir) {
     switch (dir) {
       case Direction.RIGHT:
-        this.sprite.body.velocity.x = this.playerSpeed;
+        this.body.velocity.x = this.playerSpeed;
         break;
       case Direction.LEFT:
-        this.sprite.body.velocity.x = -this.playerSpeed;
+        this.body.velocity.x = -this.playerSpeed;
         break;
       case Direction.NONE:
-        this.sprite.body.velocity.x = 0;
+        this.body.velocity.x = 0;
         break;
       default:
     }
   };
 }
+Character.prototype = Object.create(Phaser.Sprite.prototype);
+Character.prototype.constructor = Character;
 ////////////////////////////////////////////////////////////////////////////
 //Rey, que hereda de Character y se mueve y salta conforme al input del usuario
 function King (x, y, escene){
@@ -47,12 +50,12 @@ Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
 //FUNCIONES DEL REY
   King.prototype.update = function () {
     if(escene.collisionDeath || this.lifes <= 0){
-      this.sprite.visible = false;
+      this.visible = false;
         escene.game.state.start('gameOver');
 
     }
     var dir = this.getInput();
-    if(dir!== 0)this.sprite.scale.x = 3*dir;
+    if(dir!== 0)this.scale.x = 3*dir;
     Character.prototype.moveX.call(this, dir);
 
   };
@@ -70,7 +73,7 @@ Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
   };
 
   King.prototype.jump = function (){
-      this.sprite.body.velocity.y = -700;
+      this.body.velocity.y = -700;
 
   };
 
@@ -79,7 +82,7 @@ Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
   };
 
     King.prototype.isStanding = function(){
-       return this.sprite.body.blocked.down || this.sprite.body.touching.down;
+       return this.body.blocked.down || this.body.touching.down;
   };
 }
 King.prototype = Object.create(Character.prototype);
@@ -91,6 +94,7 @@ King.prototype.constructor = King;
 //Enemy, clase base para enemigos. Si tocan al rey le hacen daño.
 function Enemy (name, x, y, vidas, danyo, spriteName, escene) {
     Character.apply(this, [x, y,party.enemy,name , vidas, spriteName, escene]);
+    //TODO: HACER APLICACIÓN DEL DAÑO. PARA LA P4
     this.damage = danyo || 0;
 }
 
@@ -106,21 +110,21 @@ function Serpiente(x, y, escene){
 
   Serpiente.prototype.update = function (){
     this.moveX(this.playerNear());
-    if(this.Stepped()){
-      this.sprite.visible = false;
-      this.sprite.body.enable = false;
-    }
     if(this.KillPlayer())  escene.game.state.start('gameOver');
+    if(this.Stepped()){
+    escene.objectDestroy(this);
+    }
+
   };
   Serpiente.prototype.playerNear = function () {
-      if(escene._player.sprite.x <= this.sprite.x  && escene._player.sprite.x >= this.sprite.x - this.reach)
+      if(escene._player.x <= this.x  && escene._player.x >= this.x - this.reach)
       {
-        this.sprite.scale.x = Direction.LEFT * 3;
+        this.scale.x = Direction.LEFT * 3;
         return Direction.LEFT;
       }
-      else if (escene._player.sprite.x >= this.sprite.x && escene._player.sprite.x <= this.sprite.x + this.reach)
+      else if (escene._player.x >= this.x && escene._player.x <= this.x + this.reach)
        {
-         this.sprite.scale.x = Direction.RIGHT * 3;
+         this.scale.x = Direction.RIGHT * 3;
           return Direction.RIGHT;
         }
       else return 0;
@@ -131,7 +135,7 @@ function Serpiente(x, y, escene){
   };
 
   Serpiente.prototype.SideCollision = function (){
-    return escene.collisionWithEnnemies && ((this.sprite.body.blocked.left || this.sprite.body.blocked.right)||(this.sprite.body.touching.left || this.sprite.body.touching.right));
+    return escene.collisionWithEnnemies && ((this.body.blocked.left || this.body.blocked.right)||(this.body.touching.left || this.body.touching.right));
   };
 
   Serpiente.prototype.Stepped = function(){
@@ -139,7 +143,7 @@ function Serpiente(x, y, escene){
   };
 
   Serpiente.prototype.touchedUp = function(){
-    return this.sprite.body.blocked.up || this.sprite.body.touching.up;
+    return this.body.blocked.up || this.body.touching.up;
   };
 }
 Serpiente.prototype = Object.create(Enemy.prototype);
@@ -250,12 +254,12 @@ var Credits = {
 
   create: function () {
     this.stage.disableVisibilityChange = true;
-    this.addCredit('Music', 'Kevin Macleod');
-    this.addCredit('Developer', 'Matt McFarland');
-    this.addCredit('Lorem Ipsum', 'Mipsem Dempsum');
-    this.addCredit('Caveats', 'Keyboard Cat');
-    this.addCredit('Phaser.io', 'Powered By');
     this.addCredit('for playing', 'Thank you');
+    this.addCredit('Kekstar Studio', 'Brought to you by');
+    this.addCredit('Lead One-Hand Programmer', 'Francisco Solano López');
+    this.addCredit('Lead Programmer', 'Manuel Hernández');
+    this.addCredit('Hideo Kojima', 'Hideo Kojima');
+    this.addCredit('Phaser.io', 'Powered By');
     this.addMenuOption('Menu', function (e) {
       this.game.state.start("menu");
     });
@@ -371,7 +375,7 @@ var BootScene = {
     // load here assets required for the loading screen
     this.game.load.image('preloader_bar', 'images/preloader_bar.png');
     this.game.load.spritesheet('button', 'images/buttons.png', 168, 70);
-    this.game.load.image('logo', 'images/phaser.png');
+    this.game.load.image('logo', 'images/castle.png');
   },
 
   create: function () {
@@ -464,8 +468,9 @@ var MenuScene = {
   create: function () {
       this.game.world.setBounds(0,0,800,600);
       this.game.stage.backgroundColor = "#000000";
-      var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'logo');
+      var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY/2, 'logo');
       logo.anchor.setTo(0.5, 0.5);
+      logo.scale.setTo(0.75, 0.75);
       this.addMenuOption('Jugar', function (e) {
           this.game.state.start('preloader');
       });
@@ -502,7 +507,7 @@ var MenuScene = {
       txt.events.onInputOut.add(onOut, this);
 
       this.optionCount ++;
-    },
+    }
 };
 
 module.exports = MenuScene;
@@ -516,7 +521,9 @@ var characters = require('./Characters.js');
 var mapCreator = require('./MapCreator');
 //Scena de juego.
 var PlayScene = {
-    _player: {}, //player
+    _player: {},
+    gameOver: false,
+  //player
   //Método constructor...
   create: function () {
 
@@ -526,7 +533,7 @@ var PlayScene = {
     new mapCreator.CreateMap('tilemap', this);
     //Introducimos los objetos de juego
     //Array de enemigos
-    this.enemyArray = [];
+    this.objectArray = [];
     //grupo para los sprites de los enemigos.
     this.enemies = this.game.add.group();
     this.spawnObjects('Spawn');
@@ -546,30 +553,23 @@ var PlayScene = {
 
   spawnObjects: function(layer){
     var self = this;
-    var results = this.findObjectsByType('enemy', this.map, layer);
+    var results = this.findObjectsInLayer(this.map, layer);
     for(var i = 0; i < results.length; i++){
       self.spawnFromObject(results[i]);
     }
-    var king = this.findObjectsByType('King', this.map, layer);
-    self.spawnFromObject(king[0]);
-
-    var endlevel = this.findObjectsByType('endlevel', this.map, layer);
-    self.spawnFromObject(endlevel[0]);
   },
   //Codigo inspirado por este tutorial:
   // https://gamedevacademy.org/html5-phaser-tutorial-top-down-games-with-tiled/
   //find objects in a Tiled layer that containt a property called "type" equal to a certain value
-  findObjectsByType: function(type, map, layer) {
+  findObjectsInLayer: function(map, layer) {
      var result = [];
 
     map.objects[layer].forEach(function(element){
-       if(element.type === type) {
          //Phaser uses top left, Tiled bottom left so we have to adjust
          //also keep in mind that the cup images are a bit smaller than the tile which is 16x16
          //so they might not be placed in the exact position as in Tiled
          element.y -= map.tileHeight;
          result.push(element);
-       }
      });
      return result;
    },
@@ -579,8 +579,8 @@ var PlayScene = {
  spawnFromObject: function(element/*, group*/) {
      if(element.type === 'enemy'){
        var enemy = new characters.Serpiente(element.x*3, element.y*3, this); // Snake Spawn on tile's x,y
-       this.enemyArray.push(enemy);
-       this.enemies.add(enemy.sprite);
+       this.objectArray.push(enemy);
+       this.enemies.add(enemy);
    }
    else if(element.type === 'King'){
      this._player = new characters.King(element.x*3, element.y*3, this);
@@ -601,12 +601,13 @@ var PlayScene = {
 
     //IS called one per frame.
     update: function () {
-      this.collisionWithTilemap = this.game.physics.arcade.collide(this._player.sprite, this.ground);
-      this.collisionDeath = this.game.physics.arcade.collide(this._player.sprite, this.death);
+      if(!this.levelComplete && !this.gameOver){
+      this.collisionWithTilemap = this.game.physics.arcade.collide(this._player, this.ground);
+      this.collisionDeath = this.game.physics.arcade.collide(this._player, this.death);
       this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
-      this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player.sprite, this.enemies);
-      this.levelComplete = this.game.physics.arcade.collide(this._player.sprite, this.endlevel);
-      this.enemyArray.forEach(function(elem){
+      this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player, this.enemies);
+      this.levelComplete = this.game.physics.arcade.collide(this._player, this.endlevel);
+      this.objectArray.forEach(function(elem){
         if(elem!== null)elem.update();
       });
 
@@ -616,19 +617,27 @@ var PlayScene = {
         this.game.paused = true;
         this.pauseMenu();
       }
-      if(this.levelComplete)this.game.state.start('levelSucceed');
+      if(this.levelComplete)
 
       this.input.onDown.add(this.unpause, this);
+    }
+    else {
+      this.closeLevel();
+      if(this.gameOver)this.game.state.start('gameOver');
+      else this.game.state.start('levelSucceed');
+    }
+
+
+  },
+  closeLevel: function(){
+
   },
   unpause:function(event){
   if (this.game.paused) {
       if (this.b_menu.getBounds().contains(event.x, event.y)){
-             this.game.state.start('gameOver');
+             this.game.state.start('menu');
              this.game.paused = false;
            }
-      if (this.b_continue.getBounds().contains(event.x, event.y)) {
-        this.game.paused = false;
-    }
     else {
       this.game.paused = false;
     }
@@ -643,55 +652,88 @@ salir:function(){
 
 },
 pauseMenu:function(){
-
-      this.b_menu = this.game.add.sprite(this.game.camera.x+400,this.game.camera.y+ 250,'menu');
-      this.b_menu.anchor.setTo(0.5,0.5);
-      this.b_menu.scale.setTo(2,2);
-
-      this.b_continue = this.game.add.sprite(this.game.camera.x+400, this.game.camera.y +350 ,'continue');
-      this.b_continue.anchor.setTo(0.5,0.5);
-      this.b_continue.scale.setTo(2, 2);
-
-      this.pausetext = this.game.add.text(this.game.camera.x+400,this.game.camera.y+ 175, 'Click anywhere to continue', { font: '40px Revalia', fill: '#000',boundsAlignH: "center", boundsAlignV: "middle"  });
-      this.pausetext.anchor.setTo(0.5,0.5);
+  this.b_menu= this.addMenuOption("Menu",function () {
+    this.salir();
+    this.destroy();
+    this.game.state.start('menu');}
+    ,0);
+  this.b_continue=this.addMenuOption("Continue",function () {
+    this.salir();
+    this.game.paused = false;}
+    ,1);
+  this.pausetext = this.game.add.text(this.game.camera.x+400,this.game.camera.y+ 175, 'Click anywhere to continue', { font: '40px Revalia', fill: '#000',boundsAlignH: "center", boundsAlignV: "middle"  });
+  this.pausetext.anchor.setTo(0.5,0.5);
     },
 
   render:function(){
     //debug del cuerpo en verde
-    this.game.debug.body(this.enemies);
+    //this.game.debug.body(this.enemies);
     //Datos del collider
-    this.game.debug.bodyInfo(this.enemies, 32, 32);
+    //this.game.debug.bodyInfo(this.enemies, 32, 32);
 
   },
     configure: function(){
 
         this.game.world.setBounds(0, 0, 2400, 500);
 
-        //this._player.sprite.body.bounce.y = 0.2;
+        //this._player.body.bounce.y = 0.2;
         this.game.physics.arcade.gravity.y = 2000;
-        this._player.sprite.body.gravity.x = 0;
-        this._player.sprite.body.velocity.x = 0;
-        //this._player.sprite.body.collideWorldBounds = false;
+        this._player.body.gravity.x = 0;
+        this._player.body.velocity.x = 0;
+        //this._player.body.collideWorldBounds = false;
 
         //this._player.z = 150;
-        this.game.camera.follow(this._player.sprite);
+        this.game.camera.follow(this._player);
         this.ground.resizeWorld();
     },
 
-    characterDestroy: function (character){
-      character.sprite.destroy();
-      character = null;
+    objectDestroy: function (character){
+      var found = false;
+      var i = 0;
+      while(!found){
+        if (this.objectArray[i].name === character.name && this.objectArray[i].x === character.x && this.objectArray[i].y === character.y)found = true;
+        else i++;
+      }
+      character.destroy();
+      if (character.name != this._player.name)this.objectArray.splice(i,1);
     },
+
+
     destroy: function(){
-      this.enemyArray.forEach(function(elem){
-        elem.sprite.destroy();
-        elem = null;});
+      this.objectArray.forEach(function(elem){
+      elem.destroy();});
       this.map.destroy();
       this.character.destroy();
 
 
       console.log("Game assets deleted!");
     //TODO 9 destruir los recursos tilemap, tiles
+  },
+  addMenuOption: function(text, callback,n) {
+    var optionStyle = { font: '30pt calibri', fill: 'black', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
+    var button =  this.game.add.button(this.game.camera.x+400, (n * 80)+this.game.camera.y+ 250, 'button', callback, this, 2, 1, 0);
+    var txt = this.game.add.text(0,0, text, optionStyle);
+    txt.anchor.set(0.5);
+    button.anchor.set(0.5);
+    button.addChild(txt);
+    txt.stroke = "rgba(0,0,0,0";
+    txt.strokeThickness = 4;
+    var onOver = function (target) {
+      target.fill = "#FEFFD5";
+      target.stroke = "rgba(200,200,200,0.5)";
+      txt.useHandCursor = true;
+    };
+    var onOut = function (target) {
+      target.fill = "black";
+      target.stroke = "rgba(0,0,0,0)";
+      txt.useHandCursor = false;
+      };
+      txt.useHandCursor = true;
+      txt.inputEnabled = true;
+      txt.events.onInputUp.add(callback, this);
+      txt.events.onInputOver.add(onOver, this);
+      txt.events.onInputOut.add(onOut, this);
+    return button;
     }
 
 };
