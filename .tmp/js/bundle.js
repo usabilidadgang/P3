@@ -171,7 +171,6 @@ function CreateMap (Jsonfile, escene){
       escene.map = escene.game.add.tilemap(Jsonfile);
         //Utilizaremos siempre la misma hoja de patrones, por tanto, no necesitamos pasarla por
         //variable.
-      escene.map.addTilesetImage('sheet', 'tiles');
       escene.game.physics.arcade.TILE_BIAS = 40;
 
         //Creamos las capas de nuestro tilemap
@@ -586,7 +585,6 @@ var PlayScene = {
      this._player = new characters.King(element.x*3, element.y*3, this);
 
    }
-
     else if(element.type === 'endlevel'){
       this.endlevel = this.game.add.sprite(element.x*3, element.y*3,'stairs');
       this.endlevel.scale.setTo(3,3);
@@ -673,6 +671,7 @@ pauseMenu:function(){
 
   },
     configure: function(){
+      this.levelComplete = false;
 
         this.game.world.setBounds(0, 0, 2400, 500);
 

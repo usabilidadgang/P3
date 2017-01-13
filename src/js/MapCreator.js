@@ -5,7 +5,6 @@ function CreateMap (Jsonfile, escene){
       escene.map = escene.game.add.tilemap(Jsonfile);
         //Utilizaremos siempre la misma hoja de patrones, por tanto, no necesitamos pasarla por
         //variable.
-      escene.map.addTilesetImage('sheet', 'tiles');
       escene.game.physics.arcade.TILE_BIAS = 40;
 
         //Creamos las capas de nuestro tilemap
