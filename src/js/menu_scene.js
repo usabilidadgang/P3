@@ -9,17 +9,20 @@ var MenuScene = {
       logo.anchor.setTo(0.5, 0.5);
       logo.scale.setTo(0.75, 0.75);
       this.addMenuOption('Jugar', function (e) {
+          this.game.click.play(false);
           this.game.state.start('preloader');
       });
       this.addMenuOption('Creditos', function (e) {
+          this.game.click.play(false);
           this.game.state.start("creditos");
       });
       this.addMenuOption('GitHub', function (e) {
+        this.game.click.play(false);
         window.open("https://github.com/Kekstar");
       });
   },
   addMenuOption: function(text, callback) {
-    var optionStyle = { font: '30pt calibri', fill: 'black', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
+    var optionStyle = { font: '40pt Astloch', fontVariant: 'Bold', fill: 'yellow', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
     var button =  this.game.add.button(this.game.world.centerX, (this.optionCount * 80)+300, 'button', callback, this, 2, 1, 0);
     var txt = this.game.add.text(0,0, text, optionStyle);
     txt.anchor.set(0.5);
@@ -33,7 +36,7 @@ var MenuScene = {
       txt.useHandCursor = true;
     };
     var onOut = function (target) {
-      target.fill = "black";
+      target.fill = "yellow";
       target.stroke = "rgba(0,0,0,0)";
       txt.useHandCursor = false;
       };

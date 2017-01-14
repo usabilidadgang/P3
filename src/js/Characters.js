@@ -9,7 +9,6 @@ var party = {enemy : 0, hero : 1, undefined: -1};
 ////////////////////////////////////////////////////////////////////////////
 //Character, clase base para desarrollar el resto de personajes
 function Character(x, y, party, name, lifes, spritename, escene){
-
   Phaser.Sprite.call(this, escene.game, x, y,spritename);
   escene.game.add.existing(this);
   this.scale.setTo(3, 3);
@@ -40,23 +39,22 @@ function Character(x, y, party, name, lifes, spritename, escene){
 }
 Character.prototype = Object.create(Phaser.Sprite.prototype);
 Character.prototype.constructor = Character;
+
 ////////////////////////////////////////////////////////////////////////////
 //Rey, que hereda de Character y se mueve y salta conforme al input del usuario
 function King (x, y, escene){
   //TODO CAMBIAR EL SPRITE AÑADIDO.
 Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
+this.jumpsound = this.game.add.audio('jumpsound');
 
 //FUNCIONES DEL REY
   King.prototype.update = function () {
     if(escene.collisionDeath || this.lifes <= 0){
-      this.visible = false;
-        escene.game.state.start('gameOver');
-
+      escene.gameOver = true;
     }
     var dir = this.getInput();
     if(dir!== 0)this.scale.x = 3*dir;
     Character.prototype.moveX.call(this, dir);
-
   };
 
   King.prototype.getInput = function () {
@@ -72,6 +70,7 @@ Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
   };
 
   King.prototype.jump = function (){
+      this.jumpsound.play(false);
       this.body.velocity.y = -700;
 
   };
@@ -93,7 +92,7 @@ King.prototype.constructor = King;
 //Enemy, clase base para enemigos. Si tocan al rey le hacen daño.
 function Enemy (name, x, y, vidas, danyo, spriteName, escene) {
     Character.apply(this, [x, y,party.enemy,name , vidas, spriteName, escene]);
-    //TODO: HACER APLICACIÓN DEL DAÑO. PARA LA P4
+    this.enemyhit = this.game.add.audio('enemyHit');
     this.damage = danyo || 0;
 }
 
@@ -109,13 +108,15 @@ function Serpiente(x, y, escene){
 
   Serpiente.prototype.update = function (){
     this.moveX(this.playerNear());
-    if(this.KillPlayer())  escene.game.state.start('gameOver');
+    if(this.KillPlayer())  escene.gameOver = true;
     if(this.Stepped()){
+      this.enemyhit.play(false);
     escene.objectDestroy(this);
     }
 
   };
   Serpiente.prototype.playerNear = function () {
+    if((escene._player.y <= this.y && escene._player.y >= this.y - 100)||(escene._player.y >=this.y && escene._player.y <= this.y + 100)){
       if(escene._player.x <= this.x  && escene._player.x >= this.x - this.reach)
       {
         this.scale.x = Direction.LEFT * 3;
@@ -127,6 +128,7 @@ function Serpiente(x, y, escene){
           return Direction.RIGHT;
         }
       else return 0;
+    }
   };
 
   Serpiente.prototype.KillPlayer = function(){

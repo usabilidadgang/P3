@@ -5,12 +5,15 @@ function CreateMap (Jsonfile, escene){
       escene.map = escene.game.add.tilemap(Jsonfile);
         //Utilizaremos siempre la misma hoja de patrones, por tanto, no necesitamos pasarla por
         //variable.
+
+      escene.map.addTilesetImage('sheet', 'tiles');
       escene.game.physics.arcade.TILE_BIAS = 40;
 
         //Creamos las capas de nuestro tilemap
       escene.back = escene.map.createLayer('Back');
       escene.death = escene.map.createLayer('Death');
       escene.ground = escene.map.createLayer('Ground');
+      //escene.back.alpha = 100;
       //escene.spawn = escene.map.createLayer('spawn');
 
         //Declaramos las colisiones con la muerte y el Suelo

@@ -61,9 +61,11 @@ var Credits = {
     this.addCredit('Hideo Kojima', 'Hideo Kojima');
     this.addCredit('Phaser.io', 'Powered By');
     this.addMenuOption('Menu', function (e) {
+      this.game.click.play(false);
       this.game.state.start("menu");
     });
     this.addMenuOption('GitHub', function (e) {
+      this.game.click.play(false);
       window.open("https://github.com/Kekstar");
     });
 

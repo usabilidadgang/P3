@@ -7,15 +7,19 @@ var mapCreator = require('./MapCreator');
 //Scena de juego.
 var PlayScene = {
     _player: {},
-    gameOver: false,
   //player
   //Método constructor...
   create: function () {
-
+    this.gameOver = false;
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    this.music = this.game.add.audio('music1');
+    this.lostSound = this.game.add.audio('lost');
+    this.playerDeath = this.game.add.audio('playerDeath');
+    this.music.volume = 0.3;
+    this.music.play();
     //Generamos el mapa.
     //DEBUG: AL CARGAR TIENES QUE CAMBIAR EN EL MAIN EL NOMBRE DEL ARCHIVO
-    new mapCreator.CreateMap('tilemap', this);
+    new mapCreator.CreateMap(this.game.niveles[this.game.nivelActual], this);
     //Introducimos los objetos de juego
     //Array de enemigos
     this.objectArray = [];
@@ -80,45 +84,50 @@ var PlayScene = {
 
     }
 },
+checkColisions: function(){
+  this.collisionWithTilemap = this.game.physics.arcade.collide(this._player, this.ground);
+  this.collisionDeath = this.game.physics.arcade.collide(this._player, this.death);
+  this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
+  this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player, this.enemies);
+  this.levelComplete = this.game.physics.arcade.collide(this._player, this.endlevel);
 
-
-
-    //IS called one per frame.
+},
+  //IS called one per frame.
     update: function () {
       if(!this.levelComplete && !this.gameOver){
-      this.collisionWithTilemap = this.game.physics.arcade.collide(this._player, this.ground);
-      this.collisionDeath = this.game.physics.arcade.collide(this._player, this.death);
-      this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
-      this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player, this.enemies);
-      this.levelComplete = this.game.physics.arcade.collide(this._player, this.endlevel);
+      this.checkColisions();
       this.objectArray.forEach(function(elem){
         if(elem!== null)elem.update();
       });
-
-      if(this._player !== null)this._player.update();
-
+      this._player.update();
       if(this.pauseButton.isDown){
         this.game.paused = true;
         this.pauseMenu();
       }
-      if(this.levelComplete)
-
       this.input.onDown.add(this.unpause, this);
     }
     else {
-      this.closeLevel();
-      if(this.gameOver)this.game.state.start('gameOver');
-      else this.game.state.start('levelSucceed');
+
+      if(this.gameOver){
+        this.lostSound.play(false);
+        this.closeLevel();
+        this.game.state.start('gameOver');
+      }
+      else
+      {this.closeLevel();
+        this.game.state.start('levelSucceed');
+      }
     }
 
 
   },
   closeLevel: function(){
-
+    this.destroy();
   },
   unpause:function(event){
   if (this.game.paused) {
       if (this.b_menu.getBounds().contains(event.x, event.y)){
+             this.closeLevel();
              this.game.state.start('menu');
              this.game.paused = false;
            }
@@ -133,9 +142,11 @@ salir:function(){
   this.b_menu.destroy();
   this.b_continue.destroy();
   this.pausetext.destroy();
+  this.music.resume();
 
 },
 pauseMenu:function(){
+  this.music.pause();
   this.b_menu= this.addMenuOption("Menu",function () {
     this.salir();
     this.destroy();
@@ -185,11 +196,12 @@ pauseMenu:function(){
 
 
     destroy: function(){
+      this.music.destroy();
+      this.playerDeath.destroy();
       this.objectArray.forEach(function(elem){
       elem.destroy();});
       this.map.destroy();
-      this.character.destroy();
-
+      this._player.destroy();
 
       console.log("Game assets deleted!");
     //TODO 9 destruir los recursos tilemap, tiles

@@ -16,9 +16,12 @@ var BootScene = {
     this.game.load.image('preloader_bar', 'images/preloader_bar.png');
     this.game.load.spritesheet('button', 'images/buttons.png', 168, 70);
     this.game.load.image('logo', 'images/castle.png');
+    //http://freesound.org/people/NenadSimic/sounds/171697/
+    this.game.load.audio('click', 'Sounds/Effects/click.wav');
   },
 
   create: function () {
+      this.game.click = this.game.add.audio('click');
       this.game.state.start('preloader');
       this.game.state.start('menu');
   }
@@ -37,8 +40,20 @@ var PreloaderScene = {
       // el atlasJSONHash con 'images/rush_spritesheet.png' como imagen y 'images/rush_spritesheet.json'
       //como descriptor de la animación.
 
-    this.game.load.tilemap('tilemap', 'mapas/Nivel1.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.tilemap('Nivel1', 'mapas/Nivel1.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.tilemap('Nivel2', 'mapas/Nivel2.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tiles', 'images/sheet.png');
+    //http://freesound.org/people/Questiion/sounds/166392/
+    this.game.load.audio('music1','Sounds/Music/Level1.wav');
+
+    this.game.load.audio('jumpsound','Sounds/Effects/Jump.wav');
+
+    this.game.load.audio('enemyHit', "Sounds/Effects/EnemyHit.wav");
+    //http://freesound.org/people/josepharaoh99/sounds/361636/
+    this.game.load.audio('playerDeath', "Sounds/Effects/PlayerDeath.mp3");
+    //http://freesound.org/people/cabled_mess/sounds/350986/
+    this.game.load.audio('lost', 'Sounds/Effects/lost.wav');
+
     //this.game.load.atlas('rush', 'atlas/King.png', 'images/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     this.game.load.image('personaje', 'images/Rush.png');
     this.game.load.image('serpiente', 'images/serpiente.png');
@@ -59,18 +74,15 @@ var PreloaderScene = {
   },
      //DONE 2.2b function loadComplete()
     update: function(){
-        this._loadingBar
     },
 
 };
 var wfconfig = {
-
   active: function() {
-      console.log("font loaded");
       init();
   },
   google: {
-      families: ['Sniglet']
+      families: ['Sniglet', 'MedievalSharp', 'Astloch']
   }
 
 };
@@ -91,6 +103,8 @@ window.init = function(){
   game.state.add('levelSucceed',levelSucceed);
   //Comenzamos con el estado boot
   game.state.start('boot');
+  game.niveles = { 1: 'Nivel1', 2: 'Nivel2'};
+  game.nivelActual = 1;
 
 }
 window.onload = function () {

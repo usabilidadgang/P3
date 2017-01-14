@@ -6,9 +6,9 @@ Desde [Kekstar](https://github.com/kekstar) por
 |----------------|---------|----------------|------------| -------- |
 | Plataformas 2D | 10-88 años, casual      | 1 Jugador      | navegador  | Todas las edades |
 ## Descripción
-Golden Golem le ha quitado a el Rey Oswald III su castillo y este intentará recuperarlo. un juego de plataformas 2D lineal y basíco.
+Golden Golem le ha quitado a el Rey Oswald III su castillo y este intentará recuperarlo. un juego de plataformas 2D lineal y basico.
 ## Como se Juega
-Tu eres el Rey Oswald III, puedes saltar y moverte por el mapa, mediante las flechas de dirección, mueres cuando te toca un enemigo o caes a un foso. La serpiente te persigue cuando estas dentro de su rango, pero no puede saltar y muere al ser aplastada o caer a un foso. El Golem lanza cosas y se mueve de lado a lado, y muere cuando se pisa 3 veces. Si se Pulsa P se pausará el juego.
+Eres el Rey Oswald III, puedes saltar y moverte por el mapa, mediante las flechas de dirección. Mueres cuando te toca un enemigo o caes a un foso. La serpiente te persigue cuando estas dentro de su rango, pero no puede saltar y muere al ser aplastada o caer a un foso. El Golem lanza cosas y se mueve de lado a lado, y muere cuando se pisa 3 veces. Si se Pulsa P se pausará el juego.
 Llegar al final del nivel es el objetivo del juego, se pueden coger cofres, para obtener más puntos, y aplastando serpientes.
 ## Historia
 Golden Golem le ha quitado a el Rey Oswald III su castillo, y este intentará recuperarlo ya que es la único que tiene, eso y una deuda mastodóntica, la cual heredo de su padre, y su padre de su padre, y este ultimo la hizo la deuda comprando el castillo.
