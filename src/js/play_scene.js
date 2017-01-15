@@ -4,21 +4,28 @@
 //mover el player.
 var characters = require('./Characters.js');
 var mapCreator = require('./MapCreator');
-//Scena de juego.
+//EScena de juego.
 var PlayScene = {
     _player: {},
-  //player
-  //Método constructor...
+
   create: function () {
     this.gameOver = false;
+    this.sceneScore = 0;
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    //Inicializacion de audios.
     this.music = this.game.add.audio('music1');
     this.lostSound = this.game.add.audio('lost');
     this.playerDeath = this.game.add.audio('playerDeath');
     this.music.volume = 0.3;
     this.music.play();
+    //Inicializacion de Hud
+    this.hudScore = this.game.add.text(10, 0, 'Score: 0');
+    this.hudScore.font = 'Astloch';
+    this.hudScore.fontSize = 50;
+    this.hudScore.fixedToCamera = true;
+
     //Generamos el mapa.
-    //DEBUG: AL CARGAR TIENES QUE CAMBIAR EN EL MAIN EL NOMBRE DEL ARCHIVO
     new mapCreator.CreateMap(this.game.niveles[this.game.nivelActual], this);
     //Introducimos los objetos de juego
     //Array de enemigos
@@ -107,19 +114,23 @@ checkColisions: function(){
       this.input.onDown.add(this.unpause, this);
     }
     else {
-
       if(this.gameOver){
         this.lostSound.play(false);
         this.closeLevel();
         this.game.state.start('gameOver');
       }
       else
-      {this.closeLevel();
+      {
+        this.closeLevel();
+        this.game.overallScore+= this.sceneScore;
         this.game.state.start('levelSucceed');
       }
     }
 
 
+  },
+  hud: function(){
+    this.hudScore.text = 'Score: '+this.sceneScore;
   },
   closeLevel: function(){
     this.destroy();
@@ -152,15 +163,19 @@ pauseMenu:function(){
     this.destroy();
     this.game.state.start('menu');}
     ,0);
+    this.b_menu.font = 'Astloch';
   this.b_continue=this.addMenuOption("Continue",function () {
     this.salir();
     this.game.paused = false;}
     ,1);
-  this.pausetext = this.game.add.text(this.game.camera.x+400,this.game.camera.y+ 175, 'Click anywhere to continue', { font: '40px Revalia', fill: '#000',boundsAlignH: "center", boundsAlignV: "middle"  });
+  this.b_continue.font = 'Astloch';
+  this.pausetext = this.game.add.text(this.game.camera.x+400,this.game.camera.y+ 175, 'Click anywhere to continue', { font: '50px Astloch',fontVariant :'Bold', fill: '#000',boundsAlignH: "center", boundsAlignV: "middle"  });
+
   this.pausetext.anchor.setTo(0.5,0.5);
     },
 
   render:function(){
+    this.hud();
     //debug del cuerpo en verde
     //this.game.debug.body(this.enemies);
     //Datos del collider
@@ -207,7 +222,7 @@ pauseMenu:function(){
     //TODO 9 destruir los recursos tilemap, tiles
   },
   addMenuOption: function(text, callback,n) {
-    var optionStyle = { font: '30pt calibri', fill: 'black', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
+    var optionStyle = { font: '30pt Astloch',fontVariant:'Bold', fill: 'white', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
     var button =  this.game.add.button(this.game.camera.x+400, (n * 80)+this.game.camera.y+ 250, 'button', callback, this, 2, 1, 0);
     var txt = this.game.add.text(0,0, text, optionStyle);
     txt.anchor.set(0.5);

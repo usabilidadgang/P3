@@ -51,6 +51,7 @@ var PreloaderScene = {
     this.game.load.audio('enemyHit', "Sounds/Effects/EnemyHit.wav");
     //http://freesound.org/people/josepharaoh99/sounds/361636/
     this.game.load.audio('playerDeath', "Sounds/Effects/PlayerDeath.mp3");
+
     //http://freesound.org/people/cabled_mess/sounds/350986/
     this.game.load.audio('lost', 'Sounds/Effects/lost.wav');
 
@@ -87,11 +88,8 @@ var wfconfig = {
 
 };
 
-//DONE 3.2 Cargar Google font cuando la página esté cargada con wfconfig.
-//DONE 3.3 La creación del juego y la asignación de los states se hará en el método init().
+
 window.init = function(){
-  //DONE 1.2 Añadir los states 'boot' BootScene, 'menu' MenuScene, 'preloader' PreloaderScene, 'play' PlayScene, 'gameOver' GameOver.
-  //DONE 1.3 iniciar el state 'boot'.
   //Metodo init, que será llamado una vez la fuente se haya cargado.
   var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
   game.state.add('boot', BootScene);
@@ -105,11 +103,9 @@ window.init = function(){
   game.state.start('boot');
   game.niveles = { 1: 'Nivel1', 2: 'Nivel2'};
   game.nivelActual = 1;
+  game.overallScore = 0;
 
 }
 window.onload = function () {
-  //En el onload se cargará la Google Font
-  //DONE 3.2 Cargar Google font cuando la página esté cargada con wfconfig.
-  //DONE 3.3 La creación del juego y la asignación de los states se hará en el método init().
   WebFont.load(wfconfig);
 };

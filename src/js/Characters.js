@@ -110,6 +110,7 @@ function Serpiente(x, y, escene){
     this.moveX(this.playerNear());
     if(this.KillPlayer())  escene.gameOver = true;
     if(this.Stepped()){
+      escene.sceneScore+=10;
       this.enemyhit.play(false);
     escene.objectDestroy(this);
     }
