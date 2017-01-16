@@ -16,8 +16,14 @@ var BootScene = {
     this.game.load.image('preloader_bar', 'images/preloader_bar.png');
     this.game.load.spritesheet('button', 'images/buttons.png', 168, 70);
     this.game.load.image('logo', 'images/castle.png');
+    this.game.load.image('kekstar','images/kekstar.png');
     //http://freesound.org/people/NenadSimic/sounds/171697/
     this.game.load.audio('click', 'Sounds/Effects/click.wav');
+
+    //http://opengameart.org/content/generic-8-bit-jrpg-soundtrack
+    this.game.load.audio('intromusic', 'Sounds/Music/intro.ogg');
+    this.game.load.audio('creditMusic', 'Sounds/Music/credits.ogg');
+
   },
 
   create: function () {
@@ -42,9 +48,16 @@ var PreloaderScene = {
 
     this.game.load.tilemap('Nivel1', 'mapas/Nivel1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.tilemap('Nivel2', 'mapas/Nivel2.json', null, Phaser.Tilemap.TILED_JSON);
+
     this.game.load.image('tiles', 'images/sheet.png');
     //http://freesound.org/people/Questiion/sounds/166392/
     this.game.load.audio('music1','Sounds/Music/Level1.wav');
+    this.game.load.audio('music2','Sounds/Music/Level2.ogg');
+
+    //http://freesound.org/people/primordiality/sounds/78824/
+    this.game.load.audio('levelSuccess', 'Sounds/Effects/LevelSuccess.wav');
+
+
 
     this.game.load.audio('jumpsound','Sounds/Effects/Jump.wav');
 
@@ -102,6 +115,7 @@ window.init = function(){
   //Comenzamos con el estado boot
   game.state.start('boot');
   game.niveles = { 1: 'Nivel1', 2: 'Nivel2'};
+  game.musics = { 1: 'music1', 2:'music2'};
   game.nivelActual = 1;
   game.overallScore = 0;
 

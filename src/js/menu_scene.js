@@ -3,20 +3,26 @@ var MenuScene = {
     this.optionCount = 1;
   },
   create: function () {
+      this.intromusic = this.game.add.audio('intromusic');
+      this.intromusic.loop = true;
+      this.intromusic.play();
       this.game.world.setBounds(0,0,800,600);
       this.game.stage.backgroundColor = "#000000";
       var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY/2, 'logo');
       logo.anchor.setTo(0.5, 0.5);
       logo.scale.setTo(0.75, 0.75);
       this.addMenuOption('Jugar', function (e) {
+          this.intromusic.destroy();
           this.game.click.play(false);
           this.game.state.start('preloader');
       });
       this.addMenuOption('Creditos', function (e) {
+          this.intromusic.destroy();
           this.game.click.play(false);
           this.game.state.start("creditos");
       });
       this.addMenuOption('GitHub', function (e) {
+        this.intromusic.destroy();
         this.game.click.play(false);
         window.open("https://github.com/Kekstar");
       });

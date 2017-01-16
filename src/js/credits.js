@@ -17,8 +17,8 @@ var Credits = {
     taskText.anchor.setTo(0.5);
     taskText.stroke = "rgba(0,0,0,0)";
     taskText.strokeThickness = 4;
-    this.game.add.tween(authorText).to( { y: -300 }, 20000, Phaser.Easing.Cubic.Out, true, this.creditCount * 10000);
-    this.game.add.tween(taskText).to( { y: -200 }, 20000, Phaser.Easing.Cubic.Out, true, this.creditCount * 10000);
+    this.game.add.tween(authorText).to( { y: -300 }, 20000, Phaser.Easing.Cubic.Out, true, this.creditCount * 4000);
+    this.game.add.tween(taskText).to( { y: -200 }, 20000, Phaser.Easing.Cubic.Out, true, this.creditCount * 4000);
     this.creditCount ++;
   },
 
@@ -53,18 +53,26 @@ var Credits = {
   },
 
   create: function () {
+    
+    this.kekstar = this.game.add.sprite(30,320,'kekstar');
+    this.kekstar.scale.setTo(0.05, 0.05);
+    this.music = this.game.add.audio('creditMusic');
+    this.music.loop = true;
+    this.music.play();
     this.stage.disableVisibilityChange = true;
     this.addCredit('for playing', 'Thank you');
     this.addCredit('Kekstar Studio', 'Brought to you by');
     this.addCredit('Lead One-Hand Programmer', 'Francisco Solano López');
-    this.addCredit('Lead Programmer', 'Manuel Hernández');
+    this.addCredit('Lead Programmer/ Level Designer', 'Manuel Hernández');
     this.addCredit('Hideo Kojima', 'Hideo Kojima');
     this.addCredit('Phaser.io', 'Powered By');
     this.addMenuOption('Menu', function (e) {
+      this.music.destroy();
       this.game.click.play(false);
       this.game.state.start("menu");
     });
     this.addMenuOption('GitHub', function (e) {
+      this.music.destroy();
       this.game.click.play(false);
       window.open("https://github.com/Kekstar");
     });

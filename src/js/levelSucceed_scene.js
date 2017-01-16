@@ -1,5 +1,8 @@
 var GameOver = {
     create: function () {
+      this.music = this.game.add.audio('levelSuccess');
+      this.music.volume = 0.5;
+      this.music.play();
       this.game.stage.backgroundColor = '#ffffff';
         if(this.game.niveles[this.game.nivelActual+1] !== undefined){
           this.game.nivelActual++;
@@ -52,11 +55,13 @@ var GameOver = {
     },
     //DONE 7 declarar el callback del boton.
     continue: function(){
+      this.music.destroy();
       this.game.click.play(false);
       this.game.state.start('play');
     },
 
     goMenu: function(){
+      this.music.destroy();
       this.game.click.play(false);
       this.game.state.start('menu');
     }

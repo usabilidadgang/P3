@@ -14,7 +14,7 @@ var PlayScene = {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
     //Inicializacion de audios.
-    this.music = this.game.add.audio('music1');
+    this.music = this.game.add.audio(this.game.musics[this.game.nivelActual]);
     this.lostSound = this.game.add.audio('lost');
     this.playerDeath = this.game.add.audio('playerDeath');
     this.music.volume = 0.3;
