@@ -19,6 +19,7 @@ var PlayScene = {
     this.playerDeath = this.game.add.audio('playerDeath');
     this.music.volume = 0.3;
     this.music.play();
+    this.music.loop = true;
     //Inicializacion de Hud
     this.hudScore = this.game.add.text(10, 0, 'Score: 0');
     this.hudScore.font = 'Astloch';
@@ -164,7 +165,7 @@ pauseMenu:function(){
     this.game.state.start('menu');}
     ,0);
     this.b_menu.font = 'Astloch';
-  this.b_continue=this.addMenuOption("Continue",function () {
+  this.b_continue = this.addMenuOption("Continue",function () {
     this.salir();
     this.game.paused = false;}
     ,1);

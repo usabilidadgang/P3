@@ -26,6 +26,7 @@ var GameOver = {
           endGameText.font = 'Astloch';
           endGameText.fontSize = 70;
           endGameText.anchor.set(0.5);
+          this.game.nivelActual = 1;
 
         }
         var scoreText = this.game.add.text(400, 200, "Puntuación global:"+this.game.overallScore);

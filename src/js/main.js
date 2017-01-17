@@ -68,11 +68,10 @@ var PreloaderScene = {
     //http://freesound.org/people/cabled_mess/sounds/350986/
     this.game.load.audio('lost', 'Sounds/Effects/lost.wav');
 
-    //this.game.load.atlas('rush', 'atlas/King.png', 'images/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
-    this.game.load.image('personaje', 'images/Rush.png');
-    this.game.load.image('serpiente', 'images/serpiente.png');
-    this.game.load.image('menu', 'images/b_menu.png');
-    this.game.load.image('continue', 'images/b_continue.png');
+    this.game.load.atlas('personaje', 'images/Character Sprites/King/King.png', 'atlas/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+
+    this.game.load.atlas('serpiente', 'images/Character Sprites/Snake/Snake.png', 'atlas/Snake.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+
     this.game.load.image('stairs','images/stairs.png');
     this.load.onLoadComplete.add(this.loadComplete,this);
       //DONE 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
