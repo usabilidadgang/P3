@@ -36,15 +36,7 @@ var PlayScene = {
     this.spawnObjects('Spawn');
 
     this.pauseButton = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-
-      //nombre de la animación, frames, framerate, isloop
-      /*this._rush.animations.add('run',
-                    Phaser.Animation.generateFrameNames('RUN',1,4,'',2),10,true);
-      this._rush.animations.add('stop',
-                    Phaser.Animation.generateFrameNames('WALK',0,0,'',2),0,false);
-      this._rush.animations.add('jump',
-                     Phaser.Animation.generateFrameNames('JUMP',0,3,'',2),0,false);*/
-      this.configure();
+    this.configure();
 
   },
 
@@ -81,7 +73,9 @@ var PlayScene = {
    }
    else if(element.type === 'King'){
      this._player = new characters.King(element.x*3, element.y*3, this);
-
+   }
+   else if(element.type === 'Golem'){
+     this._boss = new characters.Golem(element.x*3, element.y*3, this);
    }
     else if(element.type === 'endlevel'){
       this.endlevel = this.game.add.sprite(element.x*3, element.y*3,'stairs');
@@ -98,6 +92,8 @@ checkColisions: function(){
   this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
   this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player, this.enemies);
   this.levelComplete = this.game.physics.arcade.collide(this._player, this.endlevel);
+  this.bossCollider = this.game.physics.arcade.collide(this._boss, this.ground);
+  this.bossPlayerColl = this.game.physics.arcade.collide(this._boss, this._player);
 
 },
   //IS called one per frame.

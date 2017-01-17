@@ -8,7 +8,7 @@ var party = {enemy : 0, hero : 1, undefined: -1};
 
 ////////////////////////////////////////////////////////////////////////////
 //Character, clase base para desarrollar el resto de personajes
-function Character(x, y, party, name, lifes, spritename, escene){
+function Character(x, y, party, name, spritename, escene){
   Phaser.Sprite.call(this, escene.game, x, y,spritename);
   escene.game.add.existing(this);
   this.scale.setTo(3, 3);
@@ -44,7 +44,7 @@ Character.prototype.constructor = Character;
 //Rey, que hereda de Character y se mueve y salta conforme al input del usuario
 function King (x, y, escene){
   //TODO CAMBIAR EL SPRITE AÑADIDO.
-Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
+Character.apply(this, [x, y, party.hero, 'King', 'personaje', escene]);
 //ANIMACIONES
 this.animations.add('run',Phaser.Animation.generateFrameNames('R',0,3),15,true);
 this.animations.add('jump', Phaser.Animation.generateFrameNames('J',0,4),10, false);
@@ -111,10 +111,9 @@ King.prototype.constructor = King;
 ////////////////////////////////////////////////////////////////////////////
 //Enemigos
 //Enemy, clase base para enemigos. Si tocan al rey le hacen daño.
-function Enemy (name, x, y, vidas, danyo, spriteName, escene) {
+function Enemy (name, x, y, spriteName, escene) {
     Character.apply(this, [x, y,party.enemy,name , vidas, spriteName, escene]);
     this.enemyhit = this.game.add.audio('enemyHit');
-    this.damage = danyo || 0;
 }
 
 Enemy.prototype = Object.create(Character.prototype);
@@ -123,14 +122,14 @@ Enemy.prototype.constructor = Enemy;
 ////////////////////////////////////////////////////////////////////////////
 //Serpiente, hereda de enemy y se mueve a izquierda y derecha
 function Serpiente(x, y, escene){
-  Enemy.apply(this, ['Serpiente',x, y, 1,1, 'serpiente'/*Nombre de sprite*/, escene]);
+  Enemy.apply(this, ['Serpiente', x, y, 'serpiente'/*Nombre de sprite*/, escene]);
 //Animaciones de la serpiente
   this.runanim = this.animations.add('run',Phaser.Animation.generateFrameNames('S',0,3),3,true);
   this.animations.add('idle', Phaser.Animation.generateFrameNames('S',0,0),1,true);
   this.deathanim = this.animations.add('death', Phaser.Animation.generateFrameNames('D',0,3),50,false);
   this.runanim.speed = 10;
   this.playerSpeed = 450;
-  
+
   this.reach = 250;
   this.primera = false;
   Serpiente.prototype.update = function (){
@@ -189,8 +188,45 @@ Serpiente.prototype.constructor = Serpiente;
 ////////////////////////////////////////////////////////////////////////////
 //Golem, enemigo final del juego.
 function Golem(x, y, escene){
-  Enemy.apply(this, ['Golem',x, y, 15, escene]);
+  Enemy.apply(this, ['Golem', x, y, escene]);
+  this.playerSpeed = 450;
+  this.state = 0;
+  this.lifes = 3;
 }
+Golem.prototype.update = function (){
+  console.log(kekeke);
+
+};
+//switch de estados
+Golem.prototype.changeState = function(caso){
+  switch(caso){
+    case 1:
+      this.runSides();
+    break;
+    case 2:
+    //generar serpientes hermano
+    break;
+    case 3:
+    break;
+    default:
+    break;
+  }
+};
+Golem.prototype.runSides = function(){
+    this.playerSpeed = 450;
+    var dir = Direction.NONE;
+    if(this.escene.bossCollider && (this.body.blocked.right || this.body.touching.right))
+      dir = Direction.RIGHT;
+
+};
+
+
+
+
+
+
+
+
 Golem.prototype = Object.create(Enemy.prototype);
 Golem.prototype.constructor = Golem;
 
