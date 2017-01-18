@@ -17,7 +17,6 @@ function Character(x, y, party, name, spritename, escene){
   this.anchor.setTo(0.5,0.5);
   this.startposition = {x:x, y:y} || {x:0, y:0};
   this.name = name || 'name not defined';
-  this.lifes = lifes || 0;
   this.party = party || party.undefined;
   this.playerSpeed = 400;
 
@@ -112,7 +111,7 @@ King.prototype.constructor = King;
 //Enemigos
 //Enemy, clase base para enemigos. Si tocan al rey le hacen daño.
 function Enemy (name, x, y, spriteName, escene) {
-    Character.apply(this, [x, y,party.enemy,name , vidas, spriteName, escene]);
+    Character.apply(this, [x, y,party.enemy,name , spriteName, escene]);
     this.enemyhit = this.game.add.audio('enemyHit');
 }
 

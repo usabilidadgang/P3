@@ -9,8 +9,7 @@ var party = {enemy : 0, hero : 1, undefined: -1};
 
 ////////////////////////////////////////////////////////////////////////////
 //Character, clase base para desarrollar el resto de personajes
-function Character(x, y, party, name, lifes, spritename, escene){
-
+function Character(x, y, party, name, spritename, escene){
   Phaser.Sprite.call(this, escene.game, x, y,spritename);
   escene.game.add.existing(this);
   this.scale.setTo(3, 3);
@@ -19,7 +18,6 @@ function Character(x, y, party, name, lifes, spritename, escene){
   this.anchor.setTo(0.5,0.5);
   this.startposition = {x:x, y:y} || {x:0, y:0};
   this.name = name || 'name not defined';
-  this.lifes = lifes || 0;
   this.party = party || party.undefined;
   this.playerSpeed = 400;
 
@@ -41,21 +39,37 @@ function Character(x, y, party, name, lifes, spritename, escene){
 }
 Character.prototype = Object.create(Phaser.Sprite.prototype);
 Character.prototype.constructor = Character;
+
 ////////////////////////////////////////////////////////////////////////////
 //Rey, que hereda de Character y se mueve y salta conforme al input del usuario
 function King (x, y, escene){
   //TODO CAMBIAR EL SPRITE AÑADIDO.
-Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
+Character.apply(this, [x, y, party.hero, 'King', 'personaje', escene]);
+//ANIMACIONES
+this.animations.add('run',Phaser.Animation.generateFrameNames('R',0,3),15,true);
+this.animations.add('jump', Phaser.Animation.generateFrameNames('J',0,4),10, false);
+this.animations.add('idle', Phaser.Animation.generateFrameNames('R',0,0),1,true);
+
+//SONIDO DEL SALTO
+this.jumpsound = this.game.add.audio('jumpsound');
+this.hasJumped = false;
 
 //FUNCIONES DEL REY
   King.prototype.update = function () {
-    if(escene.collisionDeath || this.lifes <= 0){
-      this.visible = false;
-        escene.game.state.start('gameOver');
 
+    this.animasion = '';
+    if(escene.collisionDeath || this.lifes <= 0){
+      escene.gameOver = true;
     }
     var dir = this.getInput();
-    if(dir!== 0)this.scale.x = 3*dir;
+    if(dir!== 0)
+    {
+      this.scale.x = 3*dir;
+      if(this.isStanding())this.animasion = 'run';
+    }
+    else this.animasion = 'idle';
+    if(this.isJumping()) this.animasion = 'jump';
+    this.animations.play(this.animasion);
     Character.prototype.moveX.call(this, dir);
 
   };
@@ -65,23 +79,28 @@ Character.apply(this, [x, y, party.hero, 'King', 1, 'personaje', escene]);
     //Move Right
     if(escene.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) movement = Direction.RIGHT;
     else if(escene.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) movement = Direction.LEFT;
-
     if(this.canJump() && escene.game.input.keyboard.isDown(Phaser.Keyboard.UP)){
-    this.jump();
+      this.jump();
   }
     return movement;
   };
 
+King.prototype.isJumping = function(){
+  if(!this.isStanding() && this.body.velocity.y < 0) return true;
+  else return false;
+};
   King.prototype.jump = function (){
+      this.jumpsound.play(false);
       this.body.velocity.y = -700;
 
   };
 
     King.prototype.canJump = function(){
-      return this.isStanding() && escene.collisionWithTilemap;
+      return this.isStanding() && escene.collisionWithTilemap || escene.collisionWithEnnemies;
   };
 
     King.prototype.isStanding = function(){
+        this.hasJumped = false;
        return this.body.blocked.down || this.body.touching.down;
   };
 }
@@ -92,10 +111,9 @@ King.prototype.constructor = King;
 ////////////////////////////////////////////////////////////////////////////
 //Enemigos
 //Enemy, clase base para enemigos. Si tocan al rey le hacen daño.
-function Enemy (name, x, y, vidas, danyo, spriteName, escene) {
-    Character.apply(this, [x, y,party.enemy,name , vidas, spriteName, escene]);
-    //TODO: HACER APLICACIÓN DEL DAÑO. PARA LA P4
-    this.damage = danyo || 0;
+function Enemy (name, x, y, spriteName, escene) {
+    Character.apply(this, [x, y,party.enemy,name , spriteName, escene]);
+    this.enemyhit = this.game.add.audio('enemyHit');
 }
 
 Enemy.prototype = Object.create(Character.prototype);
@@ -104,30 +122,48 @@ Enemy.prototype.constructor = Enemy;
 ////////////////////////////////////////////////////////////////////////////
 //Serpiente, hereda de enemy y se mueve a izquierda y derecha
 function Serpiente(x, y, escene){
-  Enemy.apply(this, ['Serpiente',x, y, 1,1, 'serpiente'/*Nombre de sprite*/, escene]);
+  Enemy.apply(this, ['Serpiente', x, y, 'serpiente'/*Nombre de sprite*/, escene]);
+//Animaciones de la serpiente
+  this.runanim = this.animations.add('run',Phaser.Animation.generateFrameNames('S',0,3),3,true);
+  this.animations.add('idle', Phaser.Animation.generateFrameNames('S',0,0),1,true);
+  this.deathanim = this.animations.add('death', Phaser.Animation.generateFrameNames('D',0,3),50,false);
+  this.runanim.speed = 10;
   this.playerSpeed = 450;
-  this.reach = 250;
 
+  this.reach = 250;
+  this.primera = false;
   Serpiente.prototype.update = function (){
+    if(!this.primera)
     this.moveX(this.playerNear());
-    if(this.KillPlayer())  escene.game.state.start('gameOver');
-    if(this.Stepped()){
-    escene.objectDestroy(this);
+    if(this.KillPlayer())  escene.gameOver = true;
+    if(this.Stepped() && !this.primera){
+      escene.sceneScore += 10;
+      this.enemyhit.play(false);
+      this.animations.play('death');
+      this.primera = true;
     }
+    this.deathanim.killOnComplete = true;
 
   };
   Serpiente.prototype.playerNear = function () {
+    if((escene._player.y <= this.y && escene._player.y >= this.y - 150)||(escene._player.y >=this.y && escene._player.y <= this.y + 150)){
       if(escene._player.x <= this.x  && escene._player.x >= this.x - this.reach)
       {
+        this.animations.play('run');
         this.scale.x = Direction.LEFT * 3;
         return Direction.LEFT;
       }
       else if (escene._player.x >= this.x && escene._player.x <= this.x + this.reach)
        {
+         this.animations.play('run');
          this.scale.x = Direction.RIGHT * 3;
           return Direction.RIGHT;
         }
-      else return 0;
+    }
+    else {
+      this.animations.play('idle');
+      return 0;
+    }
   };
 
   Serpiente.prototype.KillPlayer = function(){
@@ -152,8 +188,45 @@ Serpiente.prototype.constructor = Serpiente;
 ////////////////////////////////////////////////////////////////////////////
 //Golem, enemigo final del juego.
 function Golem(x, y, escene){
-  Enemy.apply(this, ['Golem',x, y, 15, escene]);
+  Enemy.apply(this, ['Golem', x, y, escene]);
+  this.playerSpeed = 450;
+  this.state = 0;
+  this.lifes = 3;
 }
+Golem.prototype.update = function (){
+  console.log(kekeke);
+
+};
+//switch de estados
+Golem.prototype.changeState = function(caso){
+  switch(caso){
+    case 1:
+      this.runSides();
+    break;
+    case 2:
+    //generar serpientes hermano
+    break;
+    case 3:
+    break;
+    default:
+    break;
+  }
+};
+Golem.prototype.runSides = function(){
+    this.playerSpeed = 450;
+    var dir = Direction.NONE;
+    if(this.escene.bossCollider && (this.body.blocked.right || this.body.touching.right))
+      dir = Direction.RIGHT;
+
+};
+
+
+
+
+
+
+
+
 Golem.prototype = Object.create(Enemy.prototype);
 Golem.prototype.constructor = Golem;
 
@@ -171,12 +244,15 @@ function CreateMap (Jsonfile, escene){
       escene.map = escene.game.add.tilemap(Jsonfile);
         //Utilizaremos siempre la misma hoja de patrones, por tanto, no necesitamos pasarla por
         //variable.
+
+      escene.map.addTilesetImage('sheet', 'tiles');
       escene.game.physics.arcade.TILE_BIAS = 40;
 
         //Creamos las capas de nuestro tilemap
       escene.back = escene.map.createLayer('Back');
       escene.death = escene.map.createLayer('Death');
       escene.ground = escene.map.createLayer('Ground');
+      //escene.back.alpha = 100;
       //escene.spawn = escene.map.createLayer('spawn');
 
         //Declaramos las colisiones con la muerte y el Suelo
@@ -216,8 +292,8 @@ var Credits = {
     taskText.anchor.setTo(0.5);
     taskText.stroke = "rgba(0,0,0,0)";
     taskText.strokeThickness = 4;
-    this.game.add.tween(authorText).to( { y: -300 }, 20000, Phaser.Easing.Cubic.Out, true, this.creditCount * 10000);
-    this.game.add.tween(taskText).to( { y: -200 }, 20000, Phaser.Easing.Cubic.Out, true, this.creditCount * 10000);
+    this.game.add.tween(authorText).to( { y: -300 }, 20000, Phaser.Easing.Cubic.Out, true, this.creditCount * 4000);
+    this.game.add.tween(taskText).to( { y: -200 }, 20000, Phaser.Easing.Cubic.Out, true, this.creditCount * 4000);
     this.creditCount ++;
   },
 
@@ -252,17 +328,27 @@ var Credits = {
   },
 
   create: function () {
+    
+    this.kekstar = this.game.add.sprite(30,320,'kekstar');
+    this.kekstar.scale.setTo(0.05, 0.05);
+    this.music = this.game.add.audio('creditMusic');
+    this.music.loop = true;
+    this.music.play();
     this.stage.disableVisibilityChange = true;
     this.addCredit('for playing', 'Thank you');
     this.addCredit('Kekstar Studio', 'Brought to you by');
     this.addCredit('Lead One-Hand Programmer', 'Francisco Solano López');
-    this.addCredit('Lead Programmer', 'Manuel Hernández');
+    this.addCredit('Lead Programmer/ Level Designer', 'Manuel Hernández');
     this.addCredit('Hideo Kojima', 'Hideo Kojima');
     this.addCredit('Phaser.io', 'Powered By');
     this.addMenuOption('Menu', function (e) {
+      this.music.destroy();
+      this.game.click.play(false);
       this.game.state.start("menu");
     });
     this.addMenuOption('GitHub', function (e) {
+      this.music.destroy();
+      this.game.click.play(false);
       window.open("https://github.com/Kekstar");
     });
 
@@ -276,25 +362,35 @@ module.exports = Credits;
 },{}],4:[function(require,module,exports){
 var GameOver = {
     create: function () {
+      this.game.stage.backgroundColor = '#ffffff';
         console.log("Game Over");
         var button = this.game.add.button(400, 300,
                                           'button',
                                           this.restart,
                                           this, 2, 1, 0);
         button.anchor.set(0.5);
-        var goText = this.game.add.text(400, 100, "GameOver");
-        var text = this.game.add.text(0, 0, "Reset Game");
+        var goText = this.game.add.text(400, 100, "¡Has muerto!");
+        goText.font = 'Astloch';
+        goText.fontSize = 70;
+        var text = this.game.add.text(0, 0, "Reintentar");
+        text.font = 'Astloch';
+        text.fill = 'white';
+        text.fontSize = 40;
+        //text.fontVariant = 'Bold';
         text.anchor.set(0.5);
         goText.anchor.set(0.5);
         button.addChild(text);
 
-  //DONE 8 crear un boton con el texto 'Return Main Menu' que nos devuelva al menu del juego
+
         var button2 = this.game.add.button(400, 200,
                                           'button',
                                           this.goMenu,
-                                          this, 2, 2, 4);
+                                          this, 2, 1, 0);
         button2.anchor.set(0.5);
         var text2 = this.game.add.text(0, 0, "Menu");
+        text2.font = 'Astloch';
+        text2.fontSize = 40;
+        text2.fill = 'white';
         text2.anchor.set(0.5);
         button2.addChild(text2);
 
@@ -303,12 +399,13 @@ var GameOver = {
 
 
     },
-    //DONE 7 declarar el callback del boton.
     restart: function(){
+      this.game.click.play(false);
       this.game.state.start('play');
     },
 
     goMenu: function(){
+      this.game.click.play(false);
       this.game.state.start('menu');
     }
 };
@@ -318,38 +415,70 @@ module.exports = GameOver;
 },{}],5:[function(require,module,exports){
 var GameOver = {
     create: function () {
-        console.log("Game Over");
-        var button = this.game.add.button(400, 300,
-                                          'button',
-                                          this.restart,
-                                          this, 2, 1, 0);
-        button.anchor.set(0.5);
-        var goText = this.game.add.text(400, 100, "Level Suceeded!");
-        var text = this.game.add.text(0, 0, "Reset Game");
-        text.anchor.set(0.5);
-        goText.anchor.set(0.5);
-        button.addChild(text);
-        
-        var button2 = this.game.add.button(400, 200,
+      this.music = this.game.add.audio('levelSuccess');
+      this.music.volume = 0.5;
+      this.music.play();
+      this.game.stage.backgroundColor = '#ffffff';
+        if(this.game.niveles[this.game.nivelActual+1] !== undefined){
+          this.game.nivelActual++;
+          var button = this.game.add.button(400, 300,
+                                            'button',
+                                            this.continue,
+                                            this, 2, 1, 0);
+          button.anchor.set(0.5);
+
+          var text = this.game.add.text(0, 0, "Sig. Nivel");
+          text.font = 'Astloch';
+          text.fill = 'white';
+
+          text.fontSize = 40;
+          text.anchor.set(0.5);
+          button.addChild(text);
+          button.anchor.set(0.5);
+        }
+        else {
+          var endGameText = this.game.add.text(400, 300, "¡Acabaste el Juego!");
+          endGameText.font = 'Astloch';
+          endGameText.fontSize = 70;
+          endGameText.anchor.set(0.5);
+          this.game.nivelActual = 1;
+
+        }
+        var scoreText = this.game.add.text(400, 200, "Puntuación global:"+this.game.overallScore);
+        scoreText.font = 'Astloch';
+        scoreText.fontSize = 70;
+        scoreText.anchor.set(0.5);
+        var goText = this.game.add.text(400, 100, "¡Nivel Completado!");
+        goText.font = 'Astloch';
+        goText.fontSize = 70;
+        var button2 = this.game.add.button(400, 400,
                                           'button',
                                           this.goMenu,
-                                          this, 2, 2, 4);
+                                          this, 2, 1, 0);
         button2.anchor.set(0.5);
+        goText.anchor.set(0.5);
         var text2 = this.game.add.text(0, 0, "Menu");
+        text2.font = 'Astloch';
+        text2.fontSize = 40;
+        text2.fill = 'white';
         text2.anchor.set(0.5);
         button2.addChild(text2);
 
 
-        button.anchor.set(0.5);
+
 
 
     },
     //DONE 7 declarar el callback del boton.
-    restart: function(){
+    continue: function(){
+      this.music.destroy();
+      this.game.click.play(false);
       this.game.state.start('play');
     },
 
     goMenu: function(){
+      this.music.destroy();
+      this.game.click.play(false);
       this.game.state.start('menu');
     }
 };
@@ -375,9 +504,18 @@ var BootScene = {
     this.game.load.image('preloader_bar', 'images/preloader_bar.png');
     this.game.load.spritesheet('button', 'images/buttons.png', 168, 70);
     this.game.load.image('logo', 'images/castle.png');
+    this.game.load.image('kekstar','images/kekstar.png');
+    //http://freesound.org/people/NenadSimic/sounds/171697/
+    this.game.load.audio('click', 'Sounds/Effects/click.wav');
+
+    //http://opengameart.org/content/generic-8-bit-jrpg-soundtrack
+    this.game.load.audio('intromusic', 'Sounds/Music/intro.ogg');
+    this.game.load.audio('creditMusic', 'Sounds/Music/credits.ogg');
+
   },
 
   create: function () {
+      this.game.click = this.game.add.audio('click');
       this.game.state.start('preloader');
       this.game.state.start('menu');
   }
@@ -396,13 +534,32 @@ var PreloaderScene = {
       // el atlasJSONHash con 'images/rush_spritesheet.png' como imagen y 'images/rush_spritesheet.json'
       //como descriptor de la animación.
 
-    this.game.load.tilemap('tilemap', 'mapas/Nivel1.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.tilemap('Nivel1', 'mapas/Nivel1.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.tilemap('Nivel2', 'mapas/Nivel2.json', null, Phaser.Tilemap.TILED_JSON);
+
     this.game.load.image('tiles', 'images/sheet.png');
-    //this.game.load.atlas('rush', 'atlas/King.png', 'images/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
-    this.game.load.image('personaje', 'images/Rush.png');
-    this.game.load.image('serpiente', 'images/serpiente.png');
-    this.game.load.image('menu', 'images/b_menu.png');
-    this.game.load.image('continue', 'images/b_continue.png');
+    //http://freesound.org/people/Questiion/sounds/166392/
+    this.game.load.audio('music1','Sounds/Music/Level1.wav');
+    this.game.load.audio('music2','Sounds/Music/Level2.ogg');
+
+    //http://freesound.org/people/primordiality/sounds/78824/
+    this.game.load.audio('levelSuccess', 'Sounds/Effects/LevelSuccess.wav');
+
+
+
+    this.game.load.audio('jumpsound','Sounds/Effects/Jump.wav');
+
+    this.game.load.audio('enemyHit', "Sounds/Effects/EnemyHit.wav");
+    //http://freesound.org/people/josepharaoh99/sounds/361636/
+    this.game.load.audio('playerDeath', "Sounds/Effects/PlayerDeath.mp3");
+
+    //http://freesound.org/people/cabled_mess/sounds/350986/
+    this.game.load.audio('lost', 'Sounds/Effects/lost.wav');
+
+    this.game.load.atlas('personaje', 'images/Character Sprites/King/King.png', 'atlas/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+
+    this.game.load.atlas('serpiente', 'images/Character Sprites/Snake/Snake.png', 'atlas/Snake.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+
     this.game.load.image('stairs','images/stairs.png');
     this.load.onLoadComplete.add(this.loadComplete,this);
       //DONE 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
@@ -418,27 +575,21 @@ var PreloaderScene = {
   },
      //DONE 2.2b function loadComplete()
     update: function(){
-        this._loadingBar
     },
 
 };
 var wfconfig = {
-
   active: function() {
-      console.log("font loaded");
       init();
   },
   google: {
-      families: ['Sniglet']
+      families: ['Sniglet', 'MedievalSharp', 'Astloch']
   }
 
 };
 
-//DONE 3.2 Cargar Google font cuando la página esté cargada con wfconfig.
-//DONE 3.3 La creación del juego y la asignación de los states se hará en el método init().
+
 window.init = function(){
-  //DONE 1.2 Añadir los states 'boot' BootScene, 'menu' MenuScene, 'preloader' PreloaderScene, 'play' PlayScene, 'gameOver' GameOver.
-  //DONE 1.3 iniciar el state 'boot'.
   //Metodo init, que será llamado una vez la fuente se haya cargado.
   var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
   game.state.add('boot', BootScene);
@@ -450,12 +601,13 @@ window.init = function(){
   game.state.add('levelSucceed',levelSucceed);
   //Comenzamos con el estado boot
   game.state.start('boot');
+  game.niveles = { 1: 'Nivel1', 2: 'Nivel2'};
+  game.musics = { 1: 'music1', 2:'music2'};
+  game.nivelActual = 1;
+  game.overallScore = 0;
 
 }
 window.onload = function () {
-  //En el onload se cargará la Google Font
-  //DONE 3.2 Cargar Google font cuando la página esté cargada con wfconfig.
-  //DONE 3.3 La creación del juego y la asignación de los states se hará en el método init().
   WebFont.load(wfconfig);
 };
 
@@ -465,23 +617,32 @@ var MenuScene = {
     this.optionCount = 1;
   },
   create: function () {
+      this.intromusic = this.game.add.audio('intromusic');
+      this.intromusic.loop = true;
+      this.intromusic.play();
       this.game.world.setBounds(0,0,800,600);
       this.game.stage.backgroundColor = "#000000";
       var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY/2, 'logo');
       logo.anchor.setTo(0.5, 0.5);
       logo.scale.setTo(0.75, 0.75);
       this.addMenuOption('Jugar', function (e) {
+          this.intromusic.destroy();
+          this.game.click.play(false);
           this.game.state.start('preloader');
       });
       this.addMenuOption('Creditos', function (e) {
+          this.intromusic.destroy();
+          this.game.click.play(false);
           this.game.state.start("creditos");
       });
       this.addMenuOption('GitHub', function (e) {
+        this.intromusic.destroy();
+        this.game.click.play(false);
         window.open("https://github.com/Kekstar");
       });
   },
   addMenuOption: function(text, callback) {
-    var optionStyle = { font: '30pt calibri', fill: 'black', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
+    var optionStyle = { font: '40pt Astloch', fontVariant: 'Bold', fill: 'yellow', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
     var button =  this.game.add.button(this.game.world.centerX, (this.optionCount * 80)+300, 'button', callback, this, 2, 1, 0);
     var txt = this.game.add.text(0,0, text, optionStyle);
     txt.anchor.set(0.5);
@@ -495,7 +656,7 @@ var MenuScene = {
       txt.useHandCursor = true;
     };
     var onOut = function (target) {
-      target.fill = "black";
+      target.fill = "yellow";
       target.stroke = "rgba(0,0,0,0)";
       txt.useHandCursor = false;
       };
@@ -518,18 +679,30 @@ module.exports = MenuScene;
 //mover el player.
 var characters = require('./Characters.js');
 var mapCreator = require('./MapCreator');
-//Scena de juego.
+//EScena de juego.
 var PlayScene = {
     _player: {},
-    gameOver: false,
-  //player
-  //Método constructor...
-  create: function () {
 
+  create: function () {
+    this.gameOver = false;
+    this.sceneScore = 0;
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    //Inicializacion de audios.
+    this.music = this.game.add.audio(this.game.musics[this.game.nivelActual]);
+    this.lostSound = this.game.add.audio('lost');
+    this.playerDeath = this.game.add.audio('playerDeath');
+    this.music.volume = 0.3;
+    this.music.play();
+    this.music.loop = true;
+    //Inicializacion de Hud
+    this.hudScore = this.game.add.text(10, 0, 'Score: 0');
+    this.hudScore.font = 'Astloch';
+    this.hudScore.fontSize = 50;
+    this.hudScore.fixedToCamera = true;
+
     //Generamos el mapa.
-    //DEBUG: AL CARGAR TIENES QUE CAMBIAR EN EL MAIN EL NOMBRE DEL ARCHIVO
-    new mapCreator.CreateMap('tilemap', this);
+    new mapCreator.CreateMap(this.game.niveles[this.game.nivelActual], this);
     //Introducimos los objetos de juego
     //Array de enemigos
     this.objectArray = [];
@@ -538,15 +711,7 @@ var PlayScene = {
     this.spawnObjects('Spawn');
 
     this.pauseButton = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-
-      //nombre de la animación, frames, framerate, isloop
-      /*this._rush.animations.add('run',
-                    Phaser.Animation.generateFrameNames('RUN',1,4,'',2),10,true);
-      this._rush.animations.add('stop',
-                    Phaser.Animation.generateFrameNames('WALK',0,0,'',2),0,false);
-      this._rush.animations.add('jump',
-                     Phaser.Animation.generateFrameNames('JUMP',0,3,'',2),0,false);*/
-      this.configure();
+    this.configure();
 
   },
 
@@ -583,7 +748,9 @@ var PlayScene = {
    }
    else if(element.type === 'King'){
      this._player = new characters.King(element.x*3, element.y*3, this);
-
+   }
+   else if(element.type === 'Golem'){
+     this._boss = new characters.Golem(element.x*3, element.y*3, this);
    }
     else if(element.type === 'endlevel'){
       this.endlevel = this.game.add.sprite(element.x*3, element.y*3,'stairs');
@@ -594,45 +761,56 @@ var PlayScene = {
 
     }
 },
+checkColisions: function(){
+  this.collisionWithTilemap = this.game.physics.arcade.collide(this._player, this.ground);
+  this.collisionDeath = this.game.physics.arcade.collide(this._player, this.death);
+  this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
+  this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player, this.enemies);
+  this.levelComplete = this.game.physics.arcade.collide(this._player, this.endlevel);
+  this.bossCollider = this.game.physics.arcade.collide(this._boss, this.ground);
+  this.bossPlayerColl = this.game.physics.arcade.collide(this._boss, this._player);
 
-
-
-    //IS called one per frame.
+},
+  //IS called one per frame.
     update: function () {
       if(!this.levelComplete && !this.gameOver){
-      this.collisionWithTilemap = this.game.physics.arcade.collide(this._player, this.ground);
-      this.collisionDeath = this.game.physics.arcade.collide(this._player, this.death);
-      this.collisionWithFloor = this.game.physics.arcade.collide(this.enemies, this.ground);
-      this.collisionWithEnnemies = this.game.physics.arcade.collide(this._player, this.enemies);
-      this.levelComplete = this.game.physics.arcade.collide(this._player, this.endlevel);
+      this.checkColisions();
       this.objectArray.forEach(function(elem){
         if(elem!== null)elem.update();
       });
-
-      if(this._player !== null)this._player.update();
-
+      this._player.update();
       if(this.pauseButton.isDown){
         this.game.paused = true;
         this.pauseMenu();
       }
-      if(this.levelComplete)
-
       this.input.onDown.add(this.unpause, this);
     }
     else {
-      this.closeLevel();
-      if(this.gameOver)this.game.state.start('gameOver');
-      else this.game.state.start('levelSucceed');
+      if(this.gameOver){
+        this.lostSound.play(false);
+        this.closeLevel();
+        this.game.state.start('gameOver');
+      }
+      else
+      {
+        this.closeLevel();
+        this.game.overallScore+= this.sceneScore;
+        this.game.state.start('levelSucceed');
+      }
     }
 
 
   },
+  hud: function(){
+    this.hudScore.text = 'Score: '+this.sceneScore;
+  },
   closeLevel: function(){
-
+    this.destroy();
   },
   unpause:function(event){
   if (this.game.paused) {
       if (this.b_menu.getBounds().contains(event.x, event.y)){
+             this.closeLevel();
              this.game.state.start('menu');
              this.game.paused = false;
            }
@@ -647,23 +825,29 @@ salir:function(){
   this.b_menu.destroy();
   this.b_continue.destroy();
   this.pausetext.destroy();
+  this.music.resume();
 
 },
 pauseMenu:function(){
+  this.music.pause();
   this.b_menu= this.addMenuOption("Menu",function () {
     this.salir();
     this.destroy();
     this.game.state.start('menu');}
     ,0);
-  this.b_continue=this.addMenuOption("Continue",function () {
+    this.b_menu.font = 'Astloch';
+  this.b_continue = this.addMenuOption("Continue",function () {
     this.salir();
     this.game.paused = false;}
     ,1);
-  this.pausetext = this.game.add.text(this.game.camera.x+400,this.game.camera.y+ 175, 'Click anywhere to continue', { font: '40px Revalia', fill: '#000',boundsAlignH: "center", boundsAlignV: "middle"  });
+  this.b_continue.font = 'Astloch';
+  this.pausetext = this.game.add.text(this.game.camera.x+400,this.game.camera.y+ 175, 'Click anywhere to continue', { font: '50px Astloch',fontVariant :'Bold', fill: '#000',boundsAlignH: "center", boundsAlignV: "middle"  });
+
   this.pausetext.anchor.setTo(0.5,0.5);
     },
 
   render:function(){
+    this.hud();
     //debug del cuerpo en verde
     //this.game.debug.body(this.enemies);
     //Datos del collider
@@ -699,17 +883,18 @@ pauseMenu:function(){
 
 
     destroy: function(){
+      this.music.destroy();
+      this.playerDeath.destroy();
       this.objectArray.forEach(function(elem){
       elem.destroy();});
       this.map.destroy();
-      this.character.destroy();
-
+      this._player.destroy();
 
       console.log("Game assets deleted!");
     //TODO 9 destruir los recursos tilemap, tiles
   },
   addMenuOption: function(text, callback,n) {
-    var optionStyle = { font: '30pt calibri', fill: 'black', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
+    var optionStyle = { font: '30pt Astloch',fontVariant:'Bold', fill: 'white', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};
     var button =  this.game.add.button(this.game.camera.x+400, (n * 80)+this.game.camera.y+ 250, 'button', callback, this, 2, 1, 0);
     var txt = this.game.add.text(0,0, text, optionStyle);
     txt.anchor.set(0.5);
