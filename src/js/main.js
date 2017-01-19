@@ -118,7 +118,7 @@ window.init = function(){
   game.state.start('boot');
   game.niveles = { 1: 'Nivel1', 2: 'Nivel2', 3: 'Nivel3'};
   game.musics = { 1: 'music1', 2:'music2', 3: 'music1'};
-  game.nivelActual = 3;
+  game.nivelActual = 1;
   game.overallScore = 0;
 
 }
