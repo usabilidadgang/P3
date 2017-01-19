@@ -75,7 +75,9 @@ var PlayScene = {
      this._player = new characters.King(element.x*3, element.y*3, this);
    }
    else if(element.type === 'Golem'){
-     this._boss = new characters.Golem(element.x*3, element.y*3, this);
+    this._boss = new characters.Golem(element.x*3, element.y*3, this);
+     this.objectArray.push(this._boss);
+     this.enemies.add(this._boss);
    }
     else if(element.type === 'endlevel'){
       this.endlevel = this.game.add.sprite(element.x*3, element.y*3,'stairs');
@@ -173,24 +175,14 @@ pauseMenu:function(){
 
   render:function(){
     this.hud();
-    //debug del cuerpo en verde
-    //this.game.debug.body(this.enemies);
-    //Datos del collider
-    //this.game.debug.bodyInfo(this.enemies, 32, 32);
-
   },
     configure: function(){
       this.levelComplete = false;
 
         this.game.world.setBounds(0, 0, 2400, 500);
-
-        //this._player.body.bounce.y = 0.2;
         this.game.physics.arcade.gravity.y = 2000;
         this._player.body.gravity.x = 0;
         this._player.body.velocity.x = 0;
-        //this._player.body.collideWorldBounds = false;
-
-        //this._player.z = 150;
         this.game.camera.follow(this._player);
         this.ground.resizeWorld();
     },
@@ -216,7 +208,6 @@ pauseMenu:function(){
       this._player.destroy();
 
       console.log("Game assets deleted!");
-    //TODO 9 destruir los recursos tilemap, tiles
   },
   addMenuOption: function(text, callback,n) {
     var optionStyle = { font: '30pt Astloch',fontVariant:'Bold', fill: 'white', align: 'left', stroke: 'rgba(0,0,0,0)', srokeThickness: 4};

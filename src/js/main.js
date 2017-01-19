@@ -48,6 +48,7 @@ var PreloaderScene = {
 
     this.game.load.tilemap('Nivel1', 'mapas/Nivel1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.tilemap('Nivel2', 'mapas/Nivel2.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.tilemap('Nivel3', 'mapas/Nivel3.json', null, Phaser.Tilemap.TILED_JSON);
 
     this.game.load.image('tiles', 'images/sheet.png');
     //http://freesound.org/people/Questiion/sounds/166392/
@@ -71,6 +72,8 @@ var PreloaderScene = {
     this.game.load.atlas('personaje', 'images/Character Sprites/King/King.png', 'atlas/King.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 
     this.game.load.atlas('serpiente', 'images/Character Sprites/Snake/Snake.png', 'atlas/Snake.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+
+      this.game.load.atlas('Golem', 'images/Character Sprites/Golem/Golem.png', 'atlas/Golem.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 
     this.game.load.image('stairs','images/stairs.png');
     this.load.onLoadComplete.add(this.loadComplete,this);
@@ -113,9 +116,9 @@ window.init = function(){
   game.state.add('levelSucceed',levelSucceed);
   //Comenzamos con el estado boot
   game.state.start('boot');
-  game.niveles = { 1: 'Nivel1', 2: 'Nivel2'};
-  game.musics = { 1: 'music1', 2:'music2'};
-  game.nivelActual = 1;
+  game.niveles = { 1: 'Nivel1', 2: 'Nivel2', 3: 'Nivel3'};
+  game.musics = { 1: 'music1', 2:'music2', 3: 'music1'};
+  game.nivelActual = 3;
   game.overallScore = 0;
 
 }

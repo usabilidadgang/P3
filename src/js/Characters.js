@@ -35,6 +35,9 @@ function Character(x, y, party, name, spritename, escene){
       default:
     }
   };
+Character.prototype.isStanding = function(){
+     return this.body.blocked.down || this.body.touching.down;
+};
 }
 Character.prototype = Object.create(Phaser.Sprite.prototype);
 Character.prototype.constructor = Character;
@@ -51,7 +54,6 @@ this.animations.add('idle', Phaser.Animation.generateFrameNames('R',0,0),1,true)
 
 //SONIDO DEL SALTO
 this.jumpsound = this.game.add.audio('jumpsound');
-this.hasJumped = false;
 
 //FUNCIONES DEL REY
   King.prototype.update = function () {
@@ -98,10 +100,6 @@ King.prototype.isJumping = function(){
       return this.isStanding() && escene.collisionWithTilemap || escene.collisionWithEnnemies;
   };
 
-    King.prototype.isStanding = function(){
-        this.hasJumped = false;
-       return this.body.blocked.down || this.body.touching.down;
-  };
 }
 King.prototype = Object.create(Character.prototype);
 King.prototype.constructor = King;
@@ -113,6 +111,19 @@ King.prototype.constructor = King;
 function Enemy (name, x, y, spriteName, escene) {
     Character.apply(this, [x, y,party.enemy,name , spriteName, escene]);
     this.enemyhit = this.game.add.audio('enemyHit');
+
+    Enemy.prototype.SideCollision = function (){
+      return escene.collisionWithEnnemies && ((this.body.blocked.left || this.body.blocked.right)||(this.body.touching.left || this.body.touching.right));
+    };
+    Enemy.prototype.KillPlayer = function(){
+        return !this.Stepped() && this.SideCollision();
+      };
+    Enemy.prototype.Stepped = function(){
+        return escene.collisionWithEnnemies && this.touchedUp();
+      };
+    Enemy.prototype.touchedUp = function(){
+        return this.body.blocked.up || this.body.touching.up;
+      };
 }
 
 Enemy.prototype = Object.create(Character.prototype);
@@ -164,22 +175,6 @@ function Serpiente(x, y, escene){
       return 0;
     }
   };
-
-  Serpiente.prototype.KillPlayer = function(){
-    return !this.Stepped() && this.SideCollision();
-  };
-
-  Serpiente.prototype.SideCollision = function (){
-    return escene.collisionWithEnnemies && ((this.body.blocked.left || this.body.blocked.right)||(this.body.touching.left || this.body.touching.right));
-  };
-
-  Serpiente.prototype.Stepped = function(){
-    return escene.collisionWithEnnemies && this.touchedUp();
-  };
-
-  Serpiente.prototype.touchedUp = function(){
-    return this.body.blocked.up || this.body.touching.up;
-  };
 }
 Serpiente.prototype = Object.create(Enemy.prototype);
 Serpiente.prototype.constructor = Serpiente;
@@ -187,45 +182,68 @@ Serpiente.prototype.constructor = Serpiente;
 ////////////////////////////////////////////////////////////////////////////
 //Golem, enemigo final del juego.
 function Golem(x, y, escene){
-  Enemy.apply(this, ['Golem', x, y, escene]);
+  Enemy.apply(this, ['Golem', x, y, 'Golem', escene]);
+  this.animations.add('run', Phaser.Animation.generateFrameNames('R',0,3),10,true);
+  this.summonanim = this.animations.add('summon', Phaser.Animation.generateFrameNames('Summon',0,1),2,false);
+  this.animations.add('idle', Phaser.Animation.generateFrameNames('R',0,0),1,true);
   this.playerSpeed = 450;
   this.state = 0;
-  this.lifes = 3;
-}
+  this.lifes = 2;
+  this.direccion = Direction.LEFT;
+  var self = this;
+  this.tocado = false;
+  this.maxSerpientes = 5;
+  this.Serpientes = 0;
 Golem.prototype.update = function (){
-  console.log(kekeke);
 
-};
-//switch de estados
-Golem.prototype.changeState = function(caso){
-  switch(caso){
-    case 1:
-      this.runSides();
-    break;
-    case 2:
-    //generar serpientes hermano
-    break;
-    case 3:
-    break;
-    default:
-    break;
+  if (this.lifes === 0)this.game.state.start('levelSucceed');
+  if(this.KillPlayer())  escene.gameOver = true;
+  if(this.Stepped() && !this.tocado){
+    this.lifes--;
+    this.tocado = true;
   }
+this.scale.x = this.direccion * 3;
+  switch(this.lifes){
+    case 2:
+      this.checkSides();
+      this.moveX(this.direccion);
+      this.animations.play('run');
+      break;
+    case 1:
+    this.option = Math.floor((Math.random() * 100000) + 1);
+    if(this.option > 0 && this.option < 90000){
+      this.animations.play('run');
+      this.checkSides();
+    }
+    else if (this.option > 90000 && this.Serpientes <= this.maxSerpientes){
+        this.spawnSnake();
+        this.Serpientes++;
+
+    }
+    break;
+
+  }
+  if(this.direccion === 0)this.animations.play('idle');
+  this.moveX(this.direccion);
+  if(Phaser.Math.distance(this.x, this.y, escene._player.x, escene._player.y) > 100)this.tocado = false ;
 };
-Golem.prototype.runSides = function(){
-    this.playerSpeed = 450;
-    var dir = Direction.NONE;
-    if(this.escene.bossCollider && (this.body.blocked.right || this.body.touching.right))
-      dir = Direction.RIGHT;
-
+Golem.prototype.spawnSnake = function (){
+    var serp = new Serpiente((Math.random() * 1390)+970, this.y, escene);
+    escene.enemies.add(serp);
+    escene.objectArray.push(serp);
 };
+Golem.prototype.checkSides = function(){
+    if(this.body.blocked.right || this.body.touching.right){
+    this.direccion = Direction.LEFT;
+    this.playerSpeed = 450 * Math.floor((Math.random() * 2) + 1);
+    }
+    else if(this.body.blocked.left || this.body.touching.left){
+    this.direccion = Direction.RIGHT;
+    this.playerSpeed = 450 * Math.floor((Math.random() * 2) + 1);
+    }
 
-
-
-
-
-
-
-
+  };
+}
 Golem.prototype = Object.create(Enemy.prototype);
 Golem.prototype.constructor = Golem;
 
