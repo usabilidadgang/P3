@@ -13,6 +13,7 @@
     "gulp-gh-pages": "*",
     "gulp-util": "*",
     "merge-stream": "*",
+    "node-fetch": "^2.3.0",
     "phaser-ce": "*",
     "vinyl-source-stream": "*",
     "watchify": "*"
