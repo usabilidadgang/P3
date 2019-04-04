@@ -17,3 +17,8 @@ class Event
     this.eventInfo = eventInfo;
   }
 }
+
+module.exports = {
+  Event : Event,
+   EventType : EventType
+ };
