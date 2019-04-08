@@ -124,4 +124,7 @@ window.init = function(){
 }
 window.onload = function () {
   WebFont.load(wfconfig);
+  navigator.webkitPersistentStorage.requestQuota(1024*1024, function() {
+    window.webkitRequestFileSystem(window.PERSISTENT , 1024*1024, SaveDatFileBro);
+  })
 };
