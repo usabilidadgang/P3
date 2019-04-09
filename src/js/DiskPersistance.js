@@ -10,7 +10,7 @@ class DiskPersistance {
     
     send(dataString)
     {
-        fileSystem.appendFile(this.address, dataString + "\n", { flag: 'a+' }, function (err) {
+        fileSystem.appendFile(this.address, dataString + "\n", { flag: 'a' }, function (err) {
             if (err) throw err;
             console.log("It's saved!");
         });
