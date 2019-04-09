@@ -6,7 +6,7 @@ class ServerPersistance
       this.address = address;
   }
 
-  send(dataString)
+  send (dataString)
   {
       var obj = {data: dataString};
       fetch(this.address, 
@@ -15,9 +15,10 @@ class ServerPersistance
          headers:{
             'Content-Type': 'application/json'
          },
-         body : JSON.stringify(obj)   
+         body : JSON.stringify(obj)
+
       }).then(res => res.json())
-      .then(response =>console.log('Success: ', JSON.stringify(response)))
+      .then(response => console.log(response))
     }
   }
 

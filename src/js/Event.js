@@ -1,12 +1,5 @@
-const EventType
-{
-  "SESSION_INIT": 1,
-  "SESSION_CLOSE": 2,
-  "PLAYER_POSITION": 3,
-  "ENEMY_DEAD": 4,
-  "LEVEL_INIT": 5,
-  "LEVEL_CLOSE": 6
-}
+'use strict'
+
 
 class Event
 {
@@ -18,7 +11,4 @@ class Event
   }
 }
 
-module.exports = {
-  Event : Event,
-   EventType : EventType
- };
+module.exports = Event;

@@ -1,7 +1,6 @@
-var ServerPersistance = require('./ServerPersistance');
-
-
+const ServerPersistance = require('./ServerPersistance');
+const readline = require('readline');
 
 var persistance = new ServerPersistance('http://localhost:80/tracker');
-response = persistance.send("tuvieja");
-console.log(response)
+response = persistance.send(process.argv[2]);
+console.log(process.argv[2])
