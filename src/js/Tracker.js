@@ -2,6 +2,7 @@
 const ServerPersistance = require('./ServerPersistance.js');
 const CSVSerializer = require('./CSVSerializer');
 const JSONSerializer = require('./JSONSerializer');
+const Event = require('./Event');
 
 class Tracker {
 
@@ -25,14 +26,17 @@ class Tracker {
         this.Serializer = new JSONSerializer();
       }
       this.instance = this;
-      this.addEvent = function(event)
+      this.addEvent = function(event_type, event_info)
       {
+        let date = new Date();
+        let timestamp = date.getTime();
+        let event = new Event(timestamp, event_type, event_info)
         this.event_queue.push(event);
         if(this.event_queue.length > 5)
           this.saveWithPersistance();
   
       }
-      this.saveWithPersistance = function()
+      this.saveWithPersistance = async function()
       {
         this.event_queue.forEach(event => {
           let serializedData = this.Serializer.serialize(event);
