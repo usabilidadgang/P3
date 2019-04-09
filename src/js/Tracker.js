@@ -1,13 +1,16 @@
 'use strict';
 const ServerPersistance = require('./ServerPersistance.js');
 const CSVSerializer = require('./CSVSerializer');
+const JSONSerializer = require('./JSONSerializer');
+
 class Tracker {
 
     constructor(typeOfPersistance, typeOfSerializing){
+      this.event_queue = [];
       if(typeOfPersistance == 0)
       {
         this.Persistence = new ServerPersistance('http://localhost:80/tracker');
-        this.event_queue = [];
+       
       }
       else if(typeOfPersistance == 1)
       {
@@ -19,7 +22,7 @@ class Tracker {
       }
       else if(typeOfSerializing == 1)
       {
-
+        this.Serializer = new JSONSerializer();
       }
       this.instance = this;
       this.addEvent = function(event)

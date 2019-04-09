@@ -1,15 +1,16 @@
 'use strict'
 const event = require('./Event');
 const eventCheck = require('./EventCheck');
-class CSVserializer
+
+class JSONSerializer
 {
     serialize(newEvent)
     {
         if(eventCheck.isEventCorrect(newEvent))
         {
-            return  newEvent.eventType.toString() + ", "+ newEvent.timeStamp + ", " + newEvent.eventInfo; 
+            return  JSON.stringify(newEvent)
         }
         else return "null";
     }
 }
-module.exports = CSVserializer;
+module.exports = JSONSerializer;
