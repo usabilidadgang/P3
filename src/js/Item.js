@@ -7,8 +7,9 @@ function Item(x, y, spritename, escene){
   this.anchor.setTo(0.5,0.5);
   this.startposition = {x:x, y:y} || {x:0, y:0};
   this.name = name || 'name not defined';
-  };
+
 }
+
 Item.prototype = Object.create(Phaser.Sprite.prototype);
 Item.prototype.constructor = Item;
 function Cofre(x,y,escene) {

@@ -10,25 +10,33 @@ class Tracker {
     constructor(typeOfPersistance, typeOfSerializing){
       this.userid = 0;
       this.event_queue = [];
-      if(typeOfPersistance == 0)
-      {
-        this.Persistence = new ServerPersistance('http://localhost:80/tracker');      
+
+      switch (typeOfPersistance) {
+        case 0:
+          this.Persistence = new ServerPersistance('http://localhost:80/tracker');
+          break;
+        case 1:
+          this.Persistence = new DiskPersistance("log.txt");
+          break;
+        default:
+          this.Persistence = new DiskPersistance("log.txt");
+          break;
       }
-      else if(typeOfPersistance == 1)
-      {
-        this.Persistence = new DiskPersistance("log.txt");
+
+      switch (typeOfSerializing) {
+        case 0:
+          this.Serializer = new CSVSerializer();
+          break;
+        case 1:
+          this.Serializer = new JSONSerializer();
+          break;
+        default:
+          this.Serializer = new CSVSerializer();
+          break;
       }
-      if(typeOfSerializing == 0)
-      {
-        this.Serializer = new CSVSerializer();
-      }
-      else if(typeOfSerializing == 1)
-      {
-        this.Serializer = new JSONSerializer();
-      }
-      this.instance = this;
       this.addEvent = function(event_type, event_info)
       {
+        console.log(event_type,event_info);
         let date = new Date();
         let timestamp = date.getTime();
         let event = new Event(this.userid, timestamp, event_type, event_info)
@@ -52,4 +60,28 @@ class Tracker {
     } 
   }
 
-  module.exports = Tracker;
+  var Instance;
+
+  function InitializeTracker(typeOfPersistance,typeOfSerializing){
+    if(Instance == undefined){
+      Instance = new Tracker(typeOfPersistance, typeOfSerializing);
+      console.log("Tracker initialized");
+    }else{
+      console.log("Tracker already initialized");
+
+    }
+  }
+
+  function AddEvent(event_type,event_info){
+    Instance.addEvent(event_type,event_info);
+  }
+
+  function SaveWithPersistance(){
+    Instance.saveWithPersistance();
+  }
+
+  module.exports = {
+    AddEvent : AddEvent, 
+    InitTracker : InitializeTracker,
+    SaveWithPersistance: SaveWithPersistance,
+  };
