@@ -27,7 +27,7 @@ var PlayScene = {
     this.hudScore.font = 'Astloch';
     this.hudScore.fontSize = 50;
     this.hudScore.fixedToCamera = true;
-    Tracker.instance.addEvent("Keke","koko");
+    Tracker.AddEvent("Keke","koko");
 
     //Generamos el mapa.
     new mapCreator.CreateMap(this.game.niveles[this.game.nivelActual], this);

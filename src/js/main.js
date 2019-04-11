@@ -5,11 +5,11 @@ var gameOver = require('./gameover_scene');
 var menuScene = require('./menu_scene');
 var credits = require('./credits');
 var levelSucceed = require('./levelSucceed_scene');
-const Tracker = require('./Tracker');
-
+var Tracker = require('./Tracker');
+const EventType = require("./EventType")
 //  The Google WebFont Loader will look for this object, so
 // it before loading the script.
-var tracker = {};
+
 
 var BootScene = {
   preload: function () {
@@ -124,13 +124,13 @@ window.init = function(){
 
 }
 window.onload = function () {
-  tracker = new Tracker(0, 0);
-  tracker.addEvent("SESSION_INIT", "No Info");
+  Tracker.InitTracker(0,0);
+  Tracker.AddEvent(EventType.SESSION_INIT,undefined)
   WebFont.load(wfconfig);
   navigator.webkitPersistentStorage.requestQuota(1024*1024, function() {
     window.webkitRequestFileSystem(window.PERSISTENT , 1024*1024, SaveDatFileBro);
   })
 };
 window.onclose = function (){
-  tracker.addEvent("SESSION_CLOSE", "No info");
+  Tracker.AddEvent(EventType.SESSION_CLOSE,undefined)
 }
