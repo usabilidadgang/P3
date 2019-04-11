@@ -31,7 +31,7 @@ class Tracker {
       {
         let date = new Date();
         let timestamp = date.getTime();
-        let event = new Event(timestamp, event_type, event_info)
+        let event = new Event(this.userid, timestamp, event_type, event_info)
         this.event_queue.push(event);
         if(this.event_queue.length > 5)
           this.saveWithPersistance();

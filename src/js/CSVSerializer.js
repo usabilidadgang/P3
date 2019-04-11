@@ -7,7 +7,7 @@ class CSVserializer
     {
         if(eventCheck.isEventCorrect(newEvent))
         {
-            return  newEvent.eventType.toString() + ", "+ newEvent.timeStamp + ", " + newEvent.eventInfo; 
+            return  newEvent.userId.toString() + ", "+ newEvent.eventType.toString() + ", "+ newEvent.timeStamp + ", " + newEvent.eventInfo; 
         }
         else return "null";
     }
