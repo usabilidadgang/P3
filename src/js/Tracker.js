@@ -8,6 +8,7 @@ const Event = require('./Event');
 class Tracker {
 
     constructor(typeOfPersistance, typeOfSerializing){
+      this.userid = 0;
       this.event_queue = [];
       if(typeOfPersistance == 0)
       {
@@ -43,6 +44,10 @@ class Tracker {
           this.Persistence.send(serializedData);
         });
         this.event_queue = [];       
+      }
+      this.flush = function()
+      {
+        this.saveWithPersistance();
       }
     } 
   }
