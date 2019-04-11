@@ -1,6 +1,10 @@
 'use strict';
 var Direction = {'LEFT':-1, 'RIGHT':1, 'NONE':0};
 
+const Tracker = require('./Tracker.js');
+
+const EventType = require('./EventType')
+
 //DEFINICION DE OBJETOS DE LA ESCENA
 //Bandos del juego. Enemigos, heroe e indefinido para errores.
 var party = {enemy : 0, hero : 1, undefined: -1};
@@ -61,6 +65,7 @@ this.jumpsound = this.game.add.audio('jumpsound');
     this.animasion = '';
     if(escene.collisionDeath || this.lifes <= 0){
       escene.gameOver = true;
+      Tracker.AddEvent(EventType.PLAYER_DEAD,{x:this.x,y:this.y,reason:"Fall"});
     }
     var dir = this.getInput();
     if(dir!== 0)
@@ -151,6 +156,7 @@ function Serpiente(x, y, escene){
       this.enemyhit.play(false);
       this.animations.play('death');
       this.primera = true;
+      Tracker.AddEvent(EventType.ENEMY_DEAD,{x:this.x,y:this.y,type:"Serpiente"});
     }
     this.deathanim.killOnComplete = true;
 
@@ -196,8 +202,14 @@ function Golem(x, y, escene){
   this.Serpientes = 0;
 Golem.prototype.update = function (){
 
-  if (this.lifes === 0)this.game.state.start('levelSucceed');
-  if(this.KillPlayer())  escene.gameOver = true;
+  if (this.lifes === 0){
+    Tracker.AddEvent(EventType.ENEMY_DEAD,{x:this._player.x,y:this._player.y,type:"Golem"});
+    this.game.state.start('levelSucceed');
+  }
+  if(this.KillPlayer()){
+    escene.gameOver = true;
+    Tracker.AddEvent(EventType.PLAYER_DEAD,{x:this._player.x,y:this._player.y,reason:"Golem"});
+  } 
   if(this.Stepped() && !this.tocado){
     this.lifes--;
     this.tocado = true;

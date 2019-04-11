@@ -6,7 +6,8 @@ var EventType = {
     ENEMY_DEAD :    3,
     PLAYER_DEAD:    4,
     LEVEL_INIT :    5,
-    LEVEL_CLOSE:    6
+    LEVEL_FAIL:     6,
+    LEVEL_SUCCEDED: 7
 }
 
 module.exports = EventType;

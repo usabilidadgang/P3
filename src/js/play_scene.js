@@ -5,6 +5,7 @@
 var characters = require('./Characters.js');
 var mapCreator = require('./MapCreator');
 const Tracker = require('./Tracker.js');
+const EventType = require('./EventType')
 
 //EScena de juego.
 var PlayScene = {
@@ -27,7 +28,7 @@ var PlayScene = {
     this.hudScore.font = 'Astloch';
     this.hudScore.fontSize = 50;
     this.hudScore.fixedToCamera = true;
-    Tracker.AddEvent("Keke","koko");
+    Tracker.AddEvent(EventType.LEVEL_INIT,this.game.nivelActual);
 
     //Generamos el mapa.
     new mapCreator.CreateMap(this.game.niveles[this.game.nivelActual], this);
@@ -120,12 +121,14 @@ checkColisions: function(){
     }
     else {
       if(this.gameOver){
+        Tracker.AddEvent(EventType.LEVEL_FAIL,{level: this.game.nivelActual});
         this.lostSound.play(false);
         this.closeLevel();
         this.game.state.start('gameOver');
       }
       else
       {
+        Tracker.AddEvent(EventType.LEVEL_SUCCEDED,{level: this.game.nivelActual});
         this.closeLevel();
         this.game.overallScore+= this.sceneScore;
         this.game.state.start('levelSucceed');

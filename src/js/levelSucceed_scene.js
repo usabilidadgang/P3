@@ -48,11 +48,6 @@ var GameOver = {
         text2.fill = 'white';
         text2.anchor.set(0.5);
         button2.addChild(text2);
-
-
-
-
-
     },
     //DONE 7 declarar el callback del boton.
     continue: function(){
