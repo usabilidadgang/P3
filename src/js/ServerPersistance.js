@@ -12,11 +12,13 @@ class ServerPersistance
       console.log("Sending object: ", obj);
       fetch(this.address, 
         {
-         method:'POST',
-         headers:{
-            'Content-Type': 'application/json'
-         },
-         body : JSON.stringify(obj)
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json'
+        },
+        body : JSON.stringify(obj),
+        mode: 'cors'
+    
 
       }).then(res => res.json())
       .then(response => console.log(response))

@@ -126,22 +126,11 @@ window.init = function(){
 window.onload = function () {
   tracker = new Tracker(0, 0);
   tracker.addEvent("SESSION_INIT", "No Info");
-  tracker.addEvent("SESSION_INIT", "No info");
-  tracker.addEvent("SESSION_INIT", "No info");
-  tracker.addEvent("SESSION_INIT", "No info");
-  tracker.addEvent("SESSION_INIT", "No info");
-  tracker.addEvent("SESSION_INIT", "No info");
-  tracker.addEvent("SESSION_INIT", "No info");
   WebFont.load(wfconfig);
   navigator.webkitPersistentStorage.requestQuota(1024*1024, function() {
     window.webkitRequestFileSystem(window.PERSISTENT , 1024*1024, SaveDatFileBro);
   })
 };
 window.onclose = function (){
-  tracker.addEvent("SESSION_CLOSE", "No info");
-  tracker.addEvent("SESSION_CLOSE", "No info");
-  tracker.addEvent("SESSION_CLOSE", "No info");
-  tracker.addEvent("SESSION_CLOSE", "No info");
-  tracker.addEvent("SESSION_CLOSE", "No info");
   tracker.addEvent("SESSION_CLOSE", "No info");
 }
