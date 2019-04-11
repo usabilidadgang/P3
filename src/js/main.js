@@ -5,6 +5,7 @@ var gameOver = require('./gameover_scene');
 var menuScene = require('./menu_scene');
 var credits = require('./credits');
 var levelSucceed = require('./levelSucceed_scene');
+var Persistence = require('./Persistence');
 const Tracker = require('./Tracker');
 
 //  The Google WebFont Loader will look for this object, so
@@ -133,9 +134,7 @@ window.onload = function () {
   tracker.addEvent("SESSION_INIT", "No info");
   tracker.addEvent("SESSION_INIT", "No info");
   WebFont.load(wfconfig);
-  navigator.webkitPersistentStorage.requestQuota(1024*1024, function() {
-    window.webkitRequestFileSystem(window.PERSISTENT , 1024*1024, SaveDatFileBro);
-  })
+  
 };
 window.onclose = function (){
   tracker.addEvent("SESSION_CLOSE", "No info");
