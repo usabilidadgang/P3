@@ -52,4 +52,22 @@ class Tracker {
     } 
   }
 
-  module.exports = Tracker;
+  var Instance;
+
+  function InitializeTracker(typeOfPersistance,typeOfSerializing){
+    if(Instance == undefined){
+      Instance = new Tracker(typeOfPersistance, typeOfSerializing);
+      console.log(Instance);
+    }
+  }
+
+  function GetTracker(){
+    if(Instance == undefined){
+      console.log("Tracker not initialized")
+      return null;
+    }else{
+      return Instance;
+    }
+  }
+
+  module.exports = {Tracker : GetTracker, InitTracker : InitializeTracker};

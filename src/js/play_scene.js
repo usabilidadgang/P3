@@ -4,6 +4,8 @@
 //mover el player.
 var characters = require('./Characters.js');
 var mapCreator = require('./MapCreator');
+const Tracker = require('./Tracker.js');
+
 //EScena de juego.
 var PlayScene = {
     _player: {},
@@ -25,6 +27,7 @@ var PlayScene = {
     this.hudScore.font = 'Astloch';
     this.hudScore.fontSize = 50;
     this.hudScore.fixedToCamera = true;
+    Tracker.instance.addEvent("Keke","koko");
 
     //Generamos el mapa.
     new mapCreator.CreateMap(this.game.niveles[this.game.nivelActual], this);
@@ -36,6 +39,7 @@ var PlayScene = {
     this.spawnObjects('Spawn');
 
     this.pauseButton = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
+    
     this.configure();
 
   },
