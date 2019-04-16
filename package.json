@@ -1,5 +1,5 @@
 {
-  "version": "0.0.0",
+  "version": "1.0.0",
   "name": "KEKGAME",
   "author": "Kekstar Studio",
   "license": "CC-BY-NC-SA-4.0",
@@ -10,12 +10,14 @@
     "del": "*",
     "fs": "0.0.1-security",
     "gulp": "3.9.1",
+    "gulp-cli": "2.1.0",
     "gulp-connect": "*",
     "gulp-gh-pages": "*",
     "gulp-util": "*",
     "merge-stream": "*",
     "node-fetch": "^2.3.0",
     "phaser-ce": "*",
+    "uniqid": "^5.0.3",
     "vinyl-source-stream": "*",
     "watchify": "*"
   }

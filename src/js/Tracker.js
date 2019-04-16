@@ -4,16 +4,17 @@ const DiskPersistance = require('./DiskPersistance');
 const CSVSerializer = require('./CSVSerializer');
 const JSONSerializer = require('./JSONSerializer');
 const Event = require('./Event');
+const uniqid = require('uniqid');
 
 class Tracker {
 
     constructor(typeOfPersistance, typeOfSerializing){
-      this.userid = 0;
+      this.userid = uniqid();
       this.event_queue = [];
 
       switch (typeOfPersistance) {
         case 0:
-          this.Persistence = new ServerPersistance('http://localhost:80/tracker');
+          this.Persistence = new ServerPersistance('http://localhost:8080/tracker');
           break;
         case 1:
           this.Persistence = new DiskPersistance("log.txt");
@@ -36,7 +37,6 @@ class Tracker {
       }
       this.addEvent = function(event_type, event_info)
       {
-        console.log(event_type,event_info);
         let date = new Date();
         let timestamp = date.getTime();
         let event = new Event(this.userid, timestamp, event_type, event_info)
@@ -68,7 +68,6 @@ class Tracker {
       console.log("Tracker initialized");
     }else{
       console.log("Tracker already initialized");
-
     }
   }
 

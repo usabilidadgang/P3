@@ -6,11 +6,7 @@ class JSONSerializer
 {
     serialize(newEvent)
     {
-        if(eventCheck.isEventCorrect(newEvent))
-        {
-            return  JSON.stringify(newEvent)
-        }
-        else return "null";
+        return  JSON.stringify(newEvent)    
     }
 }
 module.exports = JSONSerializer;

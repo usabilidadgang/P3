@@ -6,10 +6,19 @@ var characters = require('./Characters.js');
 var mapCreator = require('./MapCreator');
 const Tracker = require('./Tracker.js');
 const EventType = require('./EventType')
+const date = new Date();
 
 //EScena de juego.
 var PlayScene = {
     _player: {},
+  
+  playerPositionEvent: function()
+  {
+    if(this._player == null) return;
+      var sent = {x:this._player.x, y:this._player.y};
+      Tracker.AddEvent(EventType.PLAYER_POSITION, sent)
+
+  }, 
 
   create: function () {
     this.gameOver = false;
@@ -28,8 +37,8 @@ var PlayScene = {
     this.hudScore.font = 'Astloch';
     this.hudScore.fontSize = 50;
     this.hudScore.fixedToCamera = true;
-    Tracker.AddEvent(EventType.LEVEL_INIT,this.game.nivelActual);
-
+    Tracker.AddEvent(EventType.LEVEL_INIT,{nivel: this.game.nivelActual});
+    this.playerPosEvent = this.game.time.events.loop(1000, this.playerPositionEvent, this);
     //Generamos el mapa.
     new mapCreator.CreateMap(this.game.niveles[this.game.nivelActual], this);
     //Introducimos los objetos de juego
@@ -116,7 +125,7 @@ checkColisions: function(){
         this.pauseMenu();
       }
 
-     this.pauseButton.onDown.add(this.unpause, this);
+      this.pauseButton.onDown.add(this.unpause, this);
       this.input.onDown.add(this.unpause, this);
     }
     else {
@@ -209,6 +218,7 @@ pauseMenu:function(){
 
 
     destroy: function(){
+      this.game.time.events.remove(this.playerPosEvent);
       this.music.destroy();
       this.playerDeath.destroy();
       this.objectArray.forEach(function(elem){

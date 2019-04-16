@@ -2,14 +2,19 @@
 const event = require('./Event');
 const eventCheck = require('./EventCheck');
 class CSVserializer
-{
+{  
     serialize(newEvent)
     {
-        if(eventCheck.isEventCorrect(newEvent))
-        {
-            return  newEvent.userId.toString() + ", "+ newEvent.eventType.toString() + ", "+ newEvent.timeStamp + ", " + newEvent.eventInfo; 
-        }
-        else return "null";
+        return  newEvent.userId.toString() + ", "+ newEvent.eventType.toString() + ", "+ newEvent.timeStamp + "," + this.serializeEventInfo(newEvent.eventInfo); 
+    }
+    serializeEventInfo(eventInfo)
+    {
+        if(eventInfo == null) return "";
+        var params = "";
+        Object.values(eventInfo).forEach(property => {
+            params+= property.toString() + " ";
+        });
+        return params;
     }
 }
 module.exports = CSVserializer;

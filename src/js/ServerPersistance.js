@@ -9,7 +9,7 @@ class ServerPersistance
   send (dataString)
   {
       var obj = {data: dataString};
-      console.log("Sending object: ", obj);
+      //console.log("Sending object: ", obj);
       fetch(this.address, 
         {
         method:'POST',
@@ -21,7 +21,6 @@ class ServerPersistance
     
 
       }).then(res => res.json())
-      .then(response => console.log(response))
       .catch(error => console.log(error))
     }
   }

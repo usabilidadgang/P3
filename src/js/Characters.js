@@ -5,6 +5,7 @@ const Tracker = require('./Tracker.js');
 
 const EventType = require('./EventType')
 
+
 //DEFINICION DE OBJETOS DE LA ESCENA
 //Bandos del juego. Enemigos, heroe e indefinido para errores.
 var party = {enemy : 0, hero : 1, undefined: -1};
@@ -50,14 +51,13 @@ Character.prototype.constructor = Character;
 //Rey, que hereda de Character y se mueve y salta conforme al input del usuario
 function King (x, y, escene){
   //TODO CAMBIAR EL SPRITE AÑADIDO.
-Character.apply(this, [x, y, party.hero, 'King', 'personaje', escene]);
-//ANIMACIONES
-this.animations.add('run',Phaser.Animation.generateFrameNames('R',0,3),15,true);
-this.animations.add('jump', Phaser.Animation.generateFrameNames('J',0,4),10, false);
-this.animations.add('idle', Phaser.Animation.generateFrameNames('R',0,0),1,true);
-
-//SONIDO DEL SALTO
-this.jumpsound = this.game.add.audio('jumpsound');
+  Character.apply(this, [x, y, party.hero, 'King', 'personaje', escene]);
+  //ANIMACIONES
+  this.animations.add('run',Phaser.Animation.generateFrameNames('R',0,3),15,true);
+  this.animations.add('jump', Phaser.Animation.generateFrameNames('J',0,4),10, false);
+  this.animations.add('idle', Phaser.Animation.generateFrameNames('R',0,0),1,true);
+  //SONIDO DEL SALTO
+  this.jumpsound = this.game.add.audio('jumpsound');
 
 //FUNCIONES DEL REY
   King.prototype.update = function () {
@@ -77,7 +77,6 @@ this.jumpsound = this.game.add.audio('jumpsound');
     if(this.isJumping()) this.animasion = 'jump';
     this.animations.play(this.animasion);
     Character.prototype.moveX.call(this, dir);
-
   };
 
   King.prototype.getInput = function () {

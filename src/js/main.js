@@ -124,7 +124,7 @@ window.init = function(){
 
 }
 window.onload = function () {
-  Tracker.InitTracker(0,0);
+  Tracker.InitTracker(0,1);
   Tracker.AddEvent(EventType.SESSION_INIT,undefined)
   WebFont.load(wfconfig);
   navigator.webkitPersistentStorage.requestQuota(1024*1024, function() {
