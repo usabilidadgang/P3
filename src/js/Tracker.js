@@ -6,6 +6,7 @@ const JSONSerializer = require('./JSONSerializer');
 const Event = require('./Event');
 const uniqid = require('uniqid');
 
+
 class Tracker {
 
     constructor(typeOfPersistance, typeOfSerializing){
@@ -62,6 +63,11 @@ class Tracker {
 
   var Instance;
 
+  /**
+   * Initialize the Tracker
+   * @param {int} typeOfPersistance 0 for server persistance 1 for file persistance
+   * @param {int} typeOfSerializing 0 for csv 1 for json
+   */
   function InitializeTracker(typeOfPersistance,typeOfSerializing){
     if(Instance == undefined){
       Instance = new Tracker(typeOfPersistance, typeOfSerializing);
@@ -71,10 +77,18 @@ class Tracker {
     }
   }
 
+  /**
+   * This method add to the queue of tracked events a new one
+   * @param {int} event_type type of the event
+   * @param {object} event_info infomation about the event
+   */
   function AddEvent(event_type,event_info){
     Instance.addEvent(event_type,event_info);
   }
 
+  /**
+   * Save the tracked events
+   */
   function SaveWithPersistance(){
     Instance.saveWithPersistance();
   }
