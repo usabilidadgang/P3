@@ -6,18 +6,22 @@ const JSONSerializer = require('./JSONSerializer');
 const Event = require('./Event');
 const uniqid = require('uniqid');
 
+const PersistanceType = {
+  ServerPersistance :0,
+  LocalPersistance  :1,
+}
+
 
 class Tracker {
-
     constructor(typeOfPersistance, typeOfSerializing){
       this.userid = uniqid();
       this.event_queue = [];
 
       switch (typeOfPersistance) {
-        case 0:
+        case PersistanceType.ServerPersistance:
           this.Persistence = new ServerPersistance('http://localhost:8080/tracker');
           break;
-        case 1:
+        case PersistanceType.LocalPersistance:
           this.Persistence = new DiskPersistance("log.txt");
           break;
         default:
@@ -36,6 +40,7 @@ class Tracker {
           this.Serializer = new CSVSerializer();
           break;
       }
+
       this.addEvent = function(event_type, event_info)
       {
         let date = new Date();
@@ -46,6 +51,7 @@ class Tracker {
           this.saveWithPersistance();
   
       }
+
       this.saveWithPersistance = async function()
       {
         this.event_queue.forEach(event => {
@@ -79,18 +85,18 @@ class Tracker {
 
   /**
    * This method add to the queue of tracked events a new one
-   * @param {int} event_type type of the event
+   * @param {Int32} event_type type of the event
    * @param {object} event_info infomation about the event
    */
   function AddEvent(event_type,event_info){
-    Instance.addEvent(event_type,event_info);
+    (Instance != null)?Instance.addEvent(event_type,event_info):console.log("Tracker not initialized");
   }
 
   /**
    * Save the tracked events
    */
   function SaveWithPersistance(){
-    Instance.saveWithPersistance();
+    (Instance != null)?Instance.saveWithPersistance():console.log("Tracker not initialized");
   }
 
   module.exports = {

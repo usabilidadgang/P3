@@ -24,7 +24,7 @@ var BootScene = {
     //http://opengameart.org/content/generic-8-bit-jrpg-soundtrack
     this.game.load.audio('intromusic', 'Sounds/Music/intro.ogg');
     this.game.load.audio('creditMusic', 'Sounds/Music/credits.ogg');
-
+    
   },
 
   create: function () {
