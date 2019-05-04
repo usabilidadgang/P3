@@ -15,7 +15,13 @@ Este proyecto consiste en realizar un tracker que tomes medidas de rendimiento d
 Dicho tracker será implementado en JavaScript, para navegadores web.
 Para el proyecto hemos decido usar como base el tracker realizado en la práctica 3. Este tracker será modificado y mejorado respecto a la anterior práctica.
 
-Las métricas de rendimiento que obtendremos serán las siguientes:
+
+### Arquitectura
+Se Realizaran los siguientes modulos para obtener información:
+
+#### PerformanceInfo
+Este modulo se encargará de sacar las metricas de rendimiento.
+Las métricas de rendimiento que se quieren obtener son las siguientes:
 - Carga de CPU
 - Carga de RAM
 - FPS
@@ -24,15 +30,14 @@ Las métricas de rendimiento que obtendremos serán las siguientes:
 - Procesador
 - Ping a un servidor[^red]
 
-Obtendremos tambien nuevas metricas de localización y información del usuario:
+[^red]: Aunque nuestro juego no tenga capacidad online el tracker si que tendrá la capacidad de consultar métricas de red
+
+#### UserInfo
+Este modulo se encargará de sacar las metricas sobre el usuario.
+Las métricas sobre el usuario que se quieren obtener son las siguientes:
 - Ubicación(basado en la IP)
 - Navegador usado
 - Sistema Operativo
-
-
-[^red]: Aunque nuestro juego no tenga capacidad online el tracker si que tendrá la capacidad de consultar métricas de red
-### Arquitectura
-El Tracker tendrá 2 modulos separados para obtener estos 2 tipos de metricas
 
 ## Conclusiones
 

@@ -13,7 +13,7 @@ const PersistanceType = {
 
 const PersistanceDefaults = [
   ServerPersistance,
-  LocalPersistance
+  DiskPersistance
 ];
 
 const SerializerType = {
@@ -26,7 +26,17 @@ const SerializerDefaults = [
   JSONSerializer,
 ];
 
+/**
+ * Tracker Main class
+ *
+ * @class Tracker
+ */
 class Tracker {
+    /**
+     *Creates an instance of Tracker.
+     * @param {Object} setupInfo
+     * @memberof Tracker
+     */
     constructor(setupInfo){
       if(setupInfo != null)
       {
@@ -48,7 +58,7 @@ class Tracker {
       else
       {
         console.log("By default Local Persistance int the file log.txt")
-        this.Persistence = new LocalPersistance("log.txt");
+        this.Persistence = new DiskPersistance("log.txt");
       }
 
       if(setupInfo.serializer != undefined){
@@ -62,6 +72,12 @@ class Tracker {
 
       
 
+      /**
+       * Add Event to the queue
+       *
+       * @param {*} event_type
+       * @param {*} event_info
+       */
       this.AddEvent = function(event_type, event_info)
       {
         let date = new Date();
@@ -73,6 +89,10 @@ class Tracker {
   
       }
 
+      /**
+       *
+       *
+       */
       this.SaveWithPersistance = async function()
       {
         this.event_queue.forEach(event => {
@@ -112,8 +132,10 @@ class Tracker {
     (Instance != null)?Instance.AddEvent(event_type,event_info):console.log("Tracker not initialized");
   }
 
+  
   /**
-   * Save the tracked events
+   * save the tracked events
+   *
    */
   function SaveWithPersistance(){
     (Instance != null)?Instance.SaveWithPersistance():console.log("Tracker not initialized");
