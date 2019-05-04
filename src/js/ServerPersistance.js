@@ -20,8 +20,7 @@ class ServerPersistance
    */
   send (dataString)
   {
-      var obj = {data: dataString};
-      //console.log("Sending object: ", obj);
+      let obj = {data: dataString};
       fetch(this.address, 
         {
         method:'POST',

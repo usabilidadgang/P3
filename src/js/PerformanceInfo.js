@@ -1,32 +1,49 @@
 'use strict'
 const si = require('systeminformation');
-
+const ping = require('ping');
 /**
  * Get the current load of the CPU
  */
-function GetLoadCPU(){
-    return 0;
+function GetCPULoad(){
+    let load = null;
+    si.currentLoad().then(data => load=data.currentload).catch(error => console.log(error));
+    return load;
 }
 
 /**
  * Get the current load of the RAM
  */
 function GetLoadRAM(){
-    return 0;
+    let load = null;
+    si.mem().then(data => load=(data.used/data.total)).catch(error => console.log(error));
+    return load;
+}
+
+/**
+ * Get the current load of the RAM
+ */
+function GetRAMUsed(){
+    let info = null;
+    si.mem().then(data => info=data.used).catch(error => console.log(error));
+    return info;
 }
 
 /**
  * Get the total RAM avialable
  */
-function GetTotalRAM(){
-    return 0;
+function GetRAMTotal(){
+    let info = null;
+    si.mem().then(data => info=data.total).catch(error => console.log(error));
+    return info;
 }
 
 /**
  * Get the info of the CPU
  */
 function GetCPUInfo(){
-    return 0;
+    let info = null;
+    si.cpu().then(data => info=data).catch(error => console.log(error));
+    return info;
 }
 
 /**
@@ -35,16 +52,11 @@ function GetCPUInfo(){
  */
 function GetPingToServer(server)
 {
-    return 0;
+    let info = null;
+    ping.promise.probe(server).then(data => info = data);
+    return info;
 }
 
-/**
- * Get the current bandwith
- */
-function GetBandwith(){
-    
-    return 0;
-}
 
 module.exports = {
     GetLoadCPU,

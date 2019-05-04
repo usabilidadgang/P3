@@ -17,6 +17,7 @@
     "merge-stream": "*",
     "node-fetch": "^2.3.0",
     "phaser-ce": "*",
+    "ping": "^0.2.2",
     "systeminformation": "^4.1.6",
     "uniqid": "^5.0.3",
     "vinyl-source-stream": "*",

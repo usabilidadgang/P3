@@ -1,5 +1,5 @@
 'use strict'
-const fileSystem = require('fs');
+const fs = require('fs');
 
 /**
  * Local persistance class
@@ -21,10 +21,12 @@ class DiskPersistance {
      */
     send(dataString)
     {
-        fileSystem.appendFile(this.fileName, dataString + "\n", { flag: 'a' }, function (err) {
+        /*
+        fs.appendFile(this.fileName, dataString + "\n", { flag: 'a' }, function (err) {
             if (err) throw err;
             console.log("It's saved!");
         });
+        */
     }
 }
 

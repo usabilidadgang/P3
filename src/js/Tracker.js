@@ -7,8 +7,8 @@ const Event = require('./Event');
 const uniqid = require('uniqid');
 
 const PersistanceType = {
-  ServerPersistance :0,
-  LocalPersistance  :1,
+  ServerPersistance: 0,
+  LocalPersistance: 1,
 };
 
 const PersistanceDefaults = [
@@ -17,8 +17,8 @@ const PersistanceDefaults = [
 ];
 
 const SerializerType = {
-  CSVSerialize :0,
-  JSONSerialize:1,
+  CSVSerialize: 0,
+  JSONSerialize: 1,
 };
 
 const SerializerDefaults = [
@@ -32,117 +32,117 @@ const SerializerDefaults = [
  * @class Tracker
  */
 class Tracker {
-    /**
-     *Creates an instance of Tracker.
-     * @param {Object} setupInfo
-     * @memberof Tracker
-     */
-    constructor(setupInfo){
-      if(setupInfo != null)
-      {
-        console.log("Intializing tracker with this settings");
-        console.log(setupInfo);
-      }
-      else
-      {
-        console.log("No setup information Tracker not initializated");
-        return null;
-      }
-      this.userid = uniqid();
-      this.event_queue = [];
-      this.maxQueuedEvents = setupInfo.maxQueuedEvents || 5;
-
-      if(setupInfo.persistance != undefined){
-        this.Persistence = new PersistanceDefaults[setupInfo.persistance.type](setupInfo.persistance.dir);
-      }
-      else
-      {
-        console.log("By default Local Persistance int the file log.txt")
-        this.Persistence = new DiskPersistance("log.txt");
-      }
-
-      if(setupInfo.serializer != undefined){
-        this.Serializer = new SerializerDefaults[setupInfo.serializer.type]();
-      }
-      else
-      {
-        console.log("By default CSV serializing")
-        this.Serializer = new CSVSerializer();
-      }
-
-      
-
-      /**
-       * Add Event to the queue
-       *
-       * @param {*} event_type
-       * @param {*} event_info
-       */
-      this.AddEvent = function(event_type, event_info)
-      {
-        let date = new Date();
-        let timestamp = date.getTime();
-        let event = new Event(this.userid, timestamp, event_type, event_info)
-        this.event_queue.push(event);
-        if(this.event_queue.length > this.maxQueuedEvents)
-          this.saveWithPersistance();
-  
-      }
-
-      /**
-       *
-       *
-       */
-      this.SaveWithPersistance = async function()
-      {
-        this.event_queue.forEach(event => {
-          let serializedData = this.Serializer.serialize(event);
-          this.Persistence.send(serializedData);
-        });
-        this.event_queue = [];       
-      }
-      this.Flush = function()
-      {
-        this.saveWithPersistance();
-      }
-    } 
-  }
-
-  var Instance = null;
-
   /**
-   * Initialize the Tracker
-   * @param {int} typeOfPersistance 0 for server persistance 1 for file persistance
-   * @param {int} typeOfSerializing 0 for csv 1 for json
+   *Creates an instance of Tracker.
+   * @param {Object} setupInfo
+   * @memberof Tracker
    */
-  function InitializeTracker(setupInfo){
-    if(Instance != null){
-      console.log("Tracker already initialized");
-    }else{
-      Instance = new Tracker(setupInfo);
+  constructor(setupInfo) {
+    if (setupInfo != null) {
+      console.log("Intializing tracker with this settings");
+      console.log(setupInfo);
+    }
+    else {
+      console.log("No setup information Tracker not initializated");
+      return null;
+    }
+    this.userid = uniqid();
+    this.event_queue = [];
+    this.maxQueuedEvents = setupInfo.maxQueuedEvents || 5;
+
+    if (setupInfo.persistance != undefined) {
+      this.Persistence = new PersistanceDefaults[setupInfo.persistance.type](setupInfo.persistance.dir);
+    }
+    else {
+      console.log("By default Local Persistance int the file log.txt")
+      this.Persistence = new ServerPersistance("localhost:8088");
+    }
+
+    if (setupInfo.serializer != undefined) {
+      this.Serializer = new SerializerDefaults[setupInfo.serializer.type]();
+    }
+    else {
+      console.log("By default CSV serializing")
+      this.Serializer = new CSVSerializer();
     }
   }
 
   /**
-   * This method add to the queue of tracked events a new one
-   * @param {Int32} event_type type of the event
-   * @param {object} event_info infomation about the event
-   */
-  function AddEvent(event_type,event_info){
-    (Instance != null)?Instance.AddEvent(event_type,event_info):console.log("Tracker not initialized");
-  }
-
-  
-  /**
-   * save the tracked events
+   * Add an event to the queue
    *
+   * @param {*} event_type the event type
+   * @param {*} event_info the event info
+   * @memberof Tracker
    */
-  function SaveWithPersistance(){
-    (Instance != null)?Instance.SaveWithPersistance():console.log("Tracker not initialized");
+  AddEvent(event_type, event_info) {
+    let date = new Date();
+    let timestamp = date.getTime();
+    let event = new Event(this.userid, timestamp, event_type, event_info)
+    this.event_queue.push(event);
+    if (this.event_queue.length > this.maxQueuedEvents)
+      this.SaveWithPersistance();
+
   }
 
-  module.exports = {
-    AddEvent : AddEvent, 
-    InitTracker : InitializeTracker,
-    SaveWithPersistance: SaveWithPersistance,
-  };
+  /**
+   * Save the events
+   *
+   * @memberof Tracker
+   */
+  async SaveWithPersistance() {
+    this.event_queue.forEach(event => {
+      let serializedData = this.Serializer.serialize(event);
+      this.Persistence.send(serializedData);
+    });
+    this.event_queue = [];
+  }
+
+  /**
+   * deprecated shit ask manu why this
+   *
+   * @memberof Tracker
+   */
+  Flush() {
+    this.SaveWithPersistance();
+  }
+}
+
+var Instance = null;
+
+
+/**
+ * Initialize the tracker
+ *
+ * @param {*} setupInfo The setup information
+ */
+function InitializeTracker(setupInfo) {
+  if (Instance != null) {
+    console.log("Tracker already initialized");
+  } else {
+    Instance = new Tracker(setupInfo);
+  }
+}
+
+/**
+ * This method add to the queue of tracked events a new one
+ * @param {Int32} event_type type of the event
+ * @param {object} event_info infomation about the event
+ */
+function AddEvent(event_type, event_info) {
+  (Instance != null) ? Instance.AddEvent(event_type, event_info) : console.log("Tracker not initialized");
+}
+
+
+/**
+ * save the tracked events
+ *
+ */
+function SaveWithPersistance() {
+  (Instance != null) ? Instance.SaveWithPersistance() : console.log("Tracker not initialized");
+}
+
+module.exports = {
+  AddEvent: AddEvent,
+  InitTracker: InitializeTracker,
+  SaveWithPersistance: SaveWithPersistance,
+};
