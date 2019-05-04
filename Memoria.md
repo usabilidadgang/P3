@@ -30,6 +30,7 @@ Obtendremos tambien nuevas metricas de localización y información del usuario:
 - Sistema Operativo
 
 
+[^red]: Aunque nuestro juego no tenga capacidad online el tracker si que tendrá la capacidad de consultar métricas de red
 ### Arquitectura
 El Tracker tendrá 2 modulos separados para obtener estos 2 tipos de metricas
 
@@ -39,4 +40,3 @@ El Tracker tendrá 2 modulos separados para obtener estos 2 tipos de metricas
 
 
 
-[^red]: Aunque nuestro juego no tenga capacidad online el tracker si que tendrá la capacidad de consultar métricas de red
