@@ -7,8 +7,8 @@ const Event = require('./Event');
 const uniqid = require('uniqid');
 
 const PersistanceType = {
-  ServerPersistance: 0,
-  LocalPersistance: 1,
+  Server: 0,
+  Local: 1,
 };
 
 const PersistanceDefaults = [
@@ -17,8 +17,9 @@ const PersistanceDefaults = [
 ];
 
 const SerializerType = {
-  CSVSerialize: 0,
-  JSONSerialize: 1,
+  Custom: -1,
+  CSV: 0,
+  JSON: 1,
 };
 
 const SerializerDefaults = [
@@ -51,15 +52,21 @@ class Tracker {
     this.maxQueuedEvents = setupInfo.maxQueuedEvents || 5;
 
     if (setupInfo.persistance != undefined) {
-      this.Persistence = new PersistanceDefaults[setupInfo.persistance.type](setupInfo.persistance.dir);
+      this.Persistence = new PersistanceDefaults[setupInfo.persistance.type](setupInfo.persistance.arg);
     }
     else {
       console.log("By default Local Persistance int the file log.txt")
-      this.Persistence = new ServerPersistance("localhost:8088");
+      this.Persistence = new DiskPersistance("fucker.txt");
     }
 
     if (setupInfo.serializer != undefined) {
-      this.Serializer = new SerializerDefaults[setupInfo.serializer.type]();
+      if(setupInfo.serializer.type!= SerializerType.Custom){
+        this.Serializer = new SerializerDefaults[setupInfo.serializer.type]();
+      }
+      else
+      {
+        this.Serializer = setupInfo.serializer.custom;
+      }
     }
     else {
       console.log("By default CSV serializing")
@@ -145,4 +152,6 @@ module.exports = {
   AddEvent: AddEvent,
   InitTracker: InitializeTracker,
   SaveWithPersistance: SaveWithPersistance,
+  PersistanceType,
+  SerializerType
 };

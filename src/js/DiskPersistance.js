@@ -5,7 +5,6 @@ const fs = require('fs');
  * Local persistance class
  */
 class DiskPersistance {
-
     /**
      * Main constructor of the class
      * @param {string} fileName name of the file
@@ -21,12 +20,13 @@ class DiskPersistance {
      */
     send(dataString)
     {
-        /*
+        
+        
         fs.appendFile(this.fileName, dataString + "\n", { flag: 'a' }, function (err) {
             if (err) throw err;
             console.log("It's saved!");
         });
-        */
+        
     }
 }
 

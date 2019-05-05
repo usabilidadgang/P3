@@ -8,6 +8,11 @@ var levelSucceed = require('./levelSucceed_scene');
 var Tracker = require('./Tracker');
 const EventType = require("./EventType");
 
+const UserInfo = require('./UserInfo')
+
+const si = require('systeminformation');
+const ip = require('public-ip')
+
 //  The Google WebFont Loader will look for this object, so
 // it before loading the script.
 
@@ -120,17 +125,30 @@ window.init = function () {
   game.musics = { 1: 'music1', 2: 'music2', 3: 'music1' };
   game.nivelActual = 1;
   game.overallScore = 0;
-
+  
 }
+
 window.onload = function () {
+  let setup = {
+
+    persistance: {
+      type: Tracker.PersistanceType.Server,
+      arg: "localhost:80",
+    },
+    serializer: {
+      type: Tracker.SerializerType.CSV
+    }
+  }
+
   Tracker.InitTracker(0, 1);
   Tracker.AddEvent(EventType.SESSION_INIT, undefined)
   WebFont.load(wfconfig);
-
   //console.log(PerformanceInfo.GetLoadCPU());
-  
+  let k = document.getElementsByClassName("canvas");
+  console.log(k);
 
 };
 window.onclose = function () {
   Tracker.AddEvent(EventType.SESSION_CLOSE, undefined)
 }
+
