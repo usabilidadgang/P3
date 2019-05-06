@@ -144,8 +144,10 @@ window.onload = function () {
   Tracker.AddEvent(EventType.SESSION_INIT, undefined)
   WebFont.load(wfconfig);
   //console.log(PerformanceInfo.GetLoadCPU());
+  UserInfo.GetLocation();
   let k = document.getElementsByClassName("canvas");
-  console.log(k);
+  
+  
 
 };
 window.onclose = function () {
