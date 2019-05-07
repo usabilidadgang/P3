@@ -8,9 +8,9 @@ var levelSucceed = require('./levelSucceed_scene');
 var Tracker = require('./Tracker');
 const EventType = require("./EventType");
 
+const PerformanceInfo = require('./PerformanceInfo');
 const UserInfo = require('./UserInfo')
 
-const si = require('systeminformation');
 const ip = require('public-ip')
 
 //  The Google WebFont Loader will look for this object, so
@@ -126,6 +126,7 @@ window.init = function () {
   game.nivelActual = 1;
   game.overallScore = 0;
   
+  
 }
 
 window.onload = function () {
@@ -140,13 +141,14 @@ window.onload = function () {
     }
   }
 
-  Tracker.InitTracker(0, 1);
+  Tracker.InitTracker(0);
   Tracker.AddEvent(EventType.SESSION_INIT, undefined)
   WebFont.load(wfconfig);
   //console.log(PerformanceInfo.GetLoadCPU());
   UserInfo.GetLocation();
+  PerformanceInfo.GetLoadRAM();
+  PerformanceInfo.GetCPULoad();
   let k = document.getElementsByClassName("canvas");
-  
   
 
 };

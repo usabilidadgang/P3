@@ -23,7 +23,7 @@ return new Promise(
 
 /**
  * Get latitude and longitude
- * @returns {Promise<{lat,long}} latitude and longitude
+ * @returns {Promise<{lat:number,long:number}} latitude and longitude
  */
 function GetLocation() {
     return new Promise(
@@ -52,6 +52,8 @@ function GetOS() {
         }
     );
 }
+
+
 
 module.exports = {
     GetNavigator,
