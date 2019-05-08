@@ -2,6 +2,7 @@
 const ping = require('ping');
 const os = require('os');
 const si = require('systeminformation');
+const plat= require('platform')
 
 
 
@@ -12,8 +13,9 @@ function GetCPULoad(){
     return new Promise(
         (resolve,reject)=>{
             si.currentLoad().then(data=>{
-                if(data.currentload == NaN){
-                    reject("No CPU load avialable");
+                if(data.raw_currentload == 0){
+                    resolve(undefined);
+                    //reject("No CPU load avialable");
                 }else{
                     resolve(data.currentload);
                 }
@@ -25,17 +27,29 @@ function GetCPULoad(){
 /**
  * Get the current load of the RAM
  */
-function GetLoadRAM(){
+function GetRAMLoad(){
+    si.osInfo(data=> console.log(data)).finally(()=>console.log(""))
+    
+    console.log(plat.name)
+
     return new Promise(
         (resolve,reject)=>{
+            if(os.type()==="Browser") resolve(undefined);
             si.mem().then(data => {
+                console.log("kek")
                 if(data.used == NaN){
-                    reject("No RAM load avilable");
+                    resolve(undefined);
                 }else{
                     resolve(data.used/data.total);
                 }
-            }).catch(error => reject(error));
+                
+            }).catch(error =>  {
+                console.log("kek")
+                resolve(undefined);
+            })
         }
+                
+        
     )
 }
 
@@ -45,7 +59,13 @@ function GetLoadRAM(){
 function GetRAMUsed(){
     return new Promise(
         (resolve, reject)=>{
-            
+            si.mem().then(data => {
+                if(data.used == NaN){
+                    reject("No RAM load avilable");
+                }else{
+                    resolve(data.used);
+                }
+            }).catch(error => reject(error));
         }
     );
 }
@@ -86,7 +106,8 @@ function GetPingToServer(server)
 
 module.exports = {
     GetCPULoad,
-    GetLoadRAM,
+    GetRAMLoad,
+    GetRAMUsed,
     GetRAMTotal,
     GetCPUInfo,
     GetPingToServer,

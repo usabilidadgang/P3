@@ -48,6 +48,7 @@ function GetLocation() {
 function GetOS() {
     return new Promise(
         (resolve,reject)=>{
+            
             resolve(navigator.platform)
         }
     );

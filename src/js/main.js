@@ -119,6 +119,7 @@ window.init = function () {
   game.state.add('creditos', credits);
   game.state.add('gameOver', gameOver);
   game.state.add('levelSucceed', levelSucceed);
+  
   //Comenzamos con el estado boot
   game.state.start('boot');
   game.niveles = { 1: 'Nivel1', 2: 'Nivel2', 3: 'Nivel3' };
@@ -145,8 +146,8 @@ window.onload = function () {
   Tracker.AddEvent(EventType.SESSION_INIT, undefined)
   WebFont.load(wfconfig);
   //console.log(PerformanceInfo.GetLoadCPU());
-  UserInfo.GetLocation();
-  PerformanceInfo.GetLoadRAM();
+  //UserInfo.GetLocation();
+  PerformanceInfo.GetRAMLoad();
   PerformanceInfo.GetCPULoad();
   let k = document.getElementsByClassName("canvas");
   
