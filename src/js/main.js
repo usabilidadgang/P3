@@ -19,6 +19,11 @@ const ip = require('public-ip')
 
 var BootScene = {
   preload: function () {
+    this.game.load.onFileComplete.add(
+      (args,k,p,a,e,q)=>{
+        console.log(args,k,p,a,e,q);
+      }
+    )
     // load here assets required for the loading screen
     this.game.load.image('preloader_bar', 'images/preloader_bar.png');
     this.game.load.spritesheet('button', 'images/buttons.png', 168, 70);
@@ -71,7 +76,7 @@ var PreloaderScene = {
 
     this.game.load.audio('enemyHit', "Sounds/Effects/EnemyHit.wav");
     //http://freesound.org/people/josepharaoh99/sounds/361636/
-    this.game.load.audio('playerDeath', "Sounds/Effects/PlayerDeath.mp3");
+    this.game.load.audio('playerDeath', "Sounds/Effects/PlayerDeath.mp3").l
 
     //http://freesound.org/people/cabled_mess/sounds/350986/
     this.game.load.audio('lost', 'Sounds/Effects/lost.wav');
@@ -82,8 +87,12 @@ var PreloaderScene = {
 
     this.game.load.atlas('Golem', 'images/Character Sprites/Golem/Golem.png', 'atlas/Golem.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 
+    
+
     this.game.load.image('stairs', 'images/stairs.png');
     this.load.onLoadComplete.add(this.loadComplete, this);
+  console.log(performance.memory)
+
   },
   loadStart: function () {
     console.log("Game Assets Loading ...");
@@ -112,6 +121,7 @@ var wfconfig = {
 window.init = function () {
   //Metodo init, que será llamado una vez la fuente se haya cargado.
   var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
+  
   game.state.add('boot', BootScene);
   game.state.add('menu', menuScene);
   game.state.add('preloader', PreloaderScene);
@@ -122,10 +132,12 @@ window.init = function () {
   
   //Comenzamos con el estado boot
   game.state.start('boot');
+  
   game.niveles = { 1: 'Nivel1', 2: 'Nivel2', 3: 'Nivel3' };
   game.musics = { 1: 'music1', 2: 'music2', 3: 'music1' };
   game.nivelActual = 1;
   game.overallScore = 0;
+  console.log(performance.memory)
   
   
 }
@@ -147,13 +159,13 @@ window.onload = function () {
   WebFont.load(wfconfig);
   //console.log(PerformanceInfo.GetLoadCPU());
   //UserInfo.GetLocation();
-  PerformanceInfo.GetRAMLoad();
-  PerformanceInfo.GetCPULoad();
   let k = document.getElementsByClassName("canvas");
   
 
 };
 window.onclose = function () {
+  game.load.image().onl
+
   Tracker.AddEvent(EventType.SESSION_CLOSE, undefined)
 }
 
