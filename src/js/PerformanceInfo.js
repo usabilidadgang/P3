@@ -1,91 +1,106 @@
 'use strict'
 const ping = require('ping');
 const os = require('os');
-const si = require('systeminformation');
 const plat= require('platform')
 
 
 
-/**
- * Get the current load of the CPU
- */
-function GetCPULoad(){
-    return new Promise(
-        (resolve,reject)=>{
-            si.currentLoad().then(data=>{
-                if(data.raw_currentload == 0){
-                    resolve(undefined);
-                    //reject("No CPU load avialable");
-                }else{
-                    resolve(data.currentload);
-                }
-            })
-        }
-    );
-}
+class PerformaceInfo{
 
-/**
- * Get the current load of the RAM
- */
-function GetRAMLoad(){
-    si.osInfo(data=> console.log(data)).finally(()=>console.log(""))
-    
-    console.log(plat.name)
+    /**
+     * 
+     * @param {Phaser.Game} game 
+     */
+    constructor(game){
+        this.game = game;
+        this.lastLoadTime = Date.now();
 
-    return new Promise(
-        (resolve,reject)=>{
-            if(os.type()==="Browser") resolve(undefined);
-            si.mem().then(data => {
-                console.log("kek")
-                if(data.used == NaN){
-                    resolve(undefined);
-                }else{
-                    resolve(data.used/data.total);
-                }
-                
-            }).catch(error =>  {
-                console.log("kek")
-                resolve(undefined);
-            })
+        this.filesLoaded = {};
+        this.filesLoadedNum = 0;
+        this.initialized = false;
+
+        this.game.state.getCurrentState();
+    }
+
+    Initialize(){
+        if(this.initialized){
+            console.warn("Already Initialized");
+            return;
         }
-                
+        this.game.load.onFileComplete.add(
+            (progress,name)=>{
+              this.AddFileLoaded(name);
+            }
+        )
+        this.game.load.onLoadStart.add(
+            ()=>{
+                this.LoadStart();
+            }
+        )
+        this.game.load.onLoadComplete.add(
+            ()=>{
+                this.LoadFinished();
+            }
+        )
+        this.game.time.advancedTiming = true;
+    }
+
+    GetFilesLoaded(){
+        return this.filesLoadedNum;
+    }
+
+    AddFileLoaded(file){
         
-    )
-}
-
-/**
- * Get the current load of the RAM
- */
-function GetRAMUsed(){
-    return new Promise(
-        (resolve, reject)=>{
-            si.mem().then(data => {
-                if(data.used == NaN){
-                    reject("No RAM load avilable");
-                }else{
-                    resolve(data.used);
-                }
-            }).catch(error => reject(error));
+        if(this.filesLoaded[file] == undefined){
+            this.filesLoaded[file] = 1;
+        }else{
+            this.filesLoaded[file]++;
+            console.warn("File already loaded");
         }
-    );
+        this.filesLoadedNum++;
+    }
+
+    LoadStart(){
+        this.lastLoadTime = Date.now();
+    }
+
+    LoadFinished(){
+        let time = Date.now();
+        console.log(time-this.lastLoadTime);
+        this.lastLoadTime = time;
+    }
+
+    GetMaxFPS(){
+        return this.game.time.fpsMax;
+    }
+
+    GetCurrentFPS(){
+        return this.game.time.fps;
+    }
+
+    GetMinFPS(){
+        return this.game.time.fpsMin;
+    }
+
+    GetNumberShit(){
+        return this.game.stage.children.length;
+    }
+    
+    
+
+    
 }
 
-/**
- * Get the total RAM avialable
- */
-function GetRAMTotal(){
-    let info = null;
-    //si.mem().then(data => info=data.total).catch(error => console.log(error));
-    return info;
-}
+var Instance = undefined;
 
-/**
- * Get the info of the CPU
- */
-function GetCPUInfo(){
-    let info = null;
-    //si.cpu().then(data => info=data).catch(error => console.log(error));
-    return info;
+function Initialize(game){
+    if(Instance){
+        console.warn("already initialized");
+
+    }else{
+        Instance = new PerformaceInfo(game);
+        Instance.Initialize();
+    }
 }
 
 /**
@@ -93,22 +108,11 @@ function GetCPUInfo(){
  * @param {string} server The server that is going to be pinged
  * 
  */
-function GetPingToServer(server)
-{
-    return new Promise(
-        (resolve,reject)=>{
-            ping.promise.probe(server).then(data => resolve(data)).catch(error => reject(error));
-        }
-    )
-}
+
 
 
 
 module.exports = {
-    GetCPULoad,
-    GetRAMLoad,
-    GetRAMUsed,
-    GetRAMTotal,
-    GetCPUInfo,
-    GetPingToServer,
+    Initialize
+    
 }

@@ -19,11 +19,8 @@ const ip = require('public-ip')
 
 var BootScene = {
   preload: function () {
-    this.game.load.onFileComplete.add(
-      (args,k,p,a,e,q)=>{
-        console.log(args,k,p,a,e,q);
-      }
-    )
+    PerformanceInfo.Initialize(this.game);
+    this.load
     // load here assets required for the loading screen
     this.game.load.image('preloader_bar', 'images/preloader_bar.png');
     this.game.load.spritesheet('button', 'images/buttons.png', 168, 70);
@@ -76,7 +73,7 @@ var PreloaderScene = {
 
     this.game.load.audio('enemyHit', "Sounds/Effects/EnemyHit.wav");
     //http://freesound.org/people/josepharaoh99/sounds/361636/
-    this.game.load.audio('playerDeath', "Sounds/Effects/PlayerDeath.mp3").l
+    this.game.load.audio('playerDeath', "Sounds/Effects/PlayerDeath.mp3");
 
     //http://freesound.org/people/cabled_mess/sounds/350986/
     this.game.load.audio('lost', 'Sounds/Effects/lost.wav');
@@ -122,6 +119,8 @@ window.init = function () {
   //Metodo init, que será llamado una vez la fuente se haya cargado.
   var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
   
+  
+  
   game.state.add('boot', BootScene);
   game.state.add('menu', menuScene);
   game.state.add('preloader', PreloaderScene);
@@ -129,7 +128,6 @@ window.init = function () {
   game.state.add('creditos', credits);
   game.state.add('gameOver', gameOver);
   game.state.add('levelSucceed', levelSucceed);
-  
   //Comenzamos con el estado boot
   game.state.start('boot');
   
@@ -137,12 +135,17 @@ window.init = function () {
   game.musics = { 1: 'music1', 2: 'music2', 3: 'music1' };
   game.nivelActual = 1;
   game.overallScore = 0;
+  
+  
   console.log(performance.memory)
   
   
 }
-
+document.addEventListener("load",()=>{
+  console.log("shit in");
+})
 window.onload = function () {
+  
   let setup = {
 
     persistance: {
