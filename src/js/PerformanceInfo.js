@@ -1,18 +1,18 @@
 'use strict'
 const ping = require('ping');
 const os = require('os');
-const plat= require('platform');
+const plat = require('platform');
 const browser = require('browser-detect');
 const ipInfo = require("ipinfo");
 
 
-class PerformaceInfo{
+class PerformaceInfo {
 
     /**
      *
      * @param {Phaser.Game} game
      */
-    constructor(game){
+    constructor(game) {
         this.game = game;
         this.lastLoadTime = Date.now();
 
@@ -33,132 +33,205 @@ class PerformaceInfo{
 
 
     }
-    step (context) {
+
+    /**
+     * 
+     * @param {Can} context 
+     */
+    step(context) {
         var fps = context.GetCurrentFPS();
-        console.log(fps);
-        setInterval(this.step,1000,context);
+
+        setInterval(this.step, 1000, context);
 
     }
-    Initialize(){
-        if(this.initialized){
+
+    /**
+     * Initialize the performance module
+     */
+    Initialize() {
+        if (this.initialized) {
             console.warn("Already Initialized");
             return;
         }
+
         this.game.load.onFileComplete.add(
-            (progress,name)=>{
-              this.AddFileLoaded(name);
+            (progress, name) => {
+                this.AddFileLoaded(name);
             }
         )
         this.game.load.onLoadStart.add(
-            ()=>{
+            () => {
                 this.LoadStart();
             }
         )
         this.game.load.onLoadComplete.add(
-            ()=>{
+            () => {
                 this.LoadFinished();
             }
         )
-        this.game.update
         this.game.time.advancedTiming = true;
-
     }
 
-    GetFilesLoaded(){
+    /**
+     * @returns {number} the total loaded files
+     */
+    GetFilesLoaded() {
         return this.filesLoadedNum;
     }
 
-    AddFileLoaded(file){
+    /**
+     * add a file to the dictonary and check if repeated
+     * @param {string} file name of the file
+     */
+    AddFileLoaded(file) {
 
-        if(this.filesLoaded[file] == undefined){
+        if (this.filesLoaded[file] == undefined) {
             this.filesLoaded[file] = 1;
-            console.log("Loaded "+ file)
-        }else{
+        } else {
             this.filesLoaded[file]++;
-            console.warn("File already loaded " +file);
+            console.warn("File already loaded " + file);
         }
         this.filesLoadedNum++;
     }
 
-    LoadStart(){
+    LoadStart() {
         this.lastLoadTime = Date.now();
     }
 
-    LoadFinished(){
+    LoadFinished() {
         let time = Date.now();
-        console.log(time-this.lastLoadTime);
-        this.lastLoadTime = time;
+        this.lastLoadTime = time - this.lastLoadTime;
     }
 
-    GetMaxFPS(){
+    GetLastLoadTime() {
+        return this.lastLoadTime;
+    }
+
+
+
+    GetMaxFPS() {
         return this.game.time.fpsMax;
     }
 
-    GetCurrentFPS(){
+    GetCurrentFPS() {
         return this.game.time.fps;
     }
 
-    GetMinFPS(){
+    GetMinFPS() {
         return this.game.time.fpsMin;
     }
 
-    GetNumberShit(){
+    GetNumEntitiesScene() {
         return this.game.stage.children.length;
     }
 
-    BrowserInfo(){
-      if (navigator.userAgent.indexOf("Win") != -1) console.log("Windows");
-    if (navigator.userAgent.indexOf("Mac") != -1) console.log("Macintosh");
-    if (navigator.userAgent.indexOf("Linux") != -1) console.log("Linux");
-    if (navigator.userAgent.indexOf("Android") != -1) console.log("Android");
-    if (navigator.userAgent.indexOf("like Mac") != -1) console.log("iOS");
+    /**
+     * 
+     */
+    BrowserInfo() {
+        if (navigator.userAgent.indexOf("Win") != -1) console.log("Windows");
+        if (navigator.userAgent.indexOf("Mac") != -1) console.log("Macintosh");
+        if (navigator.userAgent.indexOf("Linux") != -1) console.log("Linux");
+        if (navigator.userAgent.indexOf("Android") != -1) console.log("Android");
+        if (navigator.userAgent.indexOf("like Mac") != -1) console.log("iOS");
+
+        console.log(navigator.platform);
 
 
-    //Esta libreria suelta el os que le da la gana, lo demás bien
-    const result = browser();
-    console.log("Broswer: " + result.name + " Version: " + result.version + " is Mobile: "+ result.mobile);
+
+        //Esta libreria suelta el os que le da la gana, lo demás bien
+        let result = browser();
+        console.log("Broswer: " + result.name + " Version: " + result.version + " is Mobile: " + result.mobile);
+        return {}
     }
 
 
-    SizeInfo(){
-      console.log("Screen Size :" + screen.width + " x " + screen.height);
-      console.log("Screen Size :" + document.documentElement.clientHeight+ " x " + screen.offsetWidth);
+    SizeInfo() {
+        console.log("Screen Size :" + screen.width + " x " + screen.height);
+        console.log("Screen Size :" + document.documentElement.clientHeight + " x " + document.documentElement.clientWidth);
+
     }
 
-    LanguageInfo(){
-      console.log("Language : " +navigator.languages);
+    LanguageInfo() {
+        console.log("Language : " + navigator.languages);
     }
 
-    IpCountryInfo(){
-      ipInfo((err, cLoc) => {
-          console.log(err || cLoc);});
-  }
+    IpCountryInfo() {
+        ipInfo((err, cLoc) => {
+            console.log(err || cLoc);
+        });
+    }
 
 
 }
 
+
 var Instance = undefined;
 
-function Initialize(game){
-    if(Instance){
+function Initialize(game) {
+    if (Instance) {
         console.warn("already initialized");
 
-    }else{
+    } else {
         Instance = new PerformaceInfo(game);
         Instance.Initialize();
     }
 }
 
+function GetLanguageInfo(){
+    return (Instance!= undefined)?Instance.LanguageInfo():-1;
+
+}
+
+function GetScreenInfo(){
+    return (Instance!= undefined)?Instance.SizeInfo():-1;
+
+}
+
 /**
- * Get the current ping to a server
- * @param {string} server The server that is going to be pinged
- *
+ * @returns 
  */
+function GetBrowserInfo(){
+    return (Instance!= undefined)?Instance.BrowserInfo():-1;
+
+}
+
+/**
+ * @returns {number} the current FPS
+ */
+function GetCurrentFPS(){
+    return (Instance!= undefined)?Instance.GetCurrentFPS():-1;
+
+}
+
+/**
+ * @returns {number} the maximum FPS
+ */
+function GetMaxFPS(){
+    return (Instance!= undefined)?Instance.GetMaxFPS():-1;
+
+}
+
+/**
+ * @returns {number} the minimum FPS, -1
+ */
+function GetMinFPS(){
+    return (Instance!= undefined)?Instance.GetMinFPS():-1;
+}
 
 
 
 
 module.exports = {
-    Initialize
+    Initialize,
+
+    /**
+     * FPS information
+     */
+    FPS:{
+        GetCurrentFPS,
+        GetMaxFPS,
+        GetMinFPS,
+    }
 
 }

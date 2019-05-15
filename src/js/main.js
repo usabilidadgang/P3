@@ -20,7 +20,8 @@ const ip = require('public-ip')
 var BootScene = {
   preload: function () {
     PerformanceInfo.Initialize(this.game);
-    this.load
+
+
     // load here assets required for the loading screen
     this.game.load.image('preloader_bar', 'images/preloader_bar.png');
     this.game.load.spritesheet('button', 'images/buttons.png', 168, 70);
@@ -136,14 +137,8 @@ window.init = function () {
   game.nivelActual = 1;
   game.overallScore = 0;
   
-  
-  console.log(performance.memory)
-  
-  
 }
-document.addEventListener("load",()=>{
-  console.log("shit in");
-})
+
 window.onload = function () {
   
   let setup = {

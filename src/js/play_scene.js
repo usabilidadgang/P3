@@ -6,7 +6,9 @@ var characters = require('./Characters.js');
 var mapCreator = require('./MapCreator');
 const Tracker = require('./Tracker.js');
 const EventType = require('./EventType')
-const date = new Date();
+
+const PerformanceInfo = require('./PerformanceInfo');
+
 
 //EScena de juego.
 var PlayScene = {
@@ -51,6 +53,7 @@ var PlayScene = {
     this.pauseButton = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
     
     this.configure();
+
 
   },
 
@@ -122,6 +125,7 @@ checkColisions: function(){
       this._player.update();
       if(this.pauseButton.isDown){
         this.game.paused = true;
+
         this.pauseMenu();
       }
 
