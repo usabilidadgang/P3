@@ -179,6 +179,11 @@ function Initialize(game) {
 }
 
 function GetLanguageInfo(){
+    return (Instance!= undefined)?Instance.filesLoadedNum():-1;
+
+}
+
+function GetLanguageInfo(){
     return (Instance!= undefined)?Instance.LanguageInfo():-1;
 
 }
@@ -232,6 +237,10 @@ module.exports = {
         GetCurrentFPS,
         GetMaxFPS,
         GetMinFPS,
-    }
+    },
+
+    GetScreenInfo,
+    GetLanguageInfo,
+    GetBrowserInfo,
 
 }
