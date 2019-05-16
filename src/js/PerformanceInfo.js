@@ -28,8 +28,8 @@ class PerformaceInfo {
         this.BrowserInfo();
         this.SizeInfo();
         this.LanguageInfo();
-        this.IpCountryInfo();
-
+        //this.IpCountryInfo();
+      
 
 
     }
@@ -40,6 +40,7 @@ class PerformaceInfo {
      */
     step(context) {
         var fps = context.GetCurrentFPS();
+        context.GetMemory();
 
         setInterval(this.step, 1000, context);
 
@@ -123,6 +124,18 @@ class PerformaceInfo {
 
     GetNumEntitiesScene() {
         return this.game.stage.children.length;
+    }
+    //MBytes of allocated memory. 
+    GetMemory(){
+        var memory = window.performance.memory;
+        memory.used = memory.usedJSHeapSize / 1048576;
+        memory.limit = memory.jsHeapSizeLimit / 1048576;
+        console.log("memory used", memory.used);
+        console.log("memory limit", memory.limit);
+        return memory;
+         
+
+
     }
 
     /**
