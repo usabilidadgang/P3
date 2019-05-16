@@ -1,6 +1,8 @@
 'use strict'
 const browser = require('browser-detect');
 const ipInfo = require("ipinfo");
+const NetworkSpeed = require('network-speed');
+const testNetworkSpeed = new NetworkSpeed();
 
 
 const PerformanceEvents = {
@@ -151,7 +153,23 @@ class PerformanceInfo {
     GetNumEntitiesScene() {
         return this.game.stage.children.length;
     }
+    //MBytes of allocated memory. 
+    GetMemory(){
+        var memory = window.performance.memory;
+        memory.used = memory.usedJSHeapSize / 1048576;
+        memory.limit = memory.jsHeapSizeLimit / 1048576;
+        console.log("memory used", memory.used);
+        console.log("memory limit", memory.limit);
+        return memory;
+    }
 
+    //Download Speed 
+    async getNetworkDownloadSpeed() {
+        const baseUrl = 'http://eu.httpbin.org/stream-bytes/50000000';
+        const fileSize = 500000;
+        const speed = await testNetworkSpeed.checkDownloadSpeed(baseUrl, fileSize);
+       return speed ;
+      }
     /**
      * 
      */

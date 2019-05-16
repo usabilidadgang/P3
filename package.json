@@ -21,6 +21,7 @@
     "gulp-util": "*",
     "ipinfo": "^1.3.9",
     "merge-stream": "*",
+    "network-speed": "^2.0.1",
     "node-fetch": "^2.3.0",
     "node-where": "^1.1.0",
     "phaser-ce": "*",
