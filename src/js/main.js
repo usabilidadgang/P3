@@ -19,7 +19,7 @@ const ip = require('public-ip')
 
 var BootScene = {
   preload: function () {
-    PerformanceInfo.Initialize(this.game);
+    PerformanceInfo.Initialize(this.game,Tracker);
 
 
     // load here assets required for the loading screen
@@ -145,24 +145,21 @@ window.onload = function () {
 
     persistance: {
       type: Tracker.PersistanceType.Server,
-      arg: "localhost:80",
+      arg: "http://localhost:8080/tracker",
     },
     serializer: {
       type: Tracker.SerializerType.CSV
     }
   }
 
-  Tracker.InitTracker(0);
+  Tracker.InitTracker(setup);
   Tracker.AddEvent(EventType.SESSION_INIT, undefined)
+  
   WebFont.load(wfconfig);
-  //console.log(PerformanceInfo.GetLoadCPU());
-  //UserInfo.GetLocation();
-  let k = document.getElementsByClassName("canvas");
   
 
 };
 window.onclose = function () {
-  game.load.image().onl
 
   Tracker.AddEvent(EventType.SESSION_CLOSE, undefined)
 }

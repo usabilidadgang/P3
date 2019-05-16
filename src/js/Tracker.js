@@ -55,8 +55,7 @@ class Tracker {
       this.Persistence = new PersistanceDefaults[setupInfo.persistance.type](setupInfo.persistance.arg);
     }
     else {
-      console.log("By default Local Persistance int the file log.txt")
-      this.Persistence = new DiskPersistance("fucker.txt");
+      this.Persistence = new ServerPersistance("localhost:8080/tracker");
     }
 
     if (setupInfo.serializer != undefined) {

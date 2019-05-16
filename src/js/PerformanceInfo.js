@@ -1,50 +1,51 @@
 'use strict'
-const ping = require('ping');
-const os = require('os');
-const plat = require('platform');
 const browser = require('browser-detect');
 const ipInfo = require("ipinfo");
 
 
-class PerformaceInfo {
+const PerformanceEvents = {
+    CURRENT_FPS: 1000,
+    MAX_FPS: 1001,
+    MIN_FPS: 1002,
+    LOAD_TIME: 1003,
+    LOADED_FILES: 1004,
+    JS_HEAP_MEMORY: 1005,
+    BROWSER_INFO: 1006,
+    LANGUAGE_INFO: 1007,
+    SCREEN_INFO: 1008,
 
+}
+
+class PerformanceInfo {
     /**
      *
      * @param {Phaser.Game} game
+     * @param {Tracker} tracker
      */
-    constructor(game) {
+    constructor(game, tracker) {
+
         this.game = game;
+        this.tracker = tracker;
         this.lastLoadTime = Date.now();
 
         this.filesLoaded = {};
         this.filesLoadedNum = 0;
         this.initialized = false;
+        this.hasDuplicatedFiles = false;
+    }
 
-        this.game.state.getCurrentState();
+    async getNetworkDownloadSpeed() {
+        const baseUrl = 'http://eu.httpbin.org/stream-bytes/50000000';
+        const fileSize = 500000;
+        const speed = await testNetworkSpeed.checkDownloadSpeed(baseUrl, fileSize);
+        return speed;
+    }
 
-        //This number can be changed
-
-        this.step(this);
-        this.BrowserInfo();
-        this.SizeInfo();
-        this.LanguageInfo();
-        this.IpCountryInfo();
-
+    async step() {
+        console.log("su");
 
 
     }
-
-    /**
-     * 
-     * @param {Can} context 
-     */
-    step(context) {
-        var fps = context.GetCurrentFPS();
-
-        setInterval(this.step, 1000, context);
-
-    }
-
     /**
      * Initialize the performance module
      */
@@ -53,7 +54,6 @@ class PerformaceInfo {
             console.warn("Already Initialized");
             return;
         }
-
         this.game.load.onFileComplete.add(
             (progress, name) => {
                 this.AddFileLoaded(name);
@@ -69,8 +69,17 @@ class PerformaceInfo {
                 this.LoadFinished();
             }
         )
+
+        this.BrowserInfo();
+        this.SizeInfo();
+        this.LanguageInfo();
+        this.IpCountryInfo();
+
         this.game.time.advancedTiming = true;
+        this.initialized = true;
+        this.step();
     }
+
 
     /**
      * @returns {number} the total loaded files
@@ -89,7 +98,8 @@ class PerformaceInfo {
             this.filesLoaded[file] = 1;
         } else {
             this.filesLoaded[file]++;
-            console.warn("File already loaded " + file);
+            this.hasDuplicatedFiles = true;
+
         }
         this.filesLoadedNum++;
     }
@@ -101,10 +111,27 @@ class PerformaceInfo {
     LoadFinished() {
         let time = Date.now();
         this.lastLoadTime = time - this.lastLoadTime;
+
+
+        if (this.tracker) {
+            this.tracker.AddEvent(PerformanceEvents.LOAD_TIME, { loadtime: this.lastLoadTime })
+            this.tracker.AddEvent(PerformanceEvents.LOADED_FILES, { filesLoaded: this.filesLoadedNum, duplicated: this.hasDuplicatedFiles })
+        }
     }
 
     GetLastLoadTime() {
         return this.lastLoadTime;
+    }
+
+    /**
+     * Only in Chrome
+     */
+    GetJSHeapInfo() {
+        let memory = window.performance.memory;
+        memory.used = memory.usedJSHeapSize / 1048576;
+        memory.limit = memory.jsHeapSizeLimit / 1048576;
+        if (this.tracker) this.tracker.AddEvent(PerformanceEvents.JS_HEAP_MEMORY, memory)
+        return memory;
     }
 
 
@@ -129,36 +156,59 @@ class PerformaceInfo {
      * 
      */
     BrowserInfo() {
-        if (navigator.userAgent.indexOf("Win") != -1) console.log("Windows");
-        if (navigator.userAgent.indexOf("Mac") != -1) console.log("Macintosh");
-        if (navigator.userAgent.indexOf("Linux") != -1) console.log("Linux");
-        if (navigator.userAgent.indexOf("Android") != -1) console.log("Android");
-        if (navigator.userAgent.indexOf("like Mac") != -1) console.log("iOS");
+        var _browserinfo = { os: "undefined" };
+        if (navigator.userAgent.indexOf("Win") != -1) _browserinfo.os = "Windows";
+        if (navigator.userAgent.indexOf("Mac") != -1) _browserinfo.os = "Macintosh";
+        if (navigator.userAgent.indexOf("Linux") != -1) _browserinfo.os = "Linux";
+        if (navigator.userAgent.indexOf("Android") != -1) _browserinfo.os = "Android";
+        if (navigator.userAgent.indexOf("like Mac") != -1) _browserinfo.os = "iOS";
 
-        console.log(navigator.platform);
+
 
 
 
         //Esta libreria suelta el os que le da la gana, lo demás bien
         let result = browser();
-        console.log("Broswer: " + result.name + " Version: " + result.version + " is Mobile: " + result.mobile);
-        return {}
+        _browserinfo.browser = result.name;
+        _browserinfo.version = result.version;
+        _browserinfo.mobile = result.mobile;
+
+        if (this.tracker) this.tracker.AddEvent(PerformanceEvents.BROWSER_INFO, _browserinfo);
+
+
+        return _browserinfo;
     }
 
 
     SizeInfo() {
-        console.log("Screen Size :" + screen.width + " x " + screen.height);
-        console.log("Screen Size :" + document.documentElement.clientHeight + " x " + document.documentElement.clientWidth);
+
+
+
+        if (this.tracker) this.tracker.AddEvent(PerformanceEvents.SCREEN_INFO, 
+            {
+                screen: screen.width + "x" + screen.height,
+            view: document.documentElement.clientWidth + "x" + document.documentElement.clientHeight
+        })
+        return {
+            screen: { width: screen.width, height: screen.height },
+            view: { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight }
+        };
 
     }
 
     LanguageInfo() {
-        console.log("Language : " + navigator.languages);
+        if (this.tracker) this.tracker.AddEvent(PerformanceEvents.LANGUAGE_INFO, { lan: navigator.languages })
+
+        return { lan: navigator.languages };
+
     }
 
     IpCountryInfo() {
         ipInfo((err, cLoc) => {
-            console.log(err || cLoc);
+            if (err)
+                console.log("cant get the loc");
+            else
+                console.log(cLoc);
         });
     }
 
@@ -168,60 +218,59 @@ class PerformaceInfo {
 
 var Instance = undefined;
 
-function Initialize(game) {
+function Initialize(game, tracker) {
     if (Instance) {
         console.warn("already initialized");
 
     } else {
-        Instance = new PerformaceInfo(game);
+        Instance = new PerformanceInfo(game, tracker);
         Instance.Initialize();
     }
 }
 
-function GetLanguageInfo(){
-    return (Instance!= undefined)?Instance.filesLoadedNum():-1;
+function GetLastLoadTime() {
+    return (Instance != undefined) ? Instance.GetLastLoadTime() : -1;
+}
+
+function GetLanguageInfo() {
+    return (Instance != undefined) ? Instance.LanguageInfo() : -1;
 
 }
 
-function GetLanguageInfo(){
-    return (Instance!= undefined)?Instance.LanguageInfo():-1;
-
-}
-
-function GetScreenInfo(){
-    return (Instance!= undefined)?Instance.SizeInfo():-1;
+function GetScreenInfo() {
+    return (Instance != undefined) ? Instance.SizeInfo() : -1;
 
 }
 
 /**
- * @returns 
+ * @returns {String} Browser Info
  */
-function GetBrowserInfo(){
-    return (Instance!= undefined)?Instance.BrowserInfo():-1;
+function GetBrowserInfo() {
+    return (Instance != undefined) ? Instance.BrowserInfo() : -1;
 
 }
 
 /**
  * @returns {number} the current FPS
  */
-function GetCurrentFPS(){
-    return (Instance!= undefined)?Instance.GetCurrentFPS():-1;
+function GetCurrentFPS() {
+    //return (Instance!= undefined)?Instance.():-1;
 
 }
 
 /**
  * @returns {number} the maximum FPS
  */
-function GetMaxFPS(){
-    return (Instance!= undefined)?Instance.GetMaxFPS():-1;
+function GetMaxFPS() {
+    return (Instance != undefined) ? Instance.GetMaxFPS() : -1;
 
 }
 
 /**
- * @returns {number} the minimum FPS, -1
+ * @returns {number} the minimum FPS,
  */
-function GetMinFPS(){
-    return (Instance!= undefined)?Instance.GetMinFPS():-1;
+function GetMinFPS() {
+    return (Instance != undefined) ? Instance.GetMinFPS() : -1;
 }
 
 
@@ -229,11 +278,7 @@ function GetMinFPS(){
 
 module.exports = {
     Initialize,
-
-    /**
-     * FPS information
-     */
-    FPS:{
+    FPS: {
         GetCurrentFPS,
         GetMaxFPS,
         GetMinFPS,
@@ -242,5 +287,6 @@ module.exports = {
     GetScreenInfo,
     GetLanguageInfo,
     GetBrowserInfo,
+    GetLastLoadTime,
 
 }

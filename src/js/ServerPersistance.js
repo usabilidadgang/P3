@@ -27,8 +27,8 @@ class ServerPersistance
         headers:{
           'Content-Type': 'application/json'
         },
-        body : JSON.stringify(obj),
-        mode: 'cors'
+        mode: 'cors',
+        body : JSON.stringify(obj)
     
 
       }).then(res => res.json())
