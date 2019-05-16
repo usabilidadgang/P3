@@ -4,13 +4,15 @@ const os = require('os');
 const plat = require('platform');
 const browser = require('browser-detect');
 const ipInfo = require("ipinfo");
+const NetworkSpeed = require('network-speed');
+const testNetworkSpeed = new NetworkSpeed();
 
 
 class PerformaceInfo {
 
     /**
      *
-     * @param {Phaser.Game} game
+     * @param {Phaser.Game} games
      */
     constructor(game) {
         this.game = game;
@@ -133,11 +135,15 @@ class PerformaceInfo {
         console.log("memory used", memory.used);
         console.log("memory limit", memory.limit);
         return memory;
-         
-
-
     }
 
+    //Download Speed 
+    async getNetworkDownloadSpeed() {
+        const baseUrl = 'http://eu.httpbin.org/stream-bytes/50000000';
+        const fileSize = 500000;
+        const speed = await testNetworkSpeed.checkDownloadSpeed(baseUrl, fileSize);
+       return speed ;
+      }
     /**
      * 
      */
