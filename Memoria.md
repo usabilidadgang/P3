@@ -1,12 +1,11 @@
 # Tracker de Rendimiento en JS en Phaser
 
-Grupo 6
+Grupo 6 :
+- Jorge Algaba Aranda
+- Manuel Hernández Nájera-Alesón
+- Francisco Solano López-Bleda de Castro
 
-Por:
-
-Jorge Algaba Aranda, Manuel Hernández Nájera-Alesón, Francisco Solano López-Bleda de Castro
-
----
+----
 
 ## Preparación
 
@@ -34,16 +33,17 @@ Los datos de rendimiento que extrae el Tracker son:
 - Tiempo de carga para cada escena del juego
 - FPS
 - Sistema operativo
-- Memoria usada por JS [^1]
+- Memoria usada por JS (solo en Chrome)
 
-[^1]:Solo en Google Chrome
+---
 
 
 ## Conclusiones
-El navegador tiene muchas limitaciones a la hora de obtener informacion del sistema/usuario, nos hemos basado en las pocas medidas otorgadas por el navegador y la información obtenible por Phaser. La característica principal de este módulo es la capacidad de poner en contexto características que afectan al rendimiento del navegador(version del navegador, tamaño de ventana, sistema operativo,...), además optimizado para Phaser (tiempo de cambio de escena, FPS, ficheros cargados ,...).
+El navegador tiene muchas limitaciones a la hora de obtener informacion del sistema/usuario, nos hemos basado en las pocas medidas otorgadas por el navegador y la información obtenible por Phaser. La característica principal de este módulo es la capacidad de poner en contexto características que afectan al rendimiento del navegador(version del navegador, tamaño de ventana, sistema operativo, ...), además optimizado para Phaser (tiempo de cambio de escena, FPS, ficheros cargados, ...).
 
 Como conclusión final, el tracker puede servir para obtener y enviar la información sobre el rendimiento y contexto de muchos usuarios, así facilitando la detección, solución de problemas y la optimización de recursos en Phaser.
 
+---
 
 ## Referencias y bibliografía
 
