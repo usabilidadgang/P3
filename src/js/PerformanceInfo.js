@@ -71,6 +71,7 @@ class PerformanceInfo {
                 this.LoadFinished();
             }
         )
+        
 
         this.BrowserInfo();
         this.SizeInfo();
@@ -80,6 +81,13 @@ class PerformanceInfo {
         this.game.time.advancedTiming = true;
         this.initialized = true;
         this.step();
+    }
+    /**
+     * 
+     */
+    SendPerformanceInfo() {
+        this.GetCurrentFPS();
+        //GetJSHeapInfo();       
     }
 
 
@@ -139,19 +147,23 @@ class PerformanceInfo {
 
 
     GetMaxFPS() {
+        if(this.tracker)this.tracker.AddEvent(PerformanceEvents.MAX_FPS, {fps: this.game.time.fpsMax})
         return this.game.time.fpsMax;
     }
 
     GetCurrentFPS() {
+        if(this.tracker)this.tracker.AddEvent(PerformanceEvents.CURRENT_FPS, {fps: this.game.time.fps})
         return this.game.time.fps;
     }
 
     GetMinFPS() {
+        if(this.tracker)this.tracker.AddEvent(PerformanceEvents.MIN_FPS, {fps: this.game.time.fpsMin})
         return this.game.time.fpsMin;
     }
 
     GetNumEntitiesScene() {
         return this.game.stage.children.length;
+
     }
     //MBytes of allocated memory. 
     GetMemory(){
@@ -160,7 +172,9 @@ class PerformanceInfo {
         memory.limit = memory.jsHeapSizeLimit / 1048576;
         console.log("memory used", memory.used);
         console.log("memory limit", memory.limit);
-        return memory;
+
+        this.tracker.AddEvent(JS_HEAP_MEMORY, {used_memory: memory});
+        return this.memory;
     }
 
     //Download Speed 
@@ -291,6 +305,13 @@ function GetMinFPS() {
     return (Instance != undefined) ? Instance.GetMinFPS() : -1;
 }
 
+/**
+ * Sends Events about performance information
+ */
+function SendPerformanceInfo() {
+    return (Instance != undefined) ? Instance.SendPerformanceInfo() : -1;
+}
+
 
 
 
@@ -306,5 +327,6 @@ module.exports = {
     GetLanguageInfo,
     GetBrowserInfo,
     GetLastLoadTime,
+    SendPerformanceInfo,
 
 }

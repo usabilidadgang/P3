@@ -20,8 +20,7 @@ const ip = require('public-ip')
 var BootScene = {
   preload: function () {
     PerformanceInfo.Initialize(this.game,Tracker);
-
-
+    
     // load here assets required for the loading screen
     this.game.load.image('preloader_bar', 'images/preloader_bar.png');
     this.game.load.spritesheet('button', 'images/buttons.png', 168, 70);

@@ -18,14 +18,20 @@ var PlayScene = {
   {
     if(this._player == null) return;
       var sent = {x:this._player.x, y:this._player.y};
-      Tracker.AddEvent(EventType.PLAYER_POSITION, sent)
+      Tracker.AddEvent(EventType.PLAYER_POSITION, sent);
 
-  }, 
+  },
+  performanceinfoEvent: function()
+  {
+    PerformanceInfo.SendPerformanceInfo();
+  },
 
   create: function () {
     this.gameOver = false;
     this.sceneScore = 0;
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    this.performanceEvent = this.game.time.events.loop(1000, this.performanceinfoEvent , this);
+
 
     //Inicializacion de audios.
     this.music = this.game.add.audio(this.game.musics[this.game.nivelActual]);
