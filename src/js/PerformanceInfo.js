@@ -286,7 +286,7 @@ function GetBrowserInfo() {
  * @returns {number} the current FPS
  */
 function GetCurrentFPS() {
-    //return (Instance!= undefined)?Instance.():-1;
+    return (Instance!= undefined)?Instance.GetCurrentFPS():-1;
 
 }
 
