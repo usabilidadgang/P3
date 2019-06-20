@@ -1,6 +1,6 @@
 'use strict'
 const fileSystem = require('fs');
-
+//Debido a las diferentes APIs de los navegadores para guardar archivos además de que no aporta una gran uilidad respecto a enviarlos al servidor
 class DiskPersistance {
 
     constructor (address)

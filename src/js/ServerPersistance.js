@@ -1,10 +1,12 @@
 const fetch = require("node-fetch")
+//Presistencia en servidor registra la direccion y envia los datos al servidor
 class ServerPersistance
 {
   constructor(address)
   {
       this.address = address;
   }
+
 
   send (dataString)
   {
