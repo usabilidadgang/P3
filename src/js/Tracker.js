@@ -9,33 +9,33 @@ const uniqid = require('uniqid');
 class Tracker {
 
     constructor(typeOfPersistance, typeOfSerializing){
-      this.userid = uniqid(); //Generacion de una id única para el usuario
+      this.userid = uniqid(); //Generacion de una id ï¿½nica para el usuario
       this.event_queue = []; //Pila de eventos
 
       switch (typeOfPersistance) {
         case 0:
           this.Persistence = new ServerPersistance('http://localhost:8080/tracker');
           break;
-        case 1://No está implementado
+        case 1://No estï¿½ implementado
           this.Persistence = new DiskPersistance("log.txt");
           break;
-        default://No está implementado
+        default://No estï¿½ implementado
           this.Persistence = new DiskPersistance("log.txt");
           break;
       }
 
       switch (typeOfSerializing) {
-        case 0: //Serialización en CSV
+        case 0: //Serializaciï¿½n en CSV
           this.Serializer = new CSVSerializer();
           break;
-        case 1: //Serialización en JSON
+        case 1: //Serializaciï¿½n en JSON
           this.Serializer = new JSONSerializer();
           break;
         default:
           this.Serializer = new CSVSerializer();
           break;
       }
-        //Añadir un evento , necesitamos el EventType y la información adicional
+        //Aï¿½adir un evento , necesitamos el EventType y la informaciï¿½n adicional
       this.addEvent = function(event_type, event_info)
       {
         let date = new Date();
@@ -46,7 +46,7 @@ class Tracker {
           this.saveWithPersistance();
   
       }
-       //funcion asíncrona que sirve para guardar los eventos de la pila
+       //funcion asï¿½ncrona que sirve para guardar los eventos de la pila
       this.saveWithPersistance = async function()
       {
         this.event_queue.forEach(event => {
@@ -73,7 +73,7 @@ class Tracker {
     }
   }
 
-  //añadir evento
+  //aï¿½adir evento
   function AddEvent(event_type,event_info){
     Instance.addEvent(event_type,event_info);
   }
