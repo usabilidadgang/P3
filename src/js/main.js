@@ -131,6 +131,7 @@ window.onload = function () {
     window.webkitRequestFileSystem(window.PERSISTENT , 1024*1024, SaveDatFileBro);
   })
 };
-window.onclose = function (){
-  Tracker.AddEvent(EventType.SESSION_CLOSE,undefined)
+window.onbeforeunload = function (){
+  Tracker.AddEvent(EventType.SESSION_CLOSE,undefined);
+  Tracker.SaveWithPersistance();
 }
