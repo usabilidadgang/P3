@@ -1,13 +1,24 @@
 'use strict'
-const event = require('./Event');
+/**
+ * Clase para la serialización de eventos a formato CSV
+ */
 class CSVserializer
 {
-    //Recibe un evento {Event} que cuenta con userId, timeStamp y eventInfo
+    /**
+     * Serializa el evento en formato CSV 
+     * @param {Event} newEvent el evento a serializar
+     * @returns {String} El evento serializado
+     */
     serialize(newEvent)
     {
         return  newEvent.userId.toString() + ", "+ newEvent.eventType.toString() + ", "+ newEvent.timeStamp + "," + this.serializeEventInfo(newEvent.eventInfo); 
     }
-    //Funcion auxiliar para serializar la parte de {Event.eventInfo}
+    //
+    /**
+     * Funcion auxiliar para serializar la informacion del evento
+     * @param {Event.eventInfo} eventInfo Informacion del evento
+     * @returns {String} la información del evento procesado para CSV
+     */
     serializeEventInfo(eventInfo)
     {
         if(eventInfo == null) return"\"\"";

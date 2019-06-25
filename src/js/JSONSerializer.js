@@ -1,9 +1,15 @@
 'use strict'
-const event = require('./Event');
 
-//Serializador a JSON, recibe un evento {Event} que cuenta con userId, timeStamp y eventInfo
+/**
+ * Clase para la serialización de eventos a formato JSON
+ */
 class JSONSerializer
 {
+    /**
+     * Serializa el evento en formato JSON
+     * @param {Event} newEvent evento a serializar
+     * @returns {String} El evento serializado en formato JSON
+     */
     serialize(newEvent)
     {
         return  JSON.stringify(newEvent)    

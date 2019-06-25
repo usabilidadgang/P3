@@ -1,17 +1,25 @@
 const fetch = require("node-fetch")
-//Presistencia en servidor registra la direccion y envia los datos al servidor
+/**
+ * Clase para la persistencia en servidor
+ */
 class ServerPersistance
 {
+  /**
+   * Constructora de la clase
+   * @param {String} address Dirección a enviar los datos
+   */
   constructor(address)
   {
       this.address = address;
   }
 
-
+  /**
+   * Envia al servidor definido la información
+   * @param {String} dataString Datos
+   */
   send (dataString)
   {
       var obj = {data: dataString};
-      //console.log("Sending object: ", obj);
       fetch(this.address, 
         {
         method:'POST',

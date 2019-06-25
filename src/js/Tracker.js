@@ -6,8 +6,16 @@ const JSONSerializer = require('./JSONSerializer');
 const Event = require('./Event');
 const uniqid = require('uniqid');
 
+/**
+ * Clase principal del tracker
+ */
 class Tracker {
 
+    /**
+     * Contructor del tracker
+     * @param {number} typeOfPersistance 
+     * @param {number} typeOfSerializing 
+     */
     constructor(typeOfPersistance, typeOfSerializing){
       this.userid = uniqid(); //Generacion de una id �nica para el usuario
       this.event_queue = []; //Pila de eventos
@@ -35,7 +43,7 @@ class Tracker {
           this.Serializer = new CSVSerializer();
           break;
       }
-        //A�adir un evento , necesitamos el EventType y la informaci�n adicional
+      
       this.addEvent = function(event_type, event_info)
       {
         let date = new Date();
@@ -63,7 +71,12 @@ class Tracker {
   }
 
   var Instance;
-  //inicializamos el tracker como un singletone
+
+  /**
+   * Iniciliza la instancia del Tracker
+   * @param {Number} typeOfPersistance 0 para la persistencia en Sevidor, 1 para persistencia en local, no funciona
+   * @param {Number} typeOfSerializing 0 para la serialización en CSV, 1 para serialización en JSON
+   */
   function InitializeTracker(typeOfPersistance,typeOfSerializing){
     if(Instance == undefined){
       Instance = new Tracker(typeOfPersistance, typeOfSerializing);
@@ -73,11 +86,18 @@ class Tracker {
     }
   }
 
-  //a�adir evento
+ /**
+  * Añade un evento a la cola
+  * @param {EventType} event_type El tipo de evento
+  * @param {Object} event_info la informacion adional del evento
+  */
   function AddEvent(event_type,event_info){
     Instance.addEvent(event_type,event_info);
   }
-  //guardar
+
+  /**
+   * Guarda los eventos segun la configuación asignada
+   */
   function SaveWithPersistance(){
     Instance.saveWithPersistance();
   }

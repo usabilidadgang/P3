@@ -1,13 +1,40 @@
 'use strict'
+/**
+ * Los tipos de eventos definidos
+ */
 var EventType = {
-    SESSION_INIT: 0, //Inicio de la sesión
-    SESSION_CLOSE:  1, //Fin de la sesión
-    PLAYER_POSITION:2, //Posición del jugador
-    ENEMY_DEAD :    3, //Muerte de enemigo
-    PLAYER_DEAD:    4, //Muerte del jguador
-    LEVEL_INIT :    5, //Inicio del nivel
-    LEVEL_FAIL:     6, //Nivel fallido
-    LEVEL_SUCCEDED: 7 //Nivel completado con éxito
+    /**
+     * Inicio de sesion
+     */
+    SESSION_INIT: 0,
+    /**
+     * Fin de la sesiÃ³n
+     */
+    SESSION_CLOSE:  1,
+    /**
+     * PosiciÃ³n del jugador
+     */
+    PLAYER_POSITION:2,
+    /**
+     * Enemigo muerto
+     */
+    ENEMY_DEAD :    3, 
+    /**
+     * Jugador muerto
+     */
+    PLAYER_DEAD:    4, 
+    /**
+     * Nivel comenzado
+     */
+    LEVEL_INIT :    5, 
+    /**
+     * Nivel fracasado
+     */
+    LEVEL_FAIL:     6, 
+    /**
+     * Nivel Completado
+     */
+    LEVEL_SUCCEDED: 7   
 }
 
 module.exports = EventType;
