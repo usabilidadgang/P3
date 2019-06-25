@@ -10,12 +10,13 @@ class CSVserializer
     //Funcion auxiliar para serializar la parte de {Event.eventInfo}
     serializeEventInfo(eventInfo)
     {
-        if(eventInfo == null) return "";
+        if(eventInfo == null) return"\"\"";
         var params = "";
+
         Object.values(eventInfo).forEach(property => {
-            params+= property.toString() + " ";
+            params+= property.toString() + ",";
         });
-        return params;
+        return "\"" + params.substr(0,params.length-1)+"\"";
     }
 }
 module.exports = CSVserializer;

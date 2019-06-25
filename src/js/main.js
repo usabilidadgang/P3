@@ -124,14 +124,14 @@ window.init = function(){
 
 }
 window.onload = function () {
-  Tracker.InitTracker(0,1);
+  Tracker.InitTracker(0,0);
   Tracker.AddEvent(EventType.SESSION_INIT,undefined)
   WebFont.load(wfconfig);
   navigator.webkitPersistentStorage.requestQuota(1024*1024, function() {
     window.webkitRequestFileSystem(window.PERSISTENT , 1024*1024, SaveDatFileBro);
   })
 };
-window.onbeforeunload = function (){
+window.onbeforeunload  = function (){
   Tracker.AddEvent(EventType.SESSION_CLOSE,undefined);
   Tracker.SaveWithPersistance();
 }
