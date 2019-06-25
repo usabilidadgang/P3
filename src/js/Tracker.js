@@ -6,8 +6,17 @@ const JSONSerializer = require('./JSONSerializer');
 const Event = require('./Event');
 const uniqid = require('uniqid');
 
+/**
+ * Enumerdo para el tipo de persistencia
+ */
 const PersistanceType = {
+  /**
+   * Persistencia en servidor
+   */
   Server: 0,
+  /**
+   * Persistencia en local
+   */
   Local: 1,
 };
 
@@ -16,9 +25,17 @@ const PersistanceDefaults = [
   DiskPersistance
 ];
 
+/**
+ * Enumerdo para el tipo de serialización
+ */
 const SerializerType = {
-  Custom: -1,
+  /**
+   * Serializacion en CSV
+   */
   CSV: 0,
+  /**
+   * Serialización en JSON
+   */
   JSON: 1,
 };
 
@@ -28,13 +45,12 @@ const SerializerDefaults = [
 ];
 
 /**
- * Tracker Main class
- *
+ * Clase del Tracker
  * @class Tracker
  */
 class Tracker {
   /**
-   *Creates an instance of Tracker.
+   * Construtora de la clase
    * @param {Object} setupInfo
    * @memberof Tracker
    */
@@ -74,10 +90,10 @@ class Tracker {
   }
 
   /**
-   * Add an event to the queue
+   * Añade un evento a la cola
    *
-   * @param {*} event_type the event type
-   * @param {*} event_info the event info
+   * @param {Number} event_type 
+   * @param {Object} event_info 
    * @memberof Tracker
    */
   AddEvent(event_type, event_info) {
@@ -91,8 +107,7 @@ class Tracker {
   }
 
   /**
-   * Save the events
-   *
+   * Guarda los eventos segun la configuración 
    * @memberof Tracker
    */
   async SaveWithPersistance() {
@@ -102,24 +117,15 @@ class Tracker {
     });
     this.event_queue = [];
   }
-
-  /**
-   * deprecated shit ask manu why this
-   *
-   * @memberof Tracker
-   */
-  Flush() {
-    this.SaveWithPersistance();
-  }
 }
 
 var Instance = null;
 
 
 /**
- * Initialize the tracker
+ * Inicializa el tracker
  *
- * @param {*} setupInfo The setup information
+ * @param {Object} setupInfo la información de las preferencias para iniciar el tracker
  */
 function InitializeTracker(setupInfo) {
   if (Instance != null) {
@@ -130,9 +136,9 @@ function InitializeTracker(setupInfo) {
 }
 
 /**
- * This method add to the queue of tracked events a new one
- * @param {Int32} event_type type of the event
- * @param {object} event_info infomation about the event
+ * Añade un evento a la cola 
+ * @param {Number} event_type tipo de evento
+ * @param {Object} event_info Información del evento
  */
 function AddEvent(event_type, event_info) {
   (Instance != null) ? Instance.AddEvent(event_type, event_info) : console.log("Tracker not initialized");
@@ -140,8 +146,7 @@ function AddEvent(event_type, event_info) {
 
 
 /**
- * save the tracked events
- *
+ * Guarda los evento segun la configuración asignada
  */
 function SaveWithPersistance() {
   (Instance != null) ? Instance.SaveWithPersistance() : console.log("Tracker not initialized");
