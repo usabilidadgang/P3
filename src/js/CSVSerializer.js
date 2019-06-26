@@ -1,11 +1,7 @@
 'use strict'
-<<<<<<< HEAD
-const event = require('./Event');
-=======
 /**
  * Clase para la serialización de eventos a formato CSV
  */
->>>>>>> 3c42de6dd1f367e25e2e7f8bd3f2152f8cc7a21d
 class CSVserializer
 {
     /**

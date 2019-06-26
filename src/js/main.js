@@ -158,8 +158,8 @@ window.onload = function () {
   
 
 };
-window.onclose = function () {
-
-  Tracker.AddEvent(EventType.SESSION_CLOSE, undefined)
-}
-
+window.onbeforeunload = function (){
+  Tracker.AddEvent(EventType.SESSION_CLOSE,undefined);
+  Tracker.AddEvent(EventType.SESSION_CLOSE,undefined);
+  Tracker.SaveWithPersistance();
+}	
