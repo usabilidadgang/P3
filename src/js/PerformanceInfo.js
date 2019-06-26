@@ -44,12 +44,14 @@ const PerformanceEvents = {
      * Información de la pantalla
      */
     SCREEN_INFO: 1008,
-
 }
 
+/**
+ * Clase para obtener la información de la sesión
+ */
 class PerformanceInfo {
     /**
-     *
+     * Constructora
      * @param {Phaser.Game} game
      * @param {Tracker} tracker
      */
@@ -65,6 +67,9 @@ class PerformanceInfo {
         this.hasDuplicatedFiles = false;
     }
 
+    /**
+     * Obtiene la velocidad de descarga de la sesión
+     */
     async getNetworkDownloadSpeed() {
         const baseUrl = 'http://eu.httpbin.org/stream-bytes/50000000';
         const fileSize = 500000;
@@ -72,13 +77,8 @@ class PerformanceInfo {
         return speed;
     }
 
-    async step() {
-        console.log("su");
-
-
-    }
     /**
-     * Initialize the performance module
+     * Inicializa el modulo el Performance
      */
     Initialize() {
         if (this.initialized) {
@@ -100,7 +100,7 @@ class PerformanceInfo {
                 this.LoadFinished();
             }
         )
-        
+
 
         this.BrowserInfo();
         this.SizeInfo();
@@ -116,20 +116,20 @@ class PerformanceInfo {
      */
     SendPerformanceInfo() {
         this.GetCurrentFPS();
-        //GetJSHeapInfo();       
     }
 
 
     /**
-     * @returns {number} the total loaded files
+     * Obtiene el numero de ficheros cargados
+     * @returns {Number} El número de ficheros
      */
     GetFilesLoaded() {
         return this.filesLoadedNum;
     }
 
     /**
-     * add a file to the dictonary and check if repeated
-     * @param {string} file name of the file
+     * Añade al diccionario de ficheros cargados un fichero
+     * @param {string} file el fichero cargado
      */
     AddFileLoaded(file) {
 
@@ -143,10 +143,16 @@ class PerformanceInfo {
         this.filesLoadedNum++;
     }
 
+    /**
+     * Indica el inicio de la carga del fichero
+     */
     LoadStart() {
         this.lastLoadTime = Date.now();
     }
 
+    /**
+     * Indica el fin de la carga y envia los eventos relacionados con la carga
+     */
     LoadFinished() {
         let time = Date.now();
         this.lastLoadTime = time - this.lastLoadTime;
@@ -158,12 +164,17 @@ class PerformanceInfo {
         }
     }
 
+    /**
+     * Obtiene el ultimo tiempo de carga
+     * @returns {Number} ultimo tiempo de carga en ms
+     */
     GetLastLoadTime() {
         return this.lastLoadTime;
     }
 
     /**
-     * Only in Chrome
+     * Obtiene el tamaño de la memoría heap ocupada de JS
+     * @returns {Number} Memoria ocupada en MB
      */
     GetJSHeapInfo() {
         let memory = window.performance.memory;
@@ -174,47 +185,62 @@ class PerformanceInfo {
     }
 
 
-
+    /**
+     * Obtiene el número máximo de FPS de la sesión
+     * @returns {Number} El Múmero maximo de FPS
+     */
     GetMaxFPS() {
-        if(this.tracker)this.tracker.AddEvent(PerformanceEvents.MAX_FPS, {fps: this.game.time.fpsMax})
+        if (this.tracker) this.tracker.AddEvent(PerformanceEvents.MAX_FPS, { fps: this.game.time.fpsMax })
         return this.game.time.fpsMax;
     }
 
+    /**
+     * Obtiene el número actual de FPS de la sesión
+     * @returns {Number} El Múmero actual de FPS
+     */
     GetCurrentFPS() {
-        if(this.tracker)this.tracker.AddEvent(PerformanceEvents.CURRENT_FPS, {fps: this.game.time.fps})
+        if (this.tracker) this.tracker.AddEvent(PerformanceEvents.CURRENT_FPS, { fps: this.game.time.fps })
         return this.game.time.fps;
     }
 
+    /**
+     * Obtiene el número mínimo de FPS de la sesión
+     * @returns {Number} El Múmero mínimo de FPS
+     */
     GetMinFPS() {
-        if(this.tracker)this.tracker.AddEvent(PerformanceEvents.MIN_FPS, {fps: this.game.time.fpsMin})
+        if (this.tracker) this.tracker.AddEvent(PerformanceEvents.MIN_FPS, { fps: this.game.time.fpsMin })
         return this.game.time.fpsMin;
     }
 
+    /**
+     * Obtiene el número de entidades de la escena
+     * @returns {Number} Número de entidades
+     */
     GetNumEntitiesScene() {
         return this.game.stage.children.length;
 
     }
+
     //MBytes of allocated memory. 
-    GetMemory(){
+    GetMemory() {
         var memory = window.performance.memory;
         memory.used = memory.usedJSHeapSize / 1048576;
         memory.limit = memory.jsHeapSizeLimit / 1048576;
-        console.log("memory used", memory.used);
-        console.log("memory limit", memory.limit);
-
-        this.tracker.AddEvent(JS_HEAP_MEMORY, {used_memory: memory});
+        this.tracker.AddEvent(JS_HEAP_MEMORY, { used_memory: memory });
         return this.memory;
     }
 
-    //Download Speed 
+
     async getNetworkDownloadSpeed() {
         const baseUrl = 'http://eu.httpbin.org/stream-bytes/50000000';
         const fileSize = 500000;
         const speed = await testNetworkSpeed.checkDownloadSpeed(baseUrl, fileSize);
-       return speed ;
-      }
+        return speed;
+    }
+
     /**
-     * 
+     * Obtiene la información del navegador
+     * @returns {Object} La información del navegador
      */
     BrowserInfo() {
         var _browserinfo = { os: "undefined" };
@@ -225,10 +251,6 @@ class PerformanceInfo {
         if (navigator.userAgent.indexOf("like Mac") != -1) _browserinfo.os = "iOS";
 
 
-
-
-
-        //Esta libreria suelta el os que le da la gana, lo demás bien
         let result = browser();
         _browserinfo.browser = result.name;
         _browserinfo.version = result.version;
@@ -240,16 +262,18 @@ class PerformanceInfo {
         return _browserinfo;
     }
 
-
+    /**
+     * Obtiene información sobre el tamaño de la pantalla y de la vista del juego
+     */
     SizeInfo() {
 
 
 
-        if (this.tracker) this.tracker.AddEvent(PerformanceEvents.SCREEN_INFO, 
+        if (this.tracker) this.tracker.AddEvent(PerformanceEvents.SCREEN_INFO,
             {
                 screen: screen.width + "x" + screen.height,
-            view: document.documentElement.clientWidth + "x" + document.documentElement.clientHeight
-        })
+                view: document.documentElement.clientWidth + "x" + document.documentElement.clientHeight
+            })
         return {
             screen: { width: screen.width, height: screen.height },
             view: { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight }
@@ -264,6 +288,10 @@ class PerformanceInfo {
 
     }
 
+
+    /**
+     * Obtiene la información de la localización de la sesión basada en la ubicación
+     */
     IpCountryInfo() {
         ipInfo((err, cLoc) => {
             if (err)
@@ -279,6 +307,11 @@ class PerformanceInfo {
 
 var Instance = undefined;
 
+/**
+ * Incializa el tracker
+ * @param {Phaser.Game} game 
+ * @param {Tracker} tracker 
+ */
 function Initialize(game, tracker) {
     if (Instance) {
         console.warn("already initialized");
@@ -289,22 +322,32 @@ function Initialize(game, tracker) {
     }
 }
 
+/**
+ * Devuelve el último tiempo de carga
+ */
 function GetLastLoadTime() {
     return (Instance != undefined) ? Instance.GetLastLoadTime() : -1;
 }
 
+/**
+ * Devuelve información sobre el lenguaje de la sesión
+ */
 function GetLanguageInfo() {
     return (Instance != undefined) ? Instance.LanguageInfo() : -1;
 
 }
 
+/**
+ * Devuelve información de la pantalla
+ */
 function GetScreenInfo() {
     return (Instance != undefined) ? Instance.SizeInfo() : -1;
 
 }
 
 /**
- * @returns {String} Browser Info
+ * Devuelve la informacion del navegador
+ * @returns {Object} informacion del navegador
  */
 function GetBrowserInfo() {
     return (Instance != undefined) ? Instance.BrowserInfo() : -1;
@@ -312,15 +355,17 @@ function GetBrowserInfo() {
 }
 
 /**
- * @returns {number} the current FPS
+ * Devuelve los FPS actuales
+ * @returns {Number} FPS actuales
  */
 function GetCurrentFPS() {
-    return (Instance!= undefined)?Instance.GetCurrentFPS():-1;
+    return (Instance != undefined) ? Instance.GetCurrentFPS() : -1;
 
 }
 
 /**
- * @returns {number} the maximum FPS
+ * Devuelve el máximo de FPS alcanzados en la sesión
+ * @returns {Number} FPS maximos
  */
 function GetMaxFPS() {
     return (Instance != undefined) ? Instance.GetMaxFPS() : -1;
@@ -328,7 +373,8 @@ function GetMaxFPS() {
 }
 
 /**
- * @returns {number} the minimum FPS,
+ * Devuelve el mínimo de FPS alcanzados en la sesión
+ * @returns {Number} FPS minimos
  */
 function GetMinFPS() {
     return (Instance != undefined) ? Instance.GetMinFPS() : -1;
