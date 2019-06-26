@@ -1,39 +1,37 @@
 const fetch = require("node-fetch")
 
 /**
- * Persistance With server
+ * Clase para la persistencia en servidor
  */
-class ServerPersistance
-{
+class ServerPersistance {
   /**
-   * Constructor of the Class
-   * @param {string} address the adress of the server
+   * Constructora de la clase
+   * @param {String} address Dirección a enviar los datos
    */
-  constructor(address)
-  {
-      this.address = address;
+  constructor(address) {
+    this.address = address;
   }
 
   /**
-   * Send the data to the server
-   * @param {string} dataString the data you want to send
+   * Envia al servidor definido la información
+   * @param {String} dataString Datos
    */
-  send (dataString)
-  {
-      let obj = {data: dataString};
-      fetch(this.address, 
-        {
-        method:'POST',
-        headers:{
+  send(dataString) {
+    var obj = { data: dataString };
+    fetch(this.address,
+      {
+        method: 'POST',
+        headers: {
           'Content-Type': 'application/json'
         },
-        mode: 'cors',
-        body : JSON.stringify(obj)
-    
+        body: JSON.stringify(obj),
+        mode: 'cors'
+
 
       }).then(res => res.json())
       .catch(error => console.log(error))
-    }
   }
+}
+
 
 module.exports = ServerPersistance;

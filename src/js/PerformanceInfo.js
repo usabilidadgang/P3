@@ -4,16 +4,45 @@ const ipInfo = require("ipinfo");
 const NetworkSpeed = require('network-speed');
 const testNetworkSpeed = new NetworkSpeed();
 
-
+/**
+ * Enumerado para los eventos de rendimiento
+ */
 const PerformanceEvents = {
+    /**
+     * FPS actuales
+     */
     CURRENT_FPS: 1000,
+    /**
+     * FPS máximos
+     */
     MAX_FPS: 1001,
+    /**
+     * FPS minimos
+     */
     MIN_FPS: 1002,
+    /**
+     * Tiempo de carga
+     */
     LOAD_TIME: 1003,
+    /**
+     * Números de ficheros cargados
+     */
     LOADED_FILES: 1004,
+    /**
+     * Memoria ocupada por el heap
+     */
     JS_HEAP_MEMORY: 1005,
+    /**
+     * Informacion del navegador
+     */
     BROWSER_INFO: 1006,
+    /**
+     * Informacion del lenguaje
+     */
     LANGUAGE_INFO: 1007,
+    /**
+     * Información de la pantalla
+     */
     SCREEN_INFO: 1008,
 
 }
