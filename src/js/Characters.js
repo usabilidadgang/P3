@@ -149,7 +149,10 @@ function Serpiente(x, y, escene){
   Serpiente.prototype.update = function (){
     if(!this.primera)
     this.moveX(this.playerNear());
-    if(this.KillPlayer())  escene.gameOver = true;
+    if(this.KillPlayer()){
+      Tracker.AddEvent(EventType.PLAYER_DEAD,{x:this._player.x,y:this._player.y,reason:"Snake"});
+      escene.gameOver = true;
+     }
     if(this.Stepped() && !this.primera){
       escene.sceneScore += 10;
       this.enemyhit.play(false);

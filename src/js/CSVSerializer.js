@@ -1,6 +1,5 @@
 'use strict'
 const event = require('./Event');
-const eventCheck = require('./EventCheck');
 class CSVserializer
 {  
     serialize(newEvent)
