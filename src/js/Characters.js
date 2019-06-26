@@ -149,7 +149,10 @@ function Serpiente(x, y, escene){
   Serpiente.prototype.update = function (){
     if(!this.primera)
     this.moveX(this.playerNear());
-    if(this.KillPlayer())  escene.gameOver = true;
+    if(this.KillPlayer()){
+      Tracker.AddEvent(EventType.PLAYER_DEAD,{x:escene._player.x,y:escene._player.y,reason:"Snake"});
+      escene.gameOver = true;
+     }
     if(this.Stepped() && !this.primera){
       escene.sceneScore += 10;
       this.enemyhit.play(false);
@@ -202,12 +205,12 @@ function Golem(x, y, escene){
 Golem.prototype.update = function (){
 
   if (this.lifes === 0){
-    Tracker.AddEvent(EventType.ENEMY_DEAD,{x:this._player.x,y:this._player.y,type:"Golem"});
+    Tracker.AddEvent(EventType.ENEMY_DEAD,{x:escene._player.x,y:escene._player.y,type:"Golem"});
     this.game.state.start('levelSucceed');
   }
   if(this.KillPlayer()){
     escene.gameOver = true;
-    Tracker.AddEvent(EventType.PLAYER_DEAD,{x:this._player.x,y:this._player.y,reason:"Golem"});
+    Tracker.AddEvent(EventType.PLAYER_DEAD,{x:escene._player.x,y:escene._player.y,reason:"Golem"});
   } 
   if(this.Stepped() && !this.tocado){
     this.lifes--;
