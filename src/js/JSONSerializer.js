@@ -11,7 +11,7 @@ class JSONSerializer
      */
     serialize(newEvent)
     {
-        return  JSON.stringify(newEvent)    
+        return JSON.stringify(newEvent)    
     }
 }
 module.exports = JSONSerializer;

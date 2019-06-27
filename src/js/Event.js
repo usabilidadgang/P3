@@ -1,25 +1,16 @@
 'use strict'
 
 /**
- * Types of Event
- */
-const EVENT_TYPE = {
-  GAME_EVENT: 0,
-  PERFORMANCE_EVENT: 1,
-}
-
-/**
- * Event Class
+ * Clase del evento
  */
 class Event
 {
   /**
-   * Main constructor of the Event Class
-   * @param {string} userId 
-   * @param {int} time_stamp 
-   * @param {int} event_type
-   * @param {int} event_id 
-   * @param {Object} eventInfo 
+   * Constructor principal de la clase
+   * @param {String} userId ID del usuario
+   * @param {Number} time_stamp Fecha en EPOC para indicar la creacion del evento
+   * @param {EventType} event_type Tipo de Evento
+   * @param {Object} eventInfo Información adicional del evento 
    * 
    */
   constructor(userId, time_stamp, event_type,  eventInfo)
