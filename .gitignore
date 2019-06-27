@@ -52,5 +52,8 @@ build/Release
 # Yarn Integrity file
 .yarn-integrity
 
+# VSCode files
+.vs
+
 
 # End of https://www.gitignore.io/api/node
