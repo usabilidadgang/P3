@@ -19,7 +19,6 @@ class Event
     this.timeStamp = time_stamp;
     this.eventType = event_type;
     this.eventInfo = eventInfo;
-    this.eventId = 0; 
   }
 }
 
