@@ -56,7 +56,7 @@ class PerformanceInfo {
      * @param {Tracker} tracker
      */
     constructor(game, tracker) {
-
+        
         this.game = game;
         this.tracker = tracker;
         this.lastLoadTime = Date.now();
@@ -66,7 +66,6 @@ class PerformanceInfo {
         this.initialized = false;
         this.hasDuplicatedFiles = false;
     }
-
     /**
      * Obtiene la velocidad de descarga de la sesión
      */
@@ -109,13 +108,20 @@ class PerformanceInfo {
 
         this.game.time.advancedTiming = true;
         this.initialized = true;
-        this.step();
+        this.TimerFPS = setTimeout(this.TimerFPSFunction, 5000);
     }
-    /**
-     * 
-     */
+
+    TimerFPSFunction(){
+        this.SendPerformanceInfo();
+        this.TimerFPS = setTimeout(this.TimerFPSFunction, 5000);
+    }
+
+
     SendPerformanceInfo() {
         this.GetCurrentFPS();
+        this.GetMinFPS();
+        this.GetMaxFPS();
+        this.GetJSHeapInfo();
     }
 
 
@@ -177,7 +183,7 @@ class PerformanceInfo {
      * @returns {Number} Memoria ocupada en MB
      */
     GetJSHeapInfo() {
-        let memory = window.performance.memory;
+        var memory = window.performance.memory;
         memory.used = memory.usedJSHeapSize / 1048576;
         memory.limit = memory.jsHeapSizeLimit / 1048576;
         if (this.tracker) this.tracker.AddEvent(PerformanceEvents.JS_HEAP_MEMORY, memory)

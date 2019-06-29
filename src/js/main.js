@@ -9,10 +9,6 @@ var Tracker = require('./Tracker');
 const EventType = require("./EventType");
 
 const PerformanceInfo = require('./PerformanceInfo');
-const UserInfo = require('./UserInfo')
-
-const ip = require('public-ip')
-
 //  The Google WebFont Loader will look for this object, so
 // it before loading the script.
 
@@ -147,8 +143,9 @@ window.onload = function () {
       arg: "http://localhost:8080/tracker",
     },
     serializer: {
-      type: Tracker.SerializerType.CSV
-    }
+      type: Tracker.SerializerType.JSON
+    },
+    maxQueuedEvents: 0
   }
 
   Tracker.InitTracker(setup);
@@ -158,8 +155,9 @@ window.onload = function () {
   
 
 };
+window.onunload = function(){
+}
 window.onbeforeunload = function (){
-  Tracker.AddEvent(EventType.SESSION_CLOSE,undefined);
   Tracker.AddEvent(EventType.SESSION_CLOSE,undefined);
   Tracker.SaveWithPersistance();
 }	
