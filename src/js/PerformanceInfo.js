@@ -110,6 +110,13 @@ class PerformanceInfo {
         this.initialized = true;
         this.TimerFPS = setTimeout(this.TimerFPSFunction, 5000);
     }
+    
+    SendPerformanceInfo() {
+        this.GetCurrentFPS();
+        this.GetMinFPS();
+        this.GetMaxFPS();
+        this.GetJSHeapInfo();
+    }
 
     TimerFPSFunction(){
         this.SendPerformanceInfo();
@@ -117,12 +124,7 @@ class PerformanceInfo {
     }
 
 
-    SendPerformanceInfo() {
-        this.GetCurrentFPS();
-        this.GetMinFPS();
-        this.GetMaxFPS();
-        this.GetJSHeapInfo();
-    }
+    
 
 
     /**
