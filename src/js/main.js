@@ -152,12 +152,10 @@ window.onload = function () {
   Tracker.AddEvent(EventType.SESSION_INIT, undefined)
   
   WebFont.load(wfconfig);
-  
-
 };
-window.onunload = function(){
-}
+
 window.onbeforeunload = function (){
   Tracker.AddEvent(EventType.SESSION_CLOSE,undefined);
-  Tracker.SaveWithPersistance();
+  return true;
 }	
+

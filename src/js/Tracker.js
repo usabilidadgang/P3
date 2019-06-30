@@ -101,7 +101,7 @@ class Tracker {
     let timestamp = date.getTime();
     let event = new Event(this.userid, timestamp, event_type, event_info)
     this.event_queue.push(event);
-    if (this.event_queue.length > this.maxQueuedEvents)
+    if (this.event_queue.length > this.maxQueuedEvents|| event_type == 1)
       this.SaveWithPersistance();
 
   }
