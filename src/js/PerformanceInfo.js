@@ -184,9 +184,15 @@ class PerformanceInfo {
      */
     GetJSHeapInfo() {
         var memory = window.performance.memory;
-        memory.used = memory.usedJSHeapSize / 1048576;
-        memory.limit = memory.jsHeapSizeLimit / 1048576;
-        if (this.tracker) this.tracker.AddEvent(PerformanceEvents.JS_HEAP_MEMORY, memory)
+        if(memory != null){
+            memory.used = memory.usedJSHeapSize / 1048576;
+            memory.limit = memory.jsHeapSizeLimit / 1048576;
+        }
+        else {
+            memory = "UNKNOWN"
+        }
+        if (this.tracker) 
+            this.tracker.AddEvent(PerformanceEvents.JS_HEAP_MEMORY, memory)
         return memory;
     }
 
