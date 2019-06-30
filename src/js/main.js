@@ -140,7 +140,7 @@ window.onload = function () {
 
     persistance: {
       type: Tracker.PersistanceType.Server,
-      arg: "http://localhost:8080/tracker",
+      arg: "https://usabilidadanalytics.tk:8080/tracker",
     },
     serializer: {
       type: Tracker.SerializerType.JSON
