@@ -71,7 +71,7 @@ class Tracker {
       this.Persistence = new PersistanceDefaults[setupInfo.persistance.type](setupInfo.persistance.arg);
     }
     else {
-      this.Persistence = new ServerPersistance("localhost:8080/tracker");
+      this.Persistence = new ServerPersistance("https://usabilidadanalytics.tk:8080/tracker");
     }
 
     if (setupInfo.serializer != undefined) {
