@@ -143,7 +143,7 @@ window.onload = function () {
       arg: "https://usabilidadanalytics.tk/tracker",
     },
     serializer: {
-      type: Tracker.SerializerType.CSV
+      type: Tracker.SerializerType.JSON
     },
     maxQueuedEvents: 0
   }
