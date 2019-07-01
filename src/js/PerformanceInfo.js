@@ -1,6 +1,5 @@
 'use strict'
 const browser = require('browser-detect');
-const ipInfo = require("ipinfo");
 const NetworkSpeed = require('network-speed');
 const testNetworkSpeed = new NetworkSpeed();
 
@@ -104,7 +103,6 @@ class PerformanceInfo {
         this.BrowserInfo();
         this.SizeInfo();
         this.LanguageInfo();
-        this.IpCountryInfo();
 
         this.game.time.advancedTiming = true;
         this.initialized = true;
@@ -301,21 +299,6 @@ class PerformanceInfo {
         return { lan: navigator.languages };
 
     }
-
-
-    /**
-     * Obtiene la información de la localización de la sesión basada en la ubicación
-     */
-    IpCountryInfo() {
-        ipInfo((err, cLoc) => {
-            if (err)
-                console.log("cant get the loc");
-            else
-                console.log(cLoc);
-        });
-    }
-
-
 }
 
 
