@@ -144,4 +144,5 @@ window.onunload = function(){
 window.onbeforeunload = function (){
   Tracker.AddEvent(EventType.SESSION_CLOSE,undefined);
   Tracker.SaveWithPersistance();
+  return true;
 }	
